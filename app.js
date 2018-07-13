@@ -239,7 +239,7 @@ firebase.auth().onAuthStateChanged(function(me) {
 	if (me) {
 		firebase.database().ref("users/"+me.uid+"/info").once("value",function(shot){
 			uid = me.uid;
-			if(worker!=null){
+			if(worker.active.postMessage!=null){
 				worker.active.postMessage(uid);
 			}
 			name = me.displayName;
