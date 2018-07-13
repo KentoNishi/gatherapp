@@ -18,7 +18,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
   var notificationTitle = 'Background Message Title';
   var notificationOptions = {
     body: 'Background Message body.',
-    icon: '/apps/gatherapp/192x192.png'
+    icon: '/gatherapp/192x192.png'
   };
   return self.registration.showNotification(notificationTitle,
     notificationOptions);
@@ -29,7 +29,7 @@ messaging.onMessage(function(payload) {
   var notificationTitle = 'Background Message Title';
   var notificationOptions = {
     body: 'Background Message body.',
-    icon: '/apps/gatherapp/192x192.png'
+    icon: '/gatherapp/192x192.png'
   };
   return self.registration.showNotification(notificationTitle,
     notificationOptions);
@@ -54,17 +54,17 @@ if(navigator.onLine){
 var CACHE_NAME = "CACHE";
 
 var urlsToCache = [
-    '/apps/gatherapp/app.js',
-    '/apps/gatherapp/',
-    '/apps/gatherapp/index.html',
-    '/apps/gatherapp/manifest.json',
-    '/apps/gatherapp/192x192.png',
-    '/apps/gatherapp/512x512.png',
-    '/apps/gatherapp/add.svg',
-    '/apps/gatherapp/menu.svg',
-    '/apps/gatherapp/google.png',
-    '/apps/gatherapp/logo.png',
-    '/apps/gatherapp/loading.gif'
+    '/gatherapp/app.js',
+    '/gatherapp/',
+    '/gatherapp/index.html',
+    '/gatherapp/manifest.json',
+    '/gatherapp/192x192.png',
+    '/gatherapp/512x512.png',
+    '/gatherapp/add.svg',
+    '/gatherapp/menu.svg',
+    '/gatherapp/google.png',
+    '/gatherapp/logo.png',
+    '/gatherapp/loading.gif'
 ];
 
 self.addEventListener('install', function(event) {
