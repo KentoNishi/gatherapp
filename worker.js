@@ -63,8 +63,7 @@ var urlsToCache = [
     '/gatherapp/add.svg',
     '/gatherapp/menu.svg',
     '/gatherapp/google.png',
-    '/gatherapp/logo.png',
-    '/gatherapp/loading.gif'
+    '/gatherapp/logo.png'
 ];
 
 self.addEventListener('install', function(event) {
