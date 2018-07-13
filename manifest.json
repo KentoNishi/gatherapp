@@ -3,17 +3,17 @@
   "name": "GatherApp",
   "icons": [
     {
-      "src": "/apps/gatherapp/192x192.png",
+      "src": "/gatherapp/192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/apps/gatherapp/512x512.png",
+      "src": "/gatherapp/512x512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "start_url": "https://kentonishi.github.io/apps/gatherapp/index.html",
+  "start_url": "https://kentonishi.github.io/gatherapp/index.html",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "display": "standalone",
