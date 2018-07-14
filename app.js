@@ -140,13 +140,13 @@ function joinGroup(id){
 function leaveGroup(id){
 	firebase.database().ref("groups/"+id+"/members").update({
 		[uid]:null
-	}).then(function(members){
+	}).then(function(members){/*
 		if(members==null){
 			firebase.database().ref("groups/"+id).remove();
 		}
 		firebase.database().ref("users/"+uid+"/groups/"+id).remove().then(function(){
 			start();
-		});
+		});*/start();
 	});
 }
 
