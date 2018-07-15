@@ -119,9 +119,8 @@ function loadGroupFeed(id){
 		});
 		if(notifications.val()==null){
 			write("No Activity",[{text:"There are no recent events."}]);
-		}else{
-			write("Return To Group",null,null,"loadGroup('"+id+"');");
 		}
+		write("Return To Group",null,null,"loadGroup('"+id+"');");
 	});
 }
 
