@@ -129,11 +129,7 @@ function joinGroup(id){
 	firebase.database().ref("groups/"+id+"/members").update({
 		[uid]:Date.now()
 	}).then(function(){
-		firebase.database().ref("users/"+uid+"/groups/").update({
-			[id]:0
-		}).then(function(){
-			loadGroup(id);
-		});
+		loadGroup(id);
 	});
 }
 
