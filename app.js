@@ -83,9 +83,7 @@ function searchGroups(){
 
 function myGroups(){
 	clear();
-	write("Loading...");//,[{html:"<img src='/gatherapp/loading.gif' class='pic'></img>"}]);
 	firebase.database().ref("users/"+uid+"/groups").once("value",function(groups){
-		clear();
 		if(groups.val()==null){
 			write("No Groups",[{text:"You have not joined any groups."}]);
 		}
