@@ -83,7 +83,9 @@ function searchGroups(){
 
 function myGroups(){
 	clear();
+	write("Loading...");
 	firebase.database().ref("users/"+uid+"/groups").once("value",function(groups){
+		clear();
 		if(groups.val()==null){
 			write("No Groups",[{text:"You have not joined any groups."}]);
 		}
