@@ -105,7 +105,7 @@ function loadGroup(id){
 		if(group.val().members[uid]!=null){
 			status=[{text:"Leave Group",href:"leaveGroup('"+group.key+"');"}];
 		}
-		write("New Gather-up",[{text:"Schedule a new gather-up."}]);
+		write("New Gather-up",[{text:"Schedule a new gather-up."}],null,"requestGatherUp('"+id+"');");
 		write("Group Feed",[{text:"View recent activity."}],null,"loadGroupFeed('"+id+"');");
 		write(group.val().info.title,[{text:memberCount+" members"}],status);
 	});
@@ -153,6 +153,10 @@ function newGroup(){
 			joinGroup(id);
 		});
 	}
+}
+
+function requestGatherUp(id){
+	write();
 }
 
 if ('serviceWorker' in navigator) {
