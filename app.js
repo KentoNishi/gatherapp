@@ -23,9 +23,7 @@ function menu(){
 
 function feed(id){
 	clear();
-	write("Loading...");
 	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
-		clear();
 		if(notifications.val()==null){
 			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
 		}
@@ -101,9 +99,7 @@ function myGroups(){
 
 function loadGroup(id){
 	clear();
-	write("Loading...");
 	firebase.database().ref("groups/"+id).once("value",function(group){
-		clear();
 		var memberCount=Object.keys(group.val().members).length;
 		var status=[{text:"Join Group",href:"joinGroup('"+group.key+"');"}];
 		if(group.val().members[uid]!=null){
@@ -116,10 +112,8 @@ function loadGroup(id){
 }
 
 function loadGroupFeed(id){
-	write("Loading...");
 	clear();
 	firebase.database().ref("groups/"+id+"/feed").once("value",function(notifications){
-		clear();
 		notifications.forEach(function(notification){
 			write(notification.val().title,[{text:notification.val().content}]);
 		});
@@ -189,6 +183,7 @@ function pos(coord){
 	lat=coord.coords.latitude;
 	lng=coord.coords.longitude;
 	var latlng=new google.maps.LatLng(lat,lng);
+
 	new google.maps.Geocoder().geocode({'latLng' : latlng}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			if (results[0]) {
