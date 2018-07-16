@@ -156,6 +156,7 @@ function newGroup(){
 }
 
 function requestGatherUp(id){
+	clear();
 	write();
 }
 
