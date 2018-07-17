@@ -157,7 +157,13 @@ function newGroup(){
 
 function requestGatherUp(id){
 	clear();
-	write();
+	var contents=[];
+	contents.push({html:"<div id='map' class='pic'></div>"});
+	contents.push({html:"<div class='inputs'>"});
+	contents.push({html:"<input placeholder='Title'></input>"});
+	contents.push({html:"<input type='datetime-local'></input>"});
+	contents.push({html:"</div>"});
+	write("New Gather-Up",contents);
 }
 
 if ('serviceWorker' in navigator) {
@@ -188,7 +194,6 @@ function pos(coord){
 	lat=coord.coords.latitude;
 	lng=coord.coords.longitude;
 	var latlng=new google.maps.LatLng(lat,lng);
-
 	new google.maps.Geocoder().geocode({'latLng' : latlng}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			if (results[0]) {
