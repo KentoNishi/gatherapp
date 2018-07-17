@@ -164,6 +164,10 @@ function requestGatherUp(id){
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
 	write("New Gather-Up",contents);
+	var map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 4,
+		center: {lat:lat,lng:lng}
+	});
 }
 
 if ('serviceWorker' in navigator) {
