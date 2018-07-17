@@ -165,10 +165,17 @@ function requestGatherUp(id){
 	contents.push({html:"</div>"});
 	write("New Gather-Up",contents);
 	var map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 4,
+		zoom: 15,
 		center: {lat:lat,lng:lng}
 	});
+	google.maps.event.addListener(marker, 'dragend', function(evt){
+		map.panTo(marker.getPosition());
+//		moveMapView(evt.latLng.lat(),evt.latLng.lng());
+	});
 }
+
+/*function moveMapView(x,y){
+}*/
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
