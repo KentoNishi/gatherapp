@@ -105,8 +105,8 @@ function loadGroup(id){
 		if(group.val().members[uid]!=null){
 			status=[{text:"Leave Group",href:"leaveGroup('"+group.key+"');"}];
 		}
-		write("New Gather-up",[{text:"Schedule a new gather-up."}],null,"requestGatherUp('"+id+"');");
-		write("Group Feed",[{text:"View recent activity."}],null,"loadGroupFeed('"+id+"');");
+		write("New Gather-up",[{text:"Schedule a new gather-up."}],null,"requestGatherUp('"+group.key+"');");
+		write("Group Feed",[{text:"View recent activity."}],null,"loadGroupFeed('"+group.key+"');");
 		write(group.val().info.title,[{text:memberCount+" members"}],status);
 	});
 }
