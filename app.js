@@ -183,7 +183,7 @@ function requestGatherUp(id){
 
 function moveMapView(x,y){
 	map.setCenter(new google.maps.LatLng(x,y));
-	new google.maps.Geocoder().geocode({'latLng' : {lat:lat,lng:lng}}, function(results, status) {
+	new google.maps.Geocoder().geocode({'latLng' : {lat:x,lng:y}}, function(results, status) {
     		if (status == google.maps.GeocoderStatus.OK) {
 			if (results[0]) {
 				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
