@@ -159,8 +159,7 @@ var map;
 function requestGatherUp(id){
 	clear();
 	var contents=[];
-	contents.push({html:"<div id='map' class='pic'></div>"});
-	contents.push({html:"<div class='inputs'>"});
+	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
 	contents.push({html:"<input placeholder='Title'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
