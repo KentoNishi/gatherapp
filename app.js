@@ -178,6 +178,7 @@ function requestGatherUp(id){
 		map.panTo(marker.getPosition());
 		moveMapView(evt.latLng.lat(),evt.latLng.lng());
 	});
+	moveMapView(lat,lng);
 }
 
 function moveMapView(x,y){
