@@ -370,6 +370,6 @@ function decode(html) {
 }
 
 window.onerror = function (message, file, line, col, error) {
-  clear();
-  write();
+	clear();
+	write();
 };
