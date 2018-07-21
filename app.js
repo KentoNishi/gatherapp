@@ -161,6 +161,7 @@ function requestGatherUp(id){
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
 	contents.push({html:"<input placeholder='Title'></input>"});
+	contents.push({html:"<input placeholder='Location'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
 	write("New Gather-Up",contents);
@@ -181,6 +182,13 @@ function requestGatherUp(id){
 
 function moveMapView(x,y){
 	map.setCenter(new google.maps.LatLng(x,y));
+	new google.maps.Geocoder().geocode({'latLng' : {lat:lat,lng:lng}}, function(results, status) {
+    		if (status == google.maps.GeocoderStatus.OK) {
+			if (results[0]) {
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
+			}
+		}
+	});
 }
 
 if ('serviceWorker' in navigator) {
