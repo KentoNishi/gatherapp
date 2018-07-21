@@ -155,6 +155,7 @@ function newGroup(){
 	}
 }
 
+var map;
 function requestGatherUp(id){
 	clear();
 	var contents=[];
@@ -164,18 +165,24 @@ function requestGatherUp(id){
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
 	write("New Gather-Up",contents);
-	var map = new google.maps.Map(document.getElementById('map'), {
+	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: {lat:lat,lng:lng}
 	});
+        var marker = new google.maps.Marker({
+		position: {lat:lat,lng:lng},
+		map: map,
+		draggable:true
+        });
 	google.maps.event.addListener(marker, 'dragend', function(evt){
 		map.panTo(marker.getPosition());
-//		moveMapView(evt.latLng.lat(),evt.latLng.lng());
+		moveMapView(evt.latLng.lat(),evt.latLng.lng());
 	});
 }
 
-/*function moveMapView(x,y){
-}*/
+function moveMapView(x,y){
+	map.setCenter(new google.maps.LatLng(x,y));
+}
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
