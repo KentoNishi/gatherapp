@@ -191,6 +191,8 @@ function newGatherUp(id){
 			title:title,
 			location:location,
 			date:date
+		}).then(function(){
+			loadGroup(id);
 		});
 	}
 }
