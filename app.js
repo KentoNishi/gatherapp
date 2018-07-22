@@ -164,7 +164,7 @@ function requestGatherUp(id){
 	contents.push({html:"<input placeholder='Location'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
-	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
+	contents.push({html:"<button onclick='newGatherUp("+'"'+id+'"'+");'>Schedule</button>"});
 	write("New Gather-Up",contents,[{href:"loadGroup('"+id+"');",text:"Cancel"}]);
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
@@ -180,6 +180,19 @@ function requestGatherUp(id){
 		moveMapView(evt.latLng.lat(),evt.latLng.lng());
 	});
 	moveMapView(lat,lng);
+}
+
+function newGatherUp(id){
+	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value;
+	var location=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
+	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
+	if(title!=null&&location!=null&&date!=null){
+		firebase.database().ref("groups/"+id+"/gatherups").push().update({
+			title:title,
+			location:location,
+			date:date
+		});
+	}
 }
 
 function moveMapView(x,y){
