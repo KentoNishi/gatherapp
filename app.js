@@ -164,7 +164,8 @@ function requestGatherUp(id){
 	contents.push({html:"<input placeholder='Location'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
-	write("New Gather-Up",contents);
+	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
+	write("New Gather-Up",contents,[{href:"loadGroup('"+id+"');",text:"Cancel"}]);
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: {lat:lat,lng:lng}
