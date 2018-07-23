@@ -23,11 +23,11 @@ function menu(){
 
 function feed(id){
 	clear();
-	var alias="users/";
+	var alias="users/"+uid;
 	if(id!=null){
-		alias="groups/";
+		alias="groups/"+id;
 	}
-	firebase.database().ref(alias+uid+"/feed").once("value",function(notifications){
+	firebase.database().ref(alias+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
 			if(id==null){
 				write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
