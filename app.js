@@ -21,14 +21,18 @@ function menu(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
-function feed(id){
+function feed(){
 	clear();
 	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
 			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
 		}
 		notifications.forEach(function(notification){
-			write(notification.val().title,[{text:notification.val().content}]);
+			if(text:notification.val().content!=null){
+				write(notification.val().title,[{text:notification.val().content}]);
+			}else{
+				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location},{text:getFormattedDate(notification.val().date)}]);
+			}
 		});
 //		write("Clear Feed",null,null,"clearFeed();");
 	});
@@ -383,6 +387,18 @@ function decode(html) {
 	var txt = document.createElement("textarea");
 	txt.innerHTML = html;
 	return txt.value;
+}
+
+function getFormattedDate(date) {
+	var year = date.getFullYear();
+
+	var month = (1 + date.getMonth()).toString();
+	month = month.length > 1 ? month : '0' + month;
+
+	var day = date.getDate().toString();
+	day = day.length > 1 ? day : '0' + day;
+
+	return month + '/' + day + '/' + year;
 }
 
 window.onerror = function (message, file, line, col, error) {
