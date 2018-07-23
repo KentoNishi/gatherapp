@@ -198,6 +198,8 @@ function newGatherUp(id){
 		}).then(function(){
 			loadGroup(id);
 		});
+	}else{
+		alert("Please complete all input fields.");
 	}
 }
 
