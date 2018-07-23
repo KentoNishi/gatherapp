@@ -28,7 +28,7 @@ function feed(){
 			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
 		}
 		notifications.forEach(function(notification){
-			if(text:notification.val().content!=null){
+			if(notification.val().content!=null){
 				write(notification.val().title,[{text:notification.val().content}]);
 			}else{
 				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location},{text:getFormattedDate(notification.val().date)}]);
