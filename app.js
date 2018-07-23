@@ -21,11 +21,19 @@ function menu(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
-function feed(){
+function feed(id){
 	clear();
-	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
+	var alias="users/";
+	if(id!=null){
+		alias="groups/";
+	}
+	firebase.database().ref(alias+uid+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
-			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
+			if(id==null){
+				write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
+			}else{
+				write("No Activity",[{text:"There are no recent events."}]);
+			}
 		}
 		notifications.forEach(function(notification){
 			if(notification.val().content!=null){
@@ -34,7 +42,9 @@ function feed(){
 				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location.split(",")[0]+","+notification.val().location.split(",")[1]},{text:getFormattedDate(notification.val().date)}]);
 			}
 		});
-//		write("Clear Feed",null,null,"clearFeed();");
+		if(id!=null){
+			write("Return To Group",null,null,"loadGroup('"+id+"');");
+		}
 	});
 }
 
@@ -110,21 +120,8 @@ function loadGroup(id){
 			status=[{text:"Leave Group",href:"leaveGroup('"+group.key+"');"}];
 		}
 		write("New Gather-up",[{text:"Schedule a new gather-up."}],null,"requestGatherUp('"+group.key+"');");
-		write("Group Feed",[{text:"View recent activity."}],null,"loadGroupFeed('"+group.key+"');");
+		write("Group Feed",[{text:"View recent activity."}],null,"feed('"+group.key+"');");
 		write(group.val().info.title,[{text:memberCount+" members"}],status);
-	});
-}
-
-function loadGroupFeed(id){
-	clear();
-	firebase.database().ref("groups/"+id+"/feed").once("value",function(notifications){
-		notifications.forEach(function(notification){
-			write(notification.val().title,[{text:notification.val().content}]);
-		});
-		if(notifications.val()==null){
-			write("No Activity",[{text:"There are no recent events."}]);
-		}
-		write("Return To Group",null,null,"loadGroup('"+id+"');");
 	});
 }
 
