@@ -31,7 +31,7 @@ function feed(){
 			if(notification.val().content!=null){
 				write(notification.val().title,[{text:notification.val().content}]);
 			}else{
-				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location},{text:getFormattedDate(notification.val().date)}]);
+				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location.split(",")[0]+","+notification.val().location.split(",")[1]},{text:getFormattedDate(notification.val().date)}]);
 			}
 		});
 //		write("Clear Feed",null,null,"clearFeed();");
