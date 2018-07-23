@@ -186,7 +186,7 @@ function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value;
 	var location=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
-	if(title!=null&&location!=null&&date!=null){
+	if(title!=null&&location!=null&&date!=null&&title!=""&&location!=""&&date!=""){
 		firebase.database().ref("groups/"+id+"/gatherups").push().update({
 			title:title,
 			location:location,
