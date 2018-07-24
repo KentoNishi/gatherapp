@@ -80,6 +80,15 @@ exports.cleanGroups =
     */
   // /*
       return fireDB.child(`/users/${user}/groups/`).update({[pushId]:change.after.val()}).then(function(){
+      	return fireDB.child(`groups/${pushId}/feed`).once('value').then(snap=>{
+      		var returns=[];
+      		snap.forEach(child=>{
+      			var key=child.key;
+				returns.push(fireDB.child(`/users/${user}/feed/${key}`).remove());
+      		});
+      		return Promise.all(returns);
+  		});
+      }).then(value=>{
       	return fireDB.child(`groups/${pushId}/members`).once('value').then(snap=>{
       		if(snap.val()===null){
       			return fireDB.child(`/groups/${pushId}`).remove();
@@ -88,7 +97,7 @@ exports.cleanGroups =
       		}
 
   		});
-      }).catch(err => {
+      	}).catch(err => {
         console.log(err);
       });
    //   */
