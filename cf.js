@@ -66,42 +66,32 @@ exports.shrinkMessages =
     });
 
   });
-    
-exports.deleteGroups =
-  functions.database.ref(`/groups/{UID}/members/{MESSAGE_ID}`).onWrite((change, context) => {
-    let UID = context.params.UID;
-    let messageID = context.params.MESSAGE_ID;
-    let fireDB = change.after.ref.root;
-    let listener_promises = [];
-	var keys=[];
-    return fireDB.child(`groups/${UID}/members`).once('value').then(snap=>{
-    	if(snap.val()===null){
-    		return fireDB.child(`/groups/${UID}/).remove();
-    	}
-    	return false;
-    });
-
-  });
-   /*
+   
 exports.cleanGroups =
   functions.database.ref(`/groups/{PUSH_ID}/members/{USER}`).onWrite((change, context) => {
     let pushId = context.params.PUSH_ID;
     let user = context.params.USER;
     let fireDB = change.after.ref.root;
-    let listener_promises = [];
+    let listener_promises = [];/*
     change.before.ref.root.child(`groups/${pushId}/feed`).forEach(childSnapshot => {
 		listener_promises.push(fireDB.child(`/users/${user}/feed/`+childSnapshot.key).remove());
     });
     return Promise.all(listener_promises);
-
+    */
+  // /*
       return fireDB.child(`/users/${user}/groups/`).update({[pushId]:change.after.val()}).then(function(){
-		    change.before.ref.root.child(`groups/${pushId}/feed`).forEach(childSnapshot => {
-		      listener_promises.push(fireDB.child(`/users/${user}/feed/`+childSnapshot.key).remove());
-		    });
-		    return Promise.all(listener_promises);
+      	return fireDB.child(`groups/${pushId}/members`).once('value').then(snap=>{
+      		if(snap.val()===null){
+      			return fireDB.child(`/groups/${pushId}`).remove();
+      		}else{
+	      		return true;
+      		}
+
+  		});
       }).catch(err => {
         console.log(err);
       });
+   //   */
 });
 
 exports.newGather =
@@ -114,4 +104,3 @@ exports.newGather =
         console.log(err);
       });
 });
-*/
