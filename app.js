@@ -1,10 +1,10 @@
 var config = {
-	apiKey: "AIzaSyDpWZcmNnF0rmmYJOLgI0-cZJMIvvHngsY",
-	authDomain: "gatherapp-1906b.firebaseapp.com",
-	databaseURL: "https://gatherapp-1906b.firebaseio.com",
-	projectId: "gatherapp-1906b",
-	storageBucket: "gatherapp-1906b.appspot.com",
-	messagingSenderId: "1038044491990"
+	apiKey: "AIzaSyB4meNlwVUltd007qmH9hPQpn6Oz_CF3xM",
+	authDomain: "gatherapp-14b50.firebaseapp.com",
+	databaseURL: "https://gatherapp-14b50.firebaseio.com",
+	projectId: "gatherapp-14b50",
+	storageBucket: "",
+	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
 
