@@ -61,7 +61,7 @@ exports.newGather =
 		let user = context.params.USER;
 		let fireDB = change.after.ref.root;
 		return fireDB.child(`/groups/${pushId}/feed/`).update({[user]:change.after.val()});
-	.catch(err => {
+	}).catch(err => {
 		console.log(err);
 	});
 });
