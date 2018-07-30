@@ -70,94 +70,9 @@ function start(){
 	write("My Groups",null,null,"myGroups();");
 }
 
-function findGroups(){
-	clear();
-	write("Search Groups",[{text:"Search groups by query."}],null,"searchGroups();");
-	write("Near Me",[{text:"Current Location:"},{text:city}],null,"byCity();");
-	write("Join Group",[{text:"Join a group by code."}],null,"byCode();");
-}
-
-function searchGroups(){
-	var query=prompt("Search Query:");
-	if(query!=null&&query.replace(/ /g,"")!=""){
-		clear();
-		write("Loading...");//,[{html:"<img src='/gatherapp/loading.gif' class='pic'></img>"}]);
-		firebase.database().ref("groups").orderByChild("info/search").startAt(query.replace(/ /g,"").toLowerCase()).endAt(query.replace(/ /g,"").toLowerCase()+"\uf8ff").limitToFirst(100).once("value",function(results){
-			clear();
-			if(results.val()==null){
-				write("No Results",[{text:"There were no relevant results."}]);
-			}
-			reverse(results).forEach(function(group){
-				var memberCount=Object.keys(group.val().members).length;
-				write(group.val().info.title,[{text:memberCount+" members"}],null,"loadGroup('"+group.key+"');");
-			});
-		});
-	}
-}
-
-function myGroups(){
-	clear();
-	write("Loading...");
-	firebase.database().ref("users/"+uid+"/groups").once("value",function(groups){
-		clear();
-		if(groups.val()==null){
-			write("No Groups",[{text:"You have not joined any groups."}]);
-		}
-		groups.forEach(function(item){
-			firebase.database().ref("groups/"+item.key).once("value",function(group){
-				write(group.val().info.title,[{text:Object.keys(group.val().members).length.toString()+" members"}],null,"loadGroup('"+group.key+"');");
-			});
-		});
-	});
-}
-
-function loadGroup(id){
-	clear();
-	firebase.database().ref("groups/"+id).once("value",function(group){
-		var memberCount=Object.keys(group.val().members).length;
-		var status=[{text:"Join Group",href:"joinGroup('"+group.key+"');"}];
-		if(group.val().members[uid]!=null){
-			status=[{text:"Leave Group",href:"leaveGroup('"+group.key+"');"}];
-		}
-		write("New Gather-up",[{text:"Schedule a new gather-up."}],null,"requestGatherUp('"+group.key+"');");
-		write("Group Feed",[{text:"View recent activity."}],null,"feed('"+group.key+"');");
-		write(group.val().info.title,[{text:memberCount+" members"}],status);
-	});
-}
-
-function joinGroup(id){
-	firebase.database().ref("groups/"+id+"/members").update({
-		[uid]:Date.now()
-	}).then(function(){
-		loadGroup(id);
-	});
-}
-
-function leaveGroup(id){
-	firebase.database().ref("groups/"+id+"/members").update({
-		[uid]:null
-	}).then(function(members){
-		start();
-	});
-}
-
-function newGroup(){
-	var title=prompt("Group Name:");
-	if(title!=null&&title.replace(/ /g,"")!=""){
-		var id=firebase.database().ref("groups").push().key;
-		firebase.database().ref("groups/"+id).update({
-			info:{
-				search:title.toLowerCase().replace(/ /g,""),
-				title:title
-			}
-		}).then(function(){
-			joinGroup(id);
-		});
-	}
-}
-
 var map;
 function requestGatherUp(id){
+	/*
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
@@ -210,6 +125,7 @@ function moveMapView(x,y){
 		}
 	});
 }
+*/
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
