@@ -70,9 +70,9 @@ function start(){
 	write("My Groups",null,null,"myGroups();");
 }
 
+/*
 var map;
 function requestGatherUp(id){
-	/*
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
