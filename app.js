@@ -48,6 +48,7 @@ function feed(id){
 	});
 }
 
+//http://jsfiddle.net/gydL0epa/542/
 /*
 function clearFeed(){
 	firebase.database().ref("users/"+uid+"/feed").remove().then(function(){
