@@ -8,6 +8,8 @@ var config = {
 };
 firebase.initializeApp(config);
 
+
+
 var uid = "";
 var name = "";
 var pic = "";
