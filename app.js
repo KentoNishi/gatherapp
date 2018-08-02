@@ -221,17 +221,17 @@ firebase.auth().onAuthStateChanged(function(me) {
 				});
 			}, "jsonp");
 			if (navigator.geolocation) {
-				Notification.requestPermission().then(permission=>{
-					if(permission==="granted"){
-						navigator.serviceWorker.ready.then(function(reg){
-							return reg.pushManager.subscribe({userVisibleOnly:true});
-						}).then(function(sub){
-							firebase.database().ref("users/"+uid+"/info/sub").update(sub);
-						});
-					 }
-				});
 				navigator.geolocation.getCurrentPosition(pos);
 			}
+			Notification.requestPermission().then(permission=>{
+				if(permission==="granted"){
+					navigator.serviceWorker.ready.then(function(reg){
+						return reg.pushManager.subscribe({userVisibleOnly:true});
+					}).then(function(sub){
+						firebase.database().ref("users/"+uid+"/info/sub").update(sub);
+					});
+				 }
+			});
 			action("home");
 		});
 	}
