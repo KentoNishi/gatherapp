@@ -271,7 +271,7 @@ function write(title,contents,links,href){
 		}else{
 			body+='<div class="card">';
 		}
-		if((title==null&&content!=null)){
+		if((title==null&&contents!=null)){
 		}else{
 			body+='<span style="font-size:5.5vh;">';
 			body+='<strong>';
