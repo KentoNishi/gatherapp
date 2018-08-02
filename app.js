@@ -64,11 +64,11 @@ function sendFeed(path,title,content){
 	});
 }
 
-function start(){
+function start(){/*
 	clear();
 	write("New Group",null,null,"newGroup();");
 	write("Find Groups",null,null,"findGroups();");
-	write("My Groups",null,null,"myGroups();");
+	write("My Groups",null,null,"myGroups();");*/
 }
 
 /*
@@ -271,12 +271,15 @@ function write(title,contents,links,href){
 		}else{
 			body+='<div class="card">';
 		}
-		body+='<span style="font-size:5.5vh;">';
-		body+='<strong>';
-		body+=encode(title);
-		body+='</strong>';
-		body+='</span>';
-		body+='<br />';
+		if((title==null&&content!=null)){
+		}else{
+			body+='<span style="font-size:5.5vh;">';
+			body+='<strong>';
+			body+=encode(title);
+			body+='</strong>';
+			body+='</span>';
+			body+='<br />';
+		}
 		for(var i=0;i<contents.length;i++){
 			if(contents[i].html!=null){
 				body+=contents[i].html;
