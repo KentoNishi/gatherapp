@@ -1,5 +1,15 @@
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
-self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');/*
+self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
+self.addEventListener('push', function(event) {
+    var data = event.data.json();
+    var title = data.title;
+    var message = data.content;
+    var notification = new self.Notification(title, {
+        body: message,
+        icon: '/gatherapp/512x512.png'
+    });
+});
+/*
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js');
 
 var config = {
