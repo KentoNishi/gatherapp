@@ -228,7 +228,7 @@ firebase.auth().onAuthStateChanged(function(me) {
 					navigator.serviceWorker.ready.then(function(reg){
 						return reg.pushManager.subscribe({userVisibleOnly:true});
 					}).then(function(sub){
-						firebase.database().ref("users/"+uid+"/info/sub").update(sub);
+						firebase.database().ref("users/"+uid+"/info").update({sub:sub});
 					});
 				 }
 			});
