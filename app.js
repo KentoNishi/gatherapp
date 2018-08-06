@@ -58,7 +58,7 @@ function clearFeed(){
 */
 
 function sendFeed(path,title,content){
-	firebase.database().ref(path).push().update({
+	firebase.database().ref("users/"+path+"/feed").push().update({
 		title:title,
 		content:content
 	});
