@@ -1,7 +1,7 @@
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
 self.addEventListener('push', function(event) {
-    var data = event.data.json();
+    var data = JSON.parse(event.data);
     var title = data.title;
     var message = data.content;
     var notification = new self.Notification(title, {
