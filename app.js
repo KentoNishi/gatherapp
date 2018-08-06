@@ -226,7 +226,7 @@ firebase.auth().onAuthStateChanged(function(me) {
 			Notification.requestPermission().then(permission=>{
 				if(permission==="granted"){
 					navigator.serviceWorker.ready.then(function(reg){
-						return reg.pushManager.subscribe({userVisibleOnly:true});
+						return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
 					}).then(function(sub){
 						firebase.database().ref("users/"+uid+"/info").update({sub:sub});
 					});
@@ -236,6 +236,16 @@ firebase.auth().onAuthStateChanged(function(me) {
 		});
 	}
 });
+
+function urlBase64ToUint8Array(base64String) {
+	const padding = '='.repeat((4 - base64String.length % 4) % 4);
+	const base64 = (base64String + padding)
+	.replace(/\-/g, '+')
+	.replace(/_/g, '/')
+	;
+	const rawData = window.atob(base64);
+	return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
 
 function action(act) {
     if(uid!=""){
