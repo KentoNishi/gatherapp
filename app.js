@@ -201,9 +201,6 @@ firebase.auth().onAuthStateChanged(function(me) {
 	if (me) {
 		firebase.database().ref("users/"+me.uid+"/info").once("value",function(shot){
 			uid = me.uid;
-			if(worker.active.postMessage!=null){
-				worker.active.postMessage(uid);
-			}
 			name = me.displayName;
 			pic = me.photoURL;
 			me.getIdToken().then(function(userToken) {
