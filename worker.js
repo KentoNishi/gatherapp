@@ -2,7 +2,7 @@ self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
 self.addEventListener('push', function(event) {
     var data = event.data.text();
-    var notification = new self.Notification("TEST", {
+    var notification = self.showNotification("TEST", {
         body: data,
         icon: '/gatherapp/512x512.png'
     });
