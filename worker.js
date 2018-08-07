@@ -1,9 +1,9 @@
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
 self.addEventListener('push', function(event) {
-    var data = event.data.text();
-    var notification = self.registration.showNotification("TEST", {
-        body: data,
+    var data = JSON.parse(event.data);
+    var notification = self.registration.showNotification(data.title, {
+        body: data.content,
         icon: '/gatherapp/512x512.png'
     });
 });
