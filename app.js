@@ -93,11 +93,11 @@ function requestGatherUp(){
 }
 
 function newGatherUp(){
-	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value;
-	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
-	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
-	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value;
-	if(title!=null&&loc!=null&&date!=null&&title!=""&&loc!=""&&date!=""&&gps!=null&&gps.split(",").length==2){
+	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
+	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
+	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value||null;
+	if(title!=null&&title!=""&&gps!=null&&gps.split(",").length==2){
 		var key=firebase.database().ref("gatherups/").push().key;
 		firebase.database().ref("gatherups/"+key).update({
 			title:title,
