@@ -71,6 +71,7 @@ function start(){/*
 	write("New Group",null,null,"newGroup();");
 	write("Find Groups",null,null,"findGroups();");
 	write("My Groups",null,null,"myGroups();");*/
+	requestGatherUp();
 }
 
 
@@ -103,14 +104,17 @@ function requestGatherUp(){
 
 function newGatherUp(){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value;
-	var location=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
+	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
 	if(title!=null&&location!=null&&date!=null&&title!=""&&location!=""&&date!=""){
 		var key=firebase.database().ref("gatherups/").push().key;
 		firebase.database().ref("gatherups/"+key).update({
 			title:title,
-			location:location,
-			date:date
+			location:loc,
+			date:date,
+			members:{
+				uid:0
+			}
 		}).then(function(){
 			loadGatherUp(key);
 		});
@@ -119,7 +123,10 @@ function newGatherUp(){
 	}
 }
 
-function loadGatherUp(){
+function loadGatherUp(id){
+	firebase.database().ref("gatherups/"+id).once("value",function(gather){
+		write(gather.val().title,[{text:gather.val().location},{text:gather.val().date}]);
+	});
 }
 
 function moveMapView(x,y){
