@@ -28,11 +28,7 @@ function feed(){
 				write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
 		}
 		notifications.forEach(function(notification){
-			if(notification.val().content!=null){
-				write(notification.val().title,[{text:notification.val().content}]);
-			}else{
-				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location.split(",")[0]+","+notification.val().location.split(",")[1]},{text:getFormattedDate(notification.val().date)}]);
-			}
+			write(notification.val().title,[{text:notification.val().content}]);
 		});
 	});
 }
@@ -111,7 +107,7 @@ function newGatherUp(){
 			loadGatherUp(key);
 		});
 	}else{
-		alert("Please complete all input fields.");
+		alert("A title is required to schedule a gather-up.");
 	}
 }
 
@@ -122,7 +118,7 @@ function loadGatherUp(id){
 		if(gather.val().members[uid]==null){
 			link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
 		}
-		write(gather.val().title,[{text:gather.val().location},{text:gather.val().date}],link);
+		write(gather.val().title,[{text:gather.val().location||"Unknown Date"},{text:gather.val().date||"Unknown Time"}],link);
 	});
 }
 
