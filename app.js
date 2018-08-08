@@ -102,7 +102,7 @@ function newGatherUp(){
 			location:loc,
 			date:date,
 			members:{
-				uid:0
+				[uid]:0
 			}
 		}).then(function(){
 			loadGatherUp(key);
