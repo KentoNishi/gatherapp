@@ -1,74 +1,32 @@
-
 const functions = require(`firebase-functions`);
 const admin = require(`firebase-admin`);
+const webpush = require("web-push");
+const keys = require("./push-keys.js");
 admin.initializeApp();
-exports.propagateMessages =
-  functions.database.ref(`/groups/{PUSH_ID}/feed/{MESSAGE_ID}`).onWrite((change, context) => {
-    let pushId = context.params.PUSH_ID;
-    let messageID = context.params.MESSAGE_ID;
+exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onWrite((change, context) => {
+    let uid = context.params.uid;
+    let id = context.params.id;
     let fireDB = change.after.ref.root;
-    return fireDB.child(`/groups/${pushId}/members`).once(`value`)
-      .then(listenersSnapshot => {
-
-        let listener_promises = [];
-        listenersSnapshot.forEach(childSnapshot => {
-          let child_key = childSnapshot.key;
-          listener_promises.push(
-            fireDB.child(`/users/${child_key}/feed/`).update({[messageID]:change.after.val()})
-          );
-        });
-        return Promise.all(listener_promises);
-      })
-      .catch(err => {
-        console.log(err);
-   });
+    return fireDB.child(`/users/${uid}/info/sub`).once(`value`).then(sub => {
+    	webpush.setGCMAPIKey(keys.GCMAPIKey);
+    	webpush.setVapidDetails(keys.subject,keys.publicKey,keys.privateKey);
+    	return fireDB.child(`/users/${uid}/feed/${id}/`).once(`value`).then(payload => {
+    		if(payload.val()!==null){
+    			return webpush.sendNotification(sub.val(),JSON.stringify(payload.val()));
+			}else{
+				return Promise.resolve();	
+			}
+		});
+	});
 });
-
-//DATE TIME CHECK
-   
-exports.cleanGroups =
-  functions.database.ref(`/groups/{PUSH_ID}/members/{USER}`).onWrite((change, context) => {
-    let pushId = context.params.PUSH_ID;
-    let user = context.params.USER;
+exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).onWrite((change, context) => {
+    let uid = context.params.uid;
+    let id = context.params.id;
     let fireDB = change.after.ref.root;
-    let listener_promises = [];/*
-    change.before.ref.root.child(`groups/${pushId}/feed`).forEach(childSnapshot => {
-		listener_promises.push(fireDB.child(`/users/${user}/feed/`+childSnapshot.key).remove());
+    return fireDB.child(`/users/${uid}/gatherups`).update({
+    	[id]:change.val()
     });
-    return Promise.all(listener_promises);
-    */
-  // /*
-      return fireDB.child(`/users/${user}/groups/`).update({[pushId]:change.after.val()}).then(function(){
-      	return fireDB.child(`groups/${pushId}/feed`).once('value').then(snap=>{
-      		var returns=[];
-      		snap.forEach(child=>{
-      			var key=child.key;
-				returns.push(fireDB.child(`/users/${user}/feed/${key}`).remove());
-      		});
-      		return Promise.all(returns);
-  		});
-      }).then(value=>{
-      	return fireDB.child(`groups/${pushId}/members`).once('value').then(snap=>{
-      		if(snap.val()===null){
-      			return fireDB.child(`/groups/${pushId}`).remove();
-      		}else{
-	      		return true;
-      		}
-
-  		});
-      	}).catch(err => {
-        console.log(err);
-      });
-   //   */
 });
-
-exports.newGather =
-  functions.database.ref(`/groups/{PUSH_ID}/gatherups/{USER}`).onWrite((change, context) => {
-    let pushId = context.params.PUSH_ID;
-    let user = context.params.USER;
-    let fireDB = change.after.ref.root;
-    return fireDB.child(`/groups/${pushId}/feed/`).update({[user]:change.after.val()})
-      .catch(err => {
-        console.log(err);
-      });
+exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
+	return 200;
 });
