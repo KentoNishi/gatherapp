@@ -21,19 +21,11 @@ function menu(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
-function feed(id){
+function feed(){
 	clear();
-	var alias="users/"+uid;
-	if(id!=null){
-	//	alias="groups/"+id;
-	}
-	firebase.database().ref(alias+"/feed").once("value",function(notifications){
+	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
-			if(id==null){
 				write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
-			}else{
-				write("No Activity",[{text:"There are no recent events."}]);
-			}
 		}
 		notifications.forEach(function(notification){
 			if(notification.val().content!=null){
@@ -42,9 +34,6 @@ function feed(id){
 				write(notification.val().title,[{text:"Gather-Up"},{text:notification.val().location.split(",")[0]+","+notification.val().location.split(",")[1]},{text:getFormattedDate(notification.val().date)}]);
 			}
 		});
-		if(id!=null){
-		//	write("Return To Group",null,null,"loadGroup('"+id+"');");
-		}
 	});
 }
 
