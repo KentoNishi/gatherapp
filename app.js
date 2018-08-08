@@ -25,7 +25,7 @@ function feed(id){
 	clear();
 	var alias="users/"+uid;
 	if(id!=null){
-		alias="groups/"+id;
+	//	alias="groups/"+id;
 	}
 	firebase.database().ref(alias+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
@@ -43,7 +43,7 @@ function feed(id){
 			}
 		});
 		if(id!=null){
-			write("Return To Group",null,null,"loadGroup('"+id+"');");
+		//	write("Return To Group",null,null,"loadGroup('"+id+"');");
 		}
 	});
 }
@@ -57,12 +57,14 @@ function clearFeed(){
 }
 */
 
+/*
 function sendFeed(path,title,content){
 	firebase.database().ref("users/"+path+"/feed").push().update({
 		title:title,
 		content:content
 	});
 }
+*/
 
 function start(){/*
 	clear();
@@ -71,9 +73,9 @@ function start(){/*
 	write("My Groups",null,null,"myGroups();");*/
 }
 
-/*
+
 var map;
-function requestGatherUp(id){
+function requestGatherUp(){
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
@@ -81,8 +83,8 @@ function requestGatherUp(id){
 	contents.push({html:"<input placeholder='Location'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
-	contents.push({html:"<button onclick='newGatherUp("+'"'+id+'"'+");'>Schedule</button>"});
-	write("New Gather-Up",contents,[{href:"loadGroup('"+id+"');",text:"Cancel"}]);
+	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
+	write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: {lat:lat,lng:lng}
@@ -99,21 +101,25 @@ function requestGatherUp(id){
 	moveMapView(lat,lng);
 }
 
-function newGatherUp(id){
+function newGatherUp(){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value;
 	var location=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
 	if(title!=null&&location!=null&&date!=null&&title!=""&&location!=""&&date!=""){
-		firebase.database().ref("groups/"+id+"/feed").push().update({
+		var key=firebase.database().ref("gatherups/").push().key;
+		firebase.database().ref("gatherups/"+key).update({
 			title:title,
 			location:location,
 			date:date
 		}).then(function(){
-			loadGroup(id);
+			loadGatherUp(key);
 		});
 	}else{
 		alert("Please complete all input fields.");
 	}
+}
+
+function loadGatherUp(){
 }
 
 function moveMapView(x,y){
@@ -126,7 +132,7 @@ function moveMapView(x,y){
 		}
 	});
 }
-*/
+
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
