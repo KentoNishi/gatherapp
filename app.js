@@ -97,7 +97,7 @@ function newGatherUp(){
 	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
 	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value;
-	if(title!=null&&location!=null&&date!=null&&title!=""&&location!=""&&date!=""&&gps!=null&&gps.split(",").length==2){
+	if(title!=null&&loc!=null&&date!=null&&title!=""&&loc!=""&&date!=""&&gps!=null&&gps.split(",").length==2){
 		var key=firebase.database().ref("gatherups/").push().key;
 		firebase.database().ref("gatherups/"+key).update({
 			title:title,
@@ -148,9 +148,9 @@ function moveMapView(x,y){
     		if (status == google.maps.GeocoderStatus.OK) {
 			if (results[0]) {
 				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
-				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=x+","+y;
 			}
 		}
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=x+","+y;
 	});
 }
 
