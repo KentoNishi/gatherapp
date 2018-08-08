@@ -168,6 +168,7 @@ function signOut() {
 function pos(coord){
 	lat=coord.coords.latitude;
 	lng=coord.coords.longitude;
+	/*
 	var latlng=new google.maps.LatLng(lat,lng);
 	new google.maps.Geocoder().geocode({'latLng' : latlng}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
@@ -208,6 +209,7 @@ function pos(coord){
 			}
 		}
 	});
+	*/
 }
 
 firebase.auth().onAuthStateChanged(function(me) {
