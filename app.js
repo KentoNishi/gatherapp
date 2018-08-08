@@ -113,8 +113,29 @@ function newGatherUp(){
 }
 
 function loadGatherUp(id){
+	clear();
 	firebase.database().ref("gatherups/"+id).once("value",function(gather){
-		write(gather.val().title,[{text:gather.val().location},{text:gather.val().date}]);
+		var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
+		if(gather.val().members[uid]==null){
+			link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
+		}
+		write(gather.val().title,[{text:gather.val().location},{text:gather.val().date}],link);
+	});
+}
+
+function joinGatherUp(id){
+	firebase.database().ref("gatherups/"+id+"/members/").update({
+		[uid]:0
+	}).then(function(){
+		loadGatherUp(id);
+	});
+}
+
+function leaveGatherUp(id){
+	firebase.database().ref("gatherups/"+id+"/members/").update({
+		[uid]:null
+	}).then(function(){
+		feed();
 	});
 }
 
