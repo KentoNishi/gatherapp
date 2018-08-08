@@ -148,6 +148,7 @@ function moveMapView(x,y){
     		if (status == google.maps.GeocoderStatus.OK) {
 			if (results[0]) {
 				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=x+","+y;
 			}
 		}
 	});
