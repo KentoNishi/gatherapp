@@ -71,6 +71,7 @@ function requestGatherUp(){
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
 	contents.push({html:"<input placeholder='Title'></input>"});
 	contents.push({html:"<input placeholder='Location'></input>"});
+	contents.push({html:"<input placeholder='GPS'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
 	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
@@ -94,12 +95,14 @@ function requestGatherUp(){
 function newGatherUp(){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value;
 	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value;
-	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
-	if(title!=null&&location!=null&&date!=null&&title!=""&&location!=""&&date!=""){
+	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value;
+	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value;
+	if(title!=null&&location!=null&&date!=null&&title!=""&&location!=""&&date!=""&&gps!=null&&gps.split(",").length==2){
 		var key=firebase.database().ref("gatherups/").push().key;
 		firebase.database().ref("gatherups/"+key).update({
 			title:title,
 			location:loc,
+			gps:gps,
 			date:date,
 			members:{
 				[uid]:0
