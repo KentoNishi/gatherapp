@@ -126,14 +126,27 @@ function loadGatherUp(id){
 			if(member.val()==null){
 				link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
 			}
-			write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"},{html:"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+member.val()+"' step='5' min='0' onchange='saveReminderTime(this.id);' id='"+id+"'></input> minutes before the event"}],link);
+			var value=member.val();
+			var contents=[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}];
+			var check="checked";
+			if(value<0){
+				value=(-value);
+				check="";
+			}
+			var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+			contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"});
+			write(gather.val().title,contents,link);
 		});
 	});
 }
 
 function saveReminderTime(id){
+	var value=parseInt(document.querySelectorAll('input[type="number"]')[0].value||0);
+	if(!document.querySelectorAll('input[type="checkbox"]')[0].checked){
+		value=(-value);
+	}
 	firebase.database().ref("gatherups/"+id+"/members").update({
-		[uid]:parseInt(document.querySelectorAll('input[type="number"]')[0].value||0)
+		[uid]:value
 	});
 }
 
