@@ -25,7 +25,7 @@ function feed(){
 	clear();
 	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
-				write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
+			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
 		}
 		notifications.forEach(function(notification){
 			write(notification.val().title,[{text:notification.val().content}]);
