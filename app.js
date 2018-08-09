@@ -11,7 +11,7 @@ firebase.initializeApp(config);
 var uid = "";
 var name = "";
 var pic = "";
-var city="";
+//var city="";
 var lat;
 var lng;
 var worker;
@@ -252,17 +252,17 @@ firebase.auth().onAuthStateChanged(function(me) {
 			me.getIdToken().then(function(userToken) {
 			});
 			$.get("https://ipinfo.io", function(response) {
-				city=response.city+", "+response.country;
+//				city=response.city+", "+response.country;
 				lat=parseFloat(response.loc.split(",")[0]);
 				lng=parseFloat(response.loc.split(",")[1]);
 				city=response.city+", "+response.country;
-				firebase.database().ref("users/"+uid+"/info").update({
-					name:name,
-					search:name.toLowerCase().replace(/ /g,""),
-					pic:pic,
-					city:city
-				});
 			}, "jsonp");
+			firebase.database().ref("users/"+uid+"/info").update({
+				name:name,
+//				search:name.toLowerCase().replace(/ /g,""),
+				pic:pic
+//				city:city
+			});
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(pos);
 			}
