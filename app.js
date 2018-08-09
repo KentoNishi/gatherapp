@@ -108,7 +108,7 @@ function newGatherUp(){
 				date:date
 			},
 			members:{
-				[uid]:0
+				[uid]:15
 			}
 		}).then(function(){
 			loadGatherUp(key);
@@ -126,8 +126,14 @@ function loadGatherUp(id){
 			if(member.val()==null){
 				link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
 			}
-			write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}],link);
+			write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"},{html:"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+member.val()+"' step='5' min='0' onchange='saveReminderTime(this.id);' id='"+id+"'></input> minutes before the event"}],link);
 		});
+	});
+}
+
+function saveReminderTime(id){
+	firebase.database().ref("gatherups/"+id+"/members").update({
+		[uid]:parseInt(document.querySelectorAll('input[type="number"]')[0].value)
 	});
 }
 
@@ -147,7 +153,7 @@ function loadGatherUps(){
 
 function joinGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/members/").update({
-		[uid]:0
+		[uid]:15
 	}).then(function(){
 		loadGatherUp(id);
 	});
