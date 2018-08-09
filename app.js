@@ -122,7 +122,7 @@ function loadGatherUp(id){
 		if(gather.val().members[uid]==null){
 			link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
 		}
-		write(gather.val().title,[{text:gather.val().location||"Unknown Date"},{text:gather.val().date||"Unknown Time"}],link);
+		write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}],link);
 	});
 }
 
