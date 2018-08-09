@@ -133,7 +133,7 @@ function loadGatherUp(id){
 
 function saveReminderTime(id){
 	firebase.database().ref("gatherups/"+id+"/members").update({
-		[uid]:parseInt(document.querySelectorAll('input[type="number"]')[0].value)
+		[uid]:parseInt(document.querySelectorAll('input[type="number"]')[0].value||0)
 	});
 }
 
