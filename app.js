@@ -87,7 +87,7 @@ function requestGatherUp(){
 		moveMapView(evt.latLng.lat(),evt.latLng.lng());
 	});
 	moveMapView(lat,lng);
-	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(24*60*1000)).toISOString().split(".")[0].slice(0,-3);
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000).toISOString().split(".")[0].slice(0,-3);
 }
 
 function newGatherUp(){
