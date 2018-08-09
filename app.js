@@ -18,6 +18,7 @@ var worker;
 
 function menu(){
 	clear();
+	write("My Gather-Ups",null,null,"loadGatherUps();");
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
@@ -100,10 +101,12 @@ function newGatherUp(){
 	if(title!=null&&title!=""){
 		var key=firebase.database().ref("gatherups/").push().key;
 		firebase.database().ref("gatherups/"+key).update({
-			title:title,
-			location:loc,
-			gps:gps,
-			date:date,
+			info:{
+				title:title,
+				location:loc,
+				gps:gps,
+				date:date
+			},
 			members:{
 				[uid]:0
 			}
@@ -123,6 +126,20 @@ function loadGatherUp(id){
 			link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
 		}
 		write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}],link);
+	});
+}
+
+function loadGatherUps(){
+	clear();
+	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
+		if(gathers.val()==null){
+			write("You have no scheduled gather-ups.");
+		}
+		gathers.forEach(gather=>{
+			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
+				write(gatherup.val().title,null,null,"loadGatherUp('"+gather.key+"');");
+			});
+		});
 	});
 }
 
