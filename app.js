@@ -157,7 +157,7 @@ function leaveGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/members/").update({
 		[uid]:null
 	}).then(function(){
-		feed();
+		loadGatherUps();
 	});
 }
 
