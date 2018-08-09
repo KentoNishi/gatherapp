@@ -135,7 +135,7 @@ function loadGatherUps(){
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		if(gathers.val()==null){
-			write("No Gather-Ups","You have no scheduled gather-ups.");
+			write("No Gather-Ups",[{text:"You have no scheduled gather-ups."}]);
 		}
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
