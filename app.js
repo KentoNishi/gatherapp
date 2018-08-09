@@ -18,8 +18,8 @@ var worker;
 
 function menu(){
 	clear();
-	write("My Gather-Ups",null,null,"loadGatherUps();");
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+	write("My Gather-Ups",null,null,"loadGatherUps();");
 }
 
 function feed(){
@@ -121,11 +121,13 @@ function newGatherUp(){
 function loadGatherUp(id){
 	clear();
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
-		var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
-		if(gather.val().members[uid]==null){
-			link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
-		}
-		write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}],link);
+		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(gather){
+			var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
+			if(member.val()==null){
+				link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
+			}
+			write(gather.val().title,[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}],link);
+		});
 	});
 }
 
@@ -133,7 +135,7 @@ function loadGatherUps(){
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		if(gathers.val()==null){
-			write("You have no scheduled gather-ups.");
+			write("No Gather-Ups","You have no scheduled gather-ups.");
 		}
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
@@ -245,38 +247,36 @@ function pos(coord){
 
 firebase.auth().onAuthStateChanged(function(me) {
 	if (me) {
-		firebase.database().ref("users/"+me.uid+"/info").once("value",function(shot){
-			uid = me.uid;
-			name = me.displayName;
-			pic = me.photoURL;
-			me.getIdToken().then(function(userToken) {
-			});
-			$.get("https://ipinfo.io", function(response) {
-//				city=response.city+", "+response.country;
-				lat=parseFloat(response.loc.split(",")[0]);
-				lng=parseFloat(response.loc.split(",")[1]);
-				city=response.city+", "+response.country;
-			}, "jsonp");
-			firebase.database().ref("users/"+uid+"/info").update({
-				name:name,
-//				search:name.toLowerCase().replace(/ /g,""),
-				pic:pic
-//				city:city
-			});
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(pos);
-			}
-			Notification.requestPermission().then(permission=>{
-				if(permission==="granted"){
-					navigator.serviceWorker.ready.then(function(reg){
-						return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
-					}).then(function(sub){
-						firebase.database().ref("users/"+uid+"/info").update({sub:sub});
-					});
-				 }
-			});
-			action("home");
+		uid = me.uid;
+		name = me.displayName;
+		pic = me.photoURL;
+		me.getIdToken().then(function(userToken) {
 		});
+		$.get("https://ipinfo.io", function(response) {
+//				city=response.city+", "+response.country;
+			lat=parseFloat(response.loc.split(",")[0]);
+			lng=parseFloat(response.loc.split(",")[1]);
+			city=response.city+", "+response.country;
+		}, "jsonp");
+		firebase.database().ref("users/"+uid+"/info").update({
+			name:name,
+//				search:name.toLowerCase().replace(/ /g,""),
+			pic:pic
+//				city:city
+		});
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(pos);
+		}
+		Notification.requestPermission().then(permission=>{
+			if(permission==="granted"){
+				navigator.serviceWorker.ready.then(function(reg){
+					return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
+				}).then(function(sub){
+					firebase.database().ref("users/"+uid+"/info").update({sub:sub});
+				});
+			 }
+		});
+		action("home");
 	}
 });
 
