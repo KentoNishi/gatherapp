@@ -69,7 +69,7 @@ function requestGatherUp(){
 	contents.push({html:"<input placeholder='Title'></input>"});
 	contents.push({html:"<input placeholder='Location'></input>"});
 	contents.push({html:"<input placeholder='GPS'></input>"});
-	contents.push({html:"<input type='datetime-local'></input>"});
+	contents.push({html:"<input type='datetime-local' style='font-size:2.5vh;'></input>"});
 	contents.push({html:"</div>"});
 	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
 	write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
