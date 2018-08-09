@@ -121,7 +121,7 @@ function newGatherUp(){
 function loadGatherUp(id){
 	clear();
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
-		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(gather){
+		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
 			var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
 			if(member.val()==null){
 				link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
