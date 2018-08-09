@@ -86,6 +86,7 @@ function requestGatherUp(){
 		moveMapView(evt.latLng.lat(),evt.latLng.lng());
 	});
 	moveMapView(lat,lng);
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000).toISOString().split(".")[0].slice(0,-3);
 }
 
 function newGatherUp(){
@@ -94,7 +95,7 @@ function newGatherUp(){
 	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value||null;
 	if(date!=null){
-		date=new Date(new Date(date).getTime()+(new Date().getTimezoneOffset()*60000));
+		date=new Date(new Date(date).getTime()+(new Date().getTimezoneOffset()*60*1000));
 	}
 	if(title!=null&&title!=""){
 		var key=firebase.database().ref("gatherups/").push().key;
