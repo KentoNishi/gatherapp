@@ -19,7 +19,7 @@ var worker;
 function menu(){
 	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
-	write("My Gather-Ups",null,null,"loadGatherUps();");
+//	write("My Gather-Ups",null,null,"loadGatherUps();");
 }
 
 function feed(){
@@ -310,7 +310,8 @@ function urlBase64ToUint8Array(base64String) {
 function action(act) {
     if(uid!=""){
         if (act == "menu") {
-		menu();
+	//	menu();
+		loadGatherUps();
         } else if (act == "add") {
 		start();
         } else if (act == "home") {
