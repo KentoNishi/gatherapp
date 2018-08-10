@@ -10,13 +10,15 @@ self.addEventListener('push', function(event) {
 });
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
-    self.clients.matchAll().then(function(activeClients){
-        if(activeClients.length>0){
-            activeClients[0].navigate("#"+event.notification.tag);
-        }else{
-            self.clients.openWindow("#"+event.notification.tag);
-        }
-    });
+    if(event.notification.tag!=null){
+        self.clients.matchAll().then(function(activeClients){
+            if(activeClients.length>0){
+                activeClients[0].navigate("#"+event.notification.tag);
+            }else{
+                self.clients.openWindow("#"+event.notification.tag);
+            }
+        });
+    }
 });
 /*
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js');
