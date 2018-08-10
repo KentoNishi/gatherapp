@@ -18,7 +18,7 @@ self.addEventListener('notificationclick', function(event) {
             }
         });
     }
-    event.notification.close();
+//    event.notification.close();
 });
 /*
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js');
