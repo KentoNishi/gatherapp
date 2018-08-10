@@ -65,13 +65,6 @@ self.onmessage=function(e){
 }
 */
 
-if(navigator.onLine){
-    caches.keys().then(function(names) {
-        for (let name of names)
-            caches.delete(name);
-    });
-}
-
 var CACHE_NAME = "CACHE";
 
 var urlsToCache = [
@@ -97,13 +90,15 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-    event.respondWith(
-        caches.match(event.request).then(function(response) {
-            if (response) {
-                return response;
-            }
-            return fetch(event.request);
-            }
-        )
-    );
+  event.respondWith(
+    caches.open('CACHE').then(function(cache) {
+      return cache.match(event.request).then(function(response) {
+        var fetchPromise = fetch(event.request).then(function(networkResponse) {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        })
+        return response || fetchPromise;
+      })
+    })
+  );
 });
