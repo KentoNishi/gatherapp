@@ -293,7 +293,11 @@ firebase.auth().onAuthStateChanged(function(me) {
 				});
 			 }
 		});
-		action("home");
+		if(window.location.hash!=""){
+			loadGatherUp(window.location.hash);
+		}else{
+			action("home");
+		}
 	}
 });
 
