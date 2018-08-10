@@ -13,9 +13,9 @@ self.addEventListener('notificationclick', function(event) {
     if(event.notification.tag!=null){
         self.clients.matchAll().then(function(activeClients){
             if(activeClients.length>0){
-                activeClients[0].navigate("#"+event.notification.tag);
+                event.waitUntil(activeClients[0].navigate("#"+event.notification.tag));
             }else{
-                self.clients.openWindow("#"+event.notification.tag);
+                event.waitUntil(self.clients.openWindow("#"+event.notification.tag));
             }
         });
     }
