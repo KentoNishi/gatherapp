@@ -9,7 +9,6 @@ self.addEventListener('push', function(event) {
     });
 });
 self.addEventListener('notificationclick', function(event) {
-    event.notification.close();
     if(event.notification.tag!=null){
         self.clients.matchAll().then(function(activeClients){
             if(activeClients.length>0){
@@ -19,6 +18,7 @@ self.addEventListener('notificationclick', function(event) {
             }
         });
     }
+    event.notification.close();
 });
 /*
 self.importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-database.js');
