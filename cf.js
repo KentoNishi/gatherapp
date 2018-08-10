@@ -27,9 +27,10 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
     	[id]:change.after.val()
     }).then(function(){
     	return fireDB.child(`/gatherups/${id}/info/`).once(`value`).then(value => {
+    		if(value.val()!==null){
 	    		var date=value.val().date;
 	    		if(date!==null&&new Date(new Date(date).getTime()-(change.after.val()*1000*60)).getTime()>new Date().getTime()){
-			    	var time=Math.ceil((new Date(date).getTime()-change.before.val()*1000*60)/(60*1000)).toString();
+	    			var time=Math.ceil((new Date(date).getTime()-change.before.val()*1000*60)/(60*1000)).toString();
 				    return fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
 				    	time=Math.ceil((new Date(date).getTime()-change.after.val()*1000*60)/(60*1000)).toString();
 				    	if(change.after.val()>0){
@@ -55,6 +56,11 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 						}
 					});
 	    		}
+    		}else{
+				return fireDB.child(`/users/${uid}/gatherups/${id}/`).remove().then(function(){
+					return fireDB.child(`/gatherups/${id}/members/${uid}/`).remove();
+				});
+    		}
 		});
     });
 });
