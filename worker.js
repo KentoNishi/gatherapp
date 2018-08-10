@@ -4,7 +4,18 @@ self.addEventListener('push', function(event) {
     var data = event.data.json();
     var notification = self.registration.showNotification(data.title, {
         body: data.content,
+        tag:data.tag,
         icon: '/gatherapp/512x512.png'
+    });
+});
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    self.clients.matchAll().then(function(activeClients){
+        if(activeClients.length>0){
+            activeClients[0].navigate("#"+event.notification.tag);
+        }else{
+            self.clients.openWindow("#"+event.notification.tag);
+        }
     });
 });
 /*
