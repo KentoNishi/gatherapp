@@ -293,8 +293,8 @@ firebase.auth().onAuthStateChanged(function(me) {
 				});
 			 }
 		});
-		if(window.location.hash!=""){
-			loadGatherUp(window.location.hash);
+		if(window.location.hash.substr(1,window.location.hash.length)!=""){
+			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 		}else{
 			action("home");
 		}
