@@ -13,15 +13,16 @@ self.addEventListener('notificationclick', function(event) {
     event.waitUntil(clients.matchAll({
         type: "window"
     }).then(function(clientList) {
-        /*
         for (var i = 0; i < clientList.length; i++) {
             var client = clientList[i];
-            if (client.url == '/' && 'focus' in client){
-                return client.focus();
+            if ('focus' in client){
+                return client.focus().then(function(){
+                    client.navigate.openWindow('https://kentonishi.github.io/gatherapp/#'+event.notification.tag);
+                });
             }
-        }*/
+        }
         if (clients.openWindow){
-            return clients.openWindow('https://kentonishi.github.io/gatherapp#'+event.notification.tag);
+            return clients.openWindow('https://kentonishi.github.io/gatherapp/#'+event.notification.tag);
         }
     }));
 });
