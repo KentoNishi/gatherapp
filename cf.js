@@ -33,7 +33,7 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 	    			var time=Math.ceil((new Date(date).getTime()-change.before.val()*1000*60)/(60*1000)).toString();
 				    return fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
 				    	time=Math.ceil((new Date(date).getTime()-change.after.val()*1000*60)/(60*1000)).toString();
-				    	if(change.after.val()>0){
+				    	if(change.after.val()>=0){
 					    	return fireDB.child(`/notifications/${time}/${id}/`).update({
 					    		[uid]:change.after.val()
 					   		});
@@ -76,7 +76,7 @@ exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrit
     		returns.push(fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
 				if(date!==null&&new Date(new Date(date).getTime()-(member.val()*1000*60)).getTime()>new Date().getTime()){
 					time=Math.ceil((new Date(change.after.val()).getTime()-(member.val()*1000*60))/(1000*60));
-					if(member.val()>0){
+					if(member.val()>=0){
 						return fireDB.child(`/notifications/${time}/${id}/`).update({
 					    	[uid]:member.val()
 					    });
