@@ -102,7 +102,7 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 				var promises=[];
 				alert.forEach(user=>{
 					var uid=user.key
-					var info={title:gather.val().title,content:"Gather-Up at "+gather.val().location+" in "+user.val()+" minutes!",href:"loadGatherUp('"+id+"');"};
+					var info={title:gather.val().title,content:"Gather-Up at "+(gather.val().location||"unknown location")+" in "+user.val()+" minutes!",tag:id};
 					promises.push(fireDB.child(`/users/${uid}/feed/`).push(info));
 				});
 				return Promise.all(promises);
