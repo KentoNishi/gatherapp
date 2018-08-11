@@ -66,9 +66,9 @@ function requestGatherUp(){
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
-	contents.push({html:"<input placeholder='Title'></input>"});
-	contents.push({html:"<input placeholder='Location'></input>"});
-	contents.push({html:"<input placeholder='GPS'></input>"});
+	contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder,this.value)||this.value;this.blur();'></input>"});
+	contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder,this.value)||this.value;this.blur();'></input>"});
+	contents.push({html:"<input placeholder='GPS' disabled></input>"});
 	contents.push({html:"<input type='datetime-local' style='font-size:2.5vh;'></input>"});
 	contents.push({html:"</div>"});
 	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
