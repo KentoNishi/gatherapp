@@ -10,14 +10,12 @@ self.addEventListener('push', function(event) {
 });
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
-    event.waitUntil(clients.matchAll({
-        type: "window"
-    }).then(function(clientList) {
+    event.waitUntil(clients.matchAll().then(function(clientList) {
         for (var i = 0; i < clientList.length; i++) {
             var client = clientList[i];
             if ('focus' in client){
                 return client.focus().then(function(){
-                    client.navigate.openWindow('https://kentonishi.github.io/gatherapp/#'+event.notification.tag);
+                    client.navigate('https://kentonishi.github.io/gatherapp/#'+event.notification.tag);
                 });
             }
         }
