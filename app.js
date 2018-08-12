@@ -66,10 +66,10 @@ function requestGatherUp(){
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
-	contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder,this.value)||this.value;this.blur();'></input>"});
-	contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder,this.value)||this.value;this.blur();'></input>"});
+	contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+	contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
 	contents.push({html:"<input placeholder='GPS' disabled></input>"});
-	contents.push({html:"<input type='type' onmousedown='this.type="+'"datetime-local"'+";this.onmousedown=null;' placeholder='Event Date'></input>"});
+	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"</div>"});
 	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
 	write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
