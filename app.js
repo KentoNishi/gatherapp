@@ -91,7 +91,7 @@ function requestGatherUp(){
 			map.panTo(marker.getPosition());
 			moveMapView(evt.latLng.lat(),evt.latLng.lng());
 		});
-		moveMapView(lat,lng);
+		moveMapView(lat,lng,true);
 	//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 
 	});
@@ -131,7 +131,7 @@ function editGatherUp(id){
 				map.panTo(marker.getPosition());
 				moveMapView(evt.latLng.lat(),evt.latLng.lng());
 			});
-			moveMapView(parseFloat(info.val().gps.split(",")[0])||lat,parseFloat(info.val().gps.split(",")[1])||lng);
+			moveMapView(parseFloat(info.val().gps.split(",")[0])||lat,parseFloat(info.val().gps.split(",")[1])||lng,true);
 		//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 		});
 	});
@@ -198,6 +198,8 @@ function loadGatherUp(id){
 				var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
 				if(member.val()==null){
 					link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
+				}else{
+					link.unshift({text:"Edit Info",href:"editGatherUp('"+id+"');"});
 				}
 				var value=member.val();
 				var contents=[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}];
@@ -262,15 +264,19 @@ function leaveGatherUp(id){
 	});
 }
 
-function moveMapView(x,y){
+function moveMapView(x,y,z){
 	map.setCenter(new google.maps.LatLng(x,y));
 	new google.maps.Geocoder().geocode({'latLng' : {lat:x,lng:y}}, function(results, status) {
     		if (status == google.maps.GeocoderStatus.OK) {
 			if (results[0]) {
-				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
+				if(z==null){
+					document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
+				}
 			}
 		}
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=x+","+y;
+		if(z==null){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=x+","+y;
+		}
 	});
 }
 
