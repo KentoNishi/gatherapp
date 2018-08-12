@@ -120,9 +120,9 @@ function editGatherUp(id){
 			contents.push({html:"</div>"});
 			contents.push({html:"<button onclick='saveGatherUp("+'"'+id+'"'+");'>Save</button>"});
 			write("Edit Gather-Up",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=info.val().title;
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location;
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=info.val().title||null;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location||null;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps||null;
 			if(info.val().date!=null){
 				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
 			}
