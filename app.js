@@ -309,6 +309,7 @@ if(navigator.onLine){
 		}
 	});
 }else{
+	clear();
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
