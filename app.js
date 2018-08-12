@@ -69,7 +69,7 @@ function requestGatherUp(){
 	contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder,this.value)||this.value;this.blur();'></input>"});
 	contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder,this.value)||this.value;this.blur();'></input>"});
 	contents.push({html:"<input placeholder='GPS' disabled></input>"});
-	contents.push({html:"<input type='type' onfocus='this.type="+'"datetime-local"'+";this.onfocus=null;' placeholder='Event Date' style='font-size:2.5vh;'></input>"});
+	contents.push({html:"<input type='type' onfocus='this.type="+'"datetime-local"'+";this.onfocus=null;' placeholder='Event Date'></input>"});
 	contents.push({html:"</div>"});
 	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
 	write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
