@@ -209,7 +209,7 @@ function loadGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
 			try{
-				var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
+				var link=[{text:"Leave",href:"if(confirm('Are you sure you want to leave "+gather.val().title+"')){leaveGatherUp('"+id+"');}"}];
 				if(member.val()==null){
 					link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
 				}else{
