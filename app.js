@@ -63,32 +63,38 @@ function start(){/*
 
 var map;
 function requestGatherUp(){
-	clear();
-	var contents=[];
-	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
-	contents.push({html:"<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button><br />"});
-	contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
-	contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
-	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-	contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input><input type='datetime-local'></input>"});
-	contents.push({html:"</div>"});
-	contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
-	write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
-	map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 15,
-		center: {lat:lat,lng:lng}
+	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
+		clear();
+		var contents=[];
+		var extra="";
+		if(permission.state!="granted"){
+			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
+		}
+		contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
+		contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+		contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
+		contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input><input type='datetime-local'></input>"});
+		contents.push({html:"</div>"});
+		contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
+		write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
+		map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 15,
+			center: {lat:lat,lng:lng}
+		});
+		var marker = new google.maps.Marker({
+			position: {lat:lat,lng:lng},
+			map: map,
+			draggable:true
+		});
+		google.maps.event.addListener(marker, 'dragend', function(evt){
+			map.panTo(marker.getPosition());
+			moveMapView(evt.latLng.lat(),evt.latLng.lng());
+		});
+		moveMapView(lat,lng);
+	//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
+
 	});
-        var marker = new google.maps.Marker({
-		position: {lat:lat,lng:lng},
-		map: map,
-		draggable:true
-        });
-	google.maps.event.addListener(marker, 'dragend', function(evt){
-		map.panTo(marker.getPosition());
-		moveMapView(evt.latLng.lat(),evt.latLng.lng());
-	});
-	moveMapView(lat,lng);
-//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 }
 
 function newGatherUp(){
@@ -136,7 +142,11 @@ function loadGatherUp(id){
 					check="";
 				}
 				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
-				contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"});
+				var extra="";
+				if(Notification.permission!="granted"){
+					extra="<button onclick='offerNotifications();'>Enable Notifications</button>";
+				}
+				contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"+extra});
 				if(navigator.share){
 					link.unshift({text:"Share on Social Media",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
@@ -249,15 +259,6 @@ if(navigator.onLine){
 				pic:pic
 	//				city:city
 			});
-			Notification.requestPermission().then(permission=>{
-				if(permission==="granted"){
-					navigator.serviceWorker.ready.then(function(reg){
-						return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
-					}).then(function(sub){
-						firebase.database().ref("users/"+uid+"/info").update({sub:sub});
-					});
-				 }
-			});
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 			}else{
@@ -268,6 +269,18 @@ if(navigator.onLine){
 }else{
 	clear();
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
+}
+
+function offerNotifications(){
+	Notification.requestPermission().then(permission=>{
+		if(permission==="granted"){
+			navigator.serviceWorker.ready.then(function(reg){
+				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
+			}).then(function(sub){
+				firebase.database().ref("users/"+uid+"/info").update({sub:sub});
+			});
+		 }
+	});
 }
 
 function urlBase64ToUint8Array(base64String) {
