@@ -144,7 +144,7 @@ function loadGatherUp(id){
 				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
 				var extra="";
 				if(Notification.permission!="granted"){
-					extra="<button onclick='offerNotifications();'>Enable Notifications</button>";
+					extra="<button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"+extra});
 				if(navigator.share){
@@ -271,13 +271,15 @@ if(navigator.onLine){
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
-function offerNotifications(){
+function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
 				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
 			}).then(function(sub){
-				firebase.database().ref("users/"+uid+"/info").update({sub:sub});
+				firebase.database().ref("users/"+uid+"/info").update({sub:sub}).then(function(){
+					loadGatherUp(id);
+				});
 			});
 		 }
 	});
