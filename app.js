@@ -97,6 +97,71 @@ function requestGatherUp(){
 	});
 }
 
+function editGatherUp(id){
+	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
+		navigator.permissions.query({'name': 'geolocation'}).then( permission => {
+			clear();
+			var contents=[];
+			var extra="";
+			if(permission.state!="granted"){
+				extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
+			}
+			contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
+			contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+			contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+			//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
+			contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input><input type='datetime-local'></input>"});
+			contents.push({html:"</div>"});
+			contents.push({html:"<button onclick='saveGatherUp("+'"'+id+'"'+");'>Save</button>"});
+			write("Edit Gather-Up",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=info.val().title;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+			map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 15,
+				center: {lat:parseFloat(info.val().gps.split(",")[0])||lat,lng:parseFloat(info.val().gps.split(",")[1])||lng}
+			});
+			var marker = new google.maps.Marker({
+				position: {lat:parseFloat(info.val().gps.split(",")[0])||lat,lng:parseFloat(info.val().gps.split(",")[1])||lng},
+				map: map,
+				draggable:true
+			});
+			google.maps.event.addListener(marker, 'dragend', function(evt){
+				map.panTo(marker.getPosition());
+				moveMapView(evt.latLng.lat(),evt.latLng.lng());
+			});
+			moveMapView(parseFloat(info.val().gps.split(",")[0])||lat,parseFloat(info.val().gps.split(",")[1])||lng);
+		//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
+		});
+	});
+}
+
+function saveGatherUp(id){
+	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
+	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
+	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value||null;
+	if(date!=null){
+		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
+	}
+	if(title!=null&&title!=""){
+		var key=id;
+		firebase.database().ref("gatherups/"+key).update({
+			info:{
+				title:title,
+				location:loc,
+				gps:gps,
+				date:date
+			}
+		}).then(function(){
+			loadGatherUp(key);
+		});
+	}else{
+		alert("A title is required to edit a gather-up.");
+	}
+}
+
 function newGatherUp(){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
