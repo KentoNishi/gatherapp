@@ -29,7 +29,7 @@ function feed(){
 			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
 		}
 		notifications.forEach(function(notification){
-			write(notification.val().title,[{text:notification.val().content}],[{text:"Dismiss",href:"clearFeed('"+notification.key+"');"}],"loadGatherUp('"+notification.val().tag+"');");
+			write(notification.val().title,[{text:notification.val().content}],[{text:"Dismiss",href:"clearFeed('"+notification.key+"');event.stopPropagation();"}],"loadGatherUp('"+notification.val().tag+"');");
 		});
 	});
 }
