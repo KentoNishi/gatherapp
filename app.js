@@ -282,16 +282,21 @@ if(navigator.onLine){
 				lat=parseFloat(response.loc.split(",")[0]);
 				lng=parseFloat(response.loc.split(",")[1]);
 				city=response.city+", "+response.country;
-			}, "jsonp");
+			}, "jsonp").then(function(){
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(pos);
+				}
+			}).catch(function(){
+				if (navigator.geolocation) {
+					navigator.geolocation.getCurrentPosition(pos);
+				}
+			});
 			firebase.database().ref("users/"+uid+"/info").update({
 				name:name,
 	//				search:name.toLowerCase().replace(/ /g,""),
 				pic:pic
 	//				city:city
 			});
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(pos);
-			}
 			Notification.requestPermission().then(permission=>{
 				if(permission==="granted"){
 					navigator.serviceWorker.ready.then(function(reg){
