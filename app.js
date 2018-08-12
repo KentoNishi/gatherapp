@@ -283,13 +283,9 @@ if(navigator.onLine){
 				lng=parseFloat(response.loc.split(",")[1]);
 				city=response.city+", "+response.country;
 			}, "jsonp").then(function(){
-				if (navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(pos);
-				}
+				geolocation();
 			}).catch(function(){
-				if (navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(pos);
-				}
+				geolocation();
 			});
 			firebase.database().ref("users/"+uid+"/info").update({
 				name:name,
@@ -326,6 +322,12 @@ function urlBase64ToUint8Array(base64String) {
 	;
 	const rawData = window.atob(base64);
 	return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
+
+function geolocation(){
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(pos);
+	}
 }
 
 function action(act) {
