@@ -141,6 +141,8 @@ function loadGatherUp(id){
 			contents.push({html:""});
 			write(gather.val().title,contents,link);
 		});
+	}).catch(error=>{
+		write("Error",[{text:"Error loading gather-up."}]);
 	});
 }
 
