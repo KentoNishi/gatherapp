@@ -66,6 +66,7 @@ function requestGatherUp(){
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
+	contents.push({html:"<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>"});
 	contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
 	contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
@@ -223,52 +224,7 @@ function signOut() {
 	});
 }
 
-function pos(coord){
-	lat=coord.coords.latitude;
-	lng=coord.coords.longitude;
-	/*
-	var latlng=new google.maps.LatLng(lat,lng);
-	new google.maps.Geocoder().geocode({'latLng' : latlng}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK) {
-			if (results[0]) {
-				var country = null, countryCode = null, loc = null, locAlt = null;
-				var c, lc, component;
-				for (var r = 0, rl = results.length; r < rl; r += 1) {
-					var result = results[r];
-					if (!loc && result.types[0] === 'locality') {
-						for (c = 0, lc = result.address_components.length; c < lc; c += 1) {
-							component = result.address_components[c];
-							if (component.types[0] === 'locality') {
-								loc = component.long_name;
-								break;
-							}
-						}
-					}
-					else if (!loc && !locAlt && result.types[0] === 'administrative_area_level_1') {
-						for (c = 0, lc = result.address_components.length; c < lc; c += 1) {
-							component = result.address_components[c];
-							if (component.types[0] === 'administrative_area_level_1') {
-								locAlt = component.long_name;
-								break;
-							}
-						}
-					} else if (!country && result.types[0] === 'country') {
-						country = result.address_components[0].long_name;
-						countryCode = result.address_components[0].short_name;
-					}
-					if (loc && country) {
-						break;
-					}
-				}
-				city=(loc + ", " + countryCode);
-				firebase.database().ref("users/"+uid+"/info").update({
-					city:city
-				});
-			}
-		}
-	});
-	*/
-}
+
 if(navigator.onLine){
 	firebase.auth().onAuthStateChanged(function(me) {
 		if (me) {
@@ -325,9 +281,11 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 function geolocation(){
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(pos);
-	}
+	navigator.permissions.query({'name': 'geolocation'}) .then( permission => {
+		if (navigator.geolocation&&permission.state=="granted") {
+			navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;});
+		}
+	});
 }
 
 function action(act) {
