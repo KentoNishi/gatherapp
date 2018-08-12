@@ -122,27 +122,29 @@ function loadGatherUp(id){
 	clear();
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
-			var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
-			if(member.val()==null){
-				link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
+			try{
+				var link=[{text:"Leave Gather-Up",href:"leaveGatherUp('"+id+"');"}];
+				if(member.val()==null){
+					link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
+				}
+				var value=member.val();
+				var contents=[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}];
+				var check="checked";
+				if(value<0){
+					value=(-value);
+					check="";
+				}
+				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+				contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"});
+				if(navigator.share){
+					link.unshift({text:"Share on Social Media",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
+				}
+				contents.push({html:""});
+				write(gather.val().title,contents,link);
+			}catch(TypeError){
+				write("Error",[{text:"Error loading gather-up."}]);
 			}
-			var value=member.val();
-			var contents=[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}];
-			var check="checked";
-			if(value<0){
-				value=(-value);
-				check="";
-			}
-			var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
-			contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"});
-			if(navigator.share){
-				link.unshift({text:"Share on Social Media",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
-			}
-			contents.push({html:""});
-			write(gather.val().title,contents,link);
 		});
-	}).catch(error=>{
-		write("Error",[{text:"Error loading gather-up."}]);
 	});
 }
 
