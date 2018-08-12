@@ -117,7 +117,9 @@ function editGatherUp(id){
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=info.val().title;
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location;
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps;
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+			if(info.val().date!=null){
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+			}
 			map = new google.maps.Map(document.getElementById('map'), {
 				zoom: 15,
 				center: {lat:parseFloat(info.val().gps.split(",")[0])||lat,lng:parseFloat(info.val().gps.split(",")[1])||lng}
