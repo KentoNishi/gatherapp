@@ -265,45 +265,48 @@ function pos(coord){
 	});
 	*/
 }
-
-firebase.auth().onAuthStateChanged(function(me) {
-	if (me) {
-		uid = me.uid;
-		name = me.displayName;
-		pic = me.photoURL;
-		me.getIdToken().then(function(userToken) {
-		});
-		$.get("https://ipinfo.io", function(response) {
-//				city=response.city+", "+response.country;
-			lat=parseFloat(response.loc.split(",")[0]);
-			lng=parseFloat(response.loc.split(",")[1]);
-			city=response.city+", "+response.country;
-		}, "jsonp");
-		firebase.database().ref("users/"+uid+"/info").update({
-			name:name,
-//				search:name.toLowerCase().replace(/ /g,""),
-			pic:pic
-//				city:city
-		});
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(pos);
+if(navigator.onLine){
+	firebase.auth().onAuthStateChanged(function(me) {
+		if (me) {
+			uid = me.uid;
+			name = me.displayName;
+			pic = me.photoURL;
+			me.getIdToken().then(function(userToken) {
+			});
+			$.get("https://ipinfo.io", function(response) {
+	//				city=response.city+", "+response.country;
+				lat=parseFloat(response.loc.split(",")[0]);
+				lng=parseFloat(response.loc.split(",")[1]);
+				city=response.city+", "+response.country;
+			}, "jsonp");
+			firebase.database().ref("users/"+uid+"/info").update({
+				name:name,
+	//				search:name.toLowerCase().replace(/ /g,""),
+				pic:pic
+	//				city:city
+			});
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(pos);
+			}
+			Notification.requestPermission().then(permission=>{
+				if(permission==="granted"){
+					navigator.serviceWorker.ready.then(function(reg){
+						return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
+					}).then(function(sub){
+						firebase.database().ref("users/"+uid+"/info").update({sub:sub});
+					});
+				 }
+			});
+			if(window.location.hash.substr(1,window.location.hash.length)!=""){
+				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+			}else{
+				action("home");
+			}
 		}
-		Notification.requestPermission().then(permission=>{
-			if(permission==="granted"){
-				navigator.serviceWorker.ready.then(function(reg){
-					return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
-				}).then(function(sub){
-					firebase.database().ref("users/"+uid+"/info").update({sub:sub});
-				});
-			 }
-		});
-		if(window.location.hash.substr(1,window.location.hash.length)!=""){
-			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
-		}else{
-			action("home");
-		}
-	}
-});
+	});
+}else{
+	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
+}
 
 function urlBase64ToUint8Array(base64String) {
 	const padding = '='.repeat((4 - base64String.length % 4) % 4);
