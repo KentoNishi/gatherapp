@@ -63,16 +63,6 @@ function start(){/*
 
 var map;
 function requestGatherUp(){
-	navigator.permissions.query({'name': 'geolocation'})
-	.then( permission =>{
-		if(permission.state=="granted"){
-			geolocation();
-		}else{
-			if(confirm("Would you like to use accurate location tracking?")){
-				geolocation();
-			}
-		}
-	});
 	clear();
 	var contents=[];
 	contents.push({html:"<div id='map' class='pic'></div><div class='inputs'>"});
@@ -236,7 +226,6 @@ function signOut() {
 function pos(coord){
 	lat=coord.coords.latitude;
 	lng=coord.coords.longitude;
-	start();
 	/*
 	var latlng=new google.maps.LatLng(lat,lng);
 	new google.maps.Geocoder().geocode({'latLng' : latlng}, function(results, status) {
@@ -293,7 +282,11 @@ if(navigator.onLine){
 				lat=parseFloat(response.loc.split(",")[0]);
 				lng=parseFloat(response.loc.split(",")[1]);
 				city=response.city+", "+response.country;
-			}, "jsonp");
+			}, "jsonp").then(function(){
+				geolocation();
+			}).catch(function(){
+				geolocation();
+			});
 			firebase.database().ref("users/"+uid+"/info").update({
 				name:name,
 	//				search:name.toLowerCase().replace(/ /g,""),
