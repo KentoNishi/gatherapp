@@ -107,6 +107,12 @@ function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
 		navigator.permissions.query({'name': 'geolocation'}).then( permission => {
 			clear();
+			var lati=lat;
+			var long=lng;
+			if(info.val().gps!=null){
+				lati=parseFloat(info.val().gps.split(",")[0]);
+				longi=parseFloat(info.val().gps.split(",")[1]);
+			}
 			var contents=[];
 			var extra="";
 			if(permission.state!="granted"){
@@ -128,10 +134,10 @@ function editGatherUp(id){
 			}
 			map = new google.maps.Map(document.getElementById('map'), {
 				zoom: 15,
-				center: {lat:parseFloat(info.val().gps.split(",")[0])||lat,lng:parseFloat(info.val().gps.split(",")[1])||lng}
+				center: {lat:lati,lng:long}
 			});
 			var marker = new google.maps.Marker({
-				position: {lat:parseFloat(info.val().gps.split(",")[0])||lat,lng:parseFloat(info.val().gps.split(",")[1])||lng},
+				position: {lat:lati,lng:long},
 				map: map,
 				draggable:true
 			});
@@ -139,7 +145,7 @@ function editGatherUp(id){
 				map.panTo(marker.getPosition());
 				moveMapView(evt.latLng.lat(),evt.latLng.lng());
 			});
-			moveMapView(parseFloat(info.val().gps.split(",")[0])||lat,parseFloat(info.val().gps.split(",")[1])||lng,true);
+			moveMapView(lati,long,true);
 		//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 		});
 	});
