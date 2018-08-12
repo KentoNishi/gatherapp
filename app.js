@@ -227,7 +227,9 @@ function loadGatherUp(id){
 				if(Notification.permission!="granted"){
 					extra="<button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
-				contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"+extra});
+				if(member.val()!=null){
+					contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"+extra});
+				}
 				if(navigator.share){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
