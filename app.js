@@ -16,7 +16,7 @@ var lat;
 var lng;
 var worker;
 
-document.querySelectorAll(".metas").innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
+document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
 	clear();
