@@ -21,7 +21,6 @@ document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content
 function menu(){
 	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
-//	write("My Gather-Ups",null,null,"loadGatherUps();");
 }
 
 function feed(){
@@ -72,20 +71,30 @@ function start(){/*
 var map;
 function requestGatherUp(){
 	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
+/*
+        var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+
+        autocomplete.addListener('place_changed', fillInAddress);
+function fillInAddress() {
+	console.log(autocomplete.getPlace());
+}
+*/
 		clear();
 		var contents=[];
 		var extra="";
 		if(permission.state!="granted"){
 			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 		}
-		contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
-		contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
-		contents.push({html:"<input disabled placeholder='Address/Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+		contents.push({html:""+extra+"<div class='inputs'>"});
+		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
+		contents.push({html:"<input placeholder='Address/Location'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-		contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input><input type='datetime-local'></input>"});
+		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"</div>"});
 		contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
 		write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
+		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+		/*
 		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 15,
 			center: {lat:lat,lng:lng}
@@ -99,41 +108,45 @@ function requestGatherUp(){
 			map.panTo(marker.getPosition());
 			moveMapView(evt.latLng.lat(),evt.latLng.lng());
 		});
-		moveMapView(lat,lng,true);
+		moveMapView(lat,lng,true);*/
 	//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 
 	});
 }
 
+var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
 		navigator.permissions.query({'name': 'geolocation'}).then( permission => {
-			clear();
+			clear();/*
 			var lati=lat;
 			var long=lng;
 			if(info.val().gps!=null){
 				lati=parseFloat(info.val().gps.split(",")[0]);
 				longi=parseFloat(info.val().gps.split(",")[1]);
-			}
+			}*/
 			var contents=[];
 			var extra="";
 			if(permission.state!="granted"){
 				extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 			}
-			contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
-			contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
-			contents.push({html:"<input placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+			contents.push({html:""+extra+"<div class='inputs'>"});
+			contents.push({html:"<input placeholder='Title' onclick=''></input>"});
+			contents.push({html:"<input placeholder='Location'></input>"});
 			//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-			contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input><input type='datetime-local'></input>"});
+			contents.push({html:"<!--<input placeholder='GPS' disabled style='display:none;'></input>--><input type='datetime-local'></input>"});
 			contents.push({html:"</div>"});
 			contents.push({html:"<button onclick='saveGatherUp("+'"'+id+'"'+");'>Save</button>"});
 			write("Edit Gather-Up",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=info.val().title||null;
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location||null;
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps||null;
+			//document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps||null;
 			if(info.val().date!=null){
-				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
 			}
+			autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+ //      			autocomplete.addListener('place_changed', fillInAddress);
+			/*
 			map = new google.maps.Map(document.getElementById('map'), {
 				zoom: 15,
 				center: {lat:lati,lng:long}
@@ -147,7 +160,7 @@ function editGatherUp(id){
 				map.panTo(marker.getPosition());
 				moveMapView(evt.latLng.lat(),evt.latLng.lng());
 			});
-			moveMapView(lati,long,true);
+			moveMapView(lati,long,true);*/
 		//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 		});
 	});
@@ -156,8 +169,8 @@ function editGatherUp(id){
 function saveGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
-	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value||null;
+//var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	if(date!=null){
 		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
 	}
@@ -166,7 +179,7 @@ function saveGatherUp(id){
 		firebase.database().ref("gatherups/"+key+"/info").update({
 			title:title,
 			location:loc,
-			gps:gps,
+//			gps:gps,
 			date:date
 		}).then(function(){
 			loadGatherUp(key);
@@ -179,8 +192,8 @@ function saveGatherUp(id){
 function newGatherUp(){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
-	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value||null;
+//	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	if(date!=null){
 		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
 	}
@@ -190,7 +203,7 @@ function newGatherUp(){
 			info:{
 				title:title,
 				location:loc,
-				gps:gps,
+//				gps:gps,
 				date:date
 			},
 			members:{
