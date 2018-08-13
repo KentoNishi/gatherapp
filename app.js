@@ -78,7 +78,7 @@ function requestGatherUp(){
 		}
 		contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
-		contents.push({html:"<input disabled placeholder='Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+		contents.push({html:"<input disabled placeholder='Address/Location' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 		contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input><input type='datetime-local'></input>"});
 		contents.push({html:"</div>"});
