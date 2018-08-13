@@ -275,7 +275,7 @@ function joinGatherUp(id){
 }
 
 function leaveGatherUp(id){
-	firebase.database().ref("gatherups/"+id+"/members/").remove().then(function(){
+	firebase.database().ref("gatherups/"+id+"/members/"+uid).remove().then(function(){
 		feed();
 	});
 }
