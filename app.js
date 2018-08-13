@@ -69,7 +69,7 @@ function start(){/*
 
 
 var map;
-function requestGatherUp(){
+function requestGatherUp(id,title,loc,date){
 	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
 /*
         var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
@@ -91,9 +91,12 @@ function fillInAddress() {
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"</div>"});
-		contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
-		write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
+		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>Schedule</button>"});
+		write((id==null)?"New":"Save"+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title;
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc;
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
 		/*
 		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 15,
@@ -117,79 +120,15 @@ function fillInAddress() {
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
-		navigator.permissions.query({'name': 'geolocation'}).then( permission => {
-			clear();/*
-			var lati=lat;
-			var long=lng;
-			if(info.val().gps!=null){
-				lati=parseFloat(info.val().gps.split(",")[0]);
-				longi=parseFloat(info.val().gps.split(",")[1]);
-			}*/
-			var contents=[];
-			var extra="";
-			if(permission.state!="granted"){
-				extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
-			}
-			contents.push({html:""+extra+"<div class='inputs'>"});
-			contents.push({html:"<input placeholder='Title' onclick=''></input>"});
-			contents.push({html:"<input placeholder='Location'></input>"});
-			//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-			contents.push({html:"<!--<input placeholder='GPS' disabled style='display:none;'></input>--><input type='datetime-local'></input>"});
-			contents.push({html:"</div>"});
-			contents.push({html:"<button onclick='saveGatherUp("+'"'+id+'"'+");'>Save</button>"});
-			write("Edit Gather-Up",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=info.val().title||null;
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location||null;
-			//document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps||null;
-			if(info.val().date!=null){
-				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
-			}
-			autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
- //      			autocomplete.addListener('place_changed', fillInAddress);
-			/*
-			map = new google.maps.Map(document.getElementById('map'), {
-				zoom: 15,
-				center: {lat:lati,lng:long}
-			});
-			var marker = new google.maps.Marker({
-				position: {lat:lati,lng:long},
-				map: map,
-				draggable:true
-			});
-			google.maps.event.addListener(marker, 'dragend', function(evt){
-				map.panTo(marker.getPosition());
-				moveMapView(evt.latLng.lat(),evt.latLng.lng());
-			});
-			moveMapView(lati,long,true);*/
-		//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
-		});
+		requestGatherUp(id,info.val().title,info.val().location,info.val().date);
 	});
 }
 
 function saveGatherUp(id){
-	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
-	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
-//var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	if(date!=null){
-		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
-	}
-	if(title!=null&&title!=""){
-		var key=id;
-		firebase.database().ref("gatherups/"+key+"/info").update({
-			title:title,
-			location:loc,
-//			gps:gps,
-			date:date
-		}).then(function(){
-			loadGatherUp(key);
-		});
-	}else{
-		alert("A title is required to edit a gather-up.");
-	}
+	newGatherUp(id);
 }
 
-function newGatherUp(){
+function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
 //	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
@@ -198,18 +137,21 @@ function newGatherUp(){
 		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
 	}
 	if(title!=null&&title!=""){
-		var key=firebase.database().ref("gatherups/").push().key;
-		firebase.database().ref("gatherups/"+key).update({
+		var key=id||firebase.database().ref("gatherups/").push().key;
+		var info={
 			info:{
 				title:title,
 				location:loc,
 //				gps:gps,
 				date:date
-			},
-			members:{
+			}
+		}
+		if(id==null){
+			info.members={
 				[uid]:15
 			}
-		}).then(function(){
+		}
+		firebase.database().ref("gatherups/"+key).update(info).then(function(){
 			loadGatherUp(key);
 		});
 	}else{
