@@ -85,7 +85,7 @@ function fillInAddress() {
 			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 		}
 		contents.push({html:""+extra+"<div class='inputs'>"});
-		contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 		contents.push({html:"<input placeholder='Address/Location'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 		contents.push({html:"<input type='datetime-local'></input>"});
@@ -130,7 +130,7 @@ function editGatherUp(id){
 				extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 			}
 			contents.push({html:""+extra+"<div class='inputs'>"});
-			contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
+			contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 			contents.push({html:"<input placeholder='Location'></input>"});
 			//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 			contents.push({html:"<!--<input placeholder='GPS' disabled style='display:none;'></input>--><input type='datetime-local'></input>"});
