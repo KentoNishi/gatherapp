@@ -204,6 +204,7 @@ function newGatherUp(){
 
 function loadGatherUp(id){
 	clear();
+	window.location.hash=id;
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
 			try{
@@ -389,20 +390,21 @@ function geolocation(){
 }
 
 function action(act) {
-    if(uid!=""){
-        if (act == "menu") {
-	//	menu();
-		loadGatherUps();
-        } else if (act == "add") {
-		start();
-        } else if (act == "home") {
-		feed();
-        }
-    }
+	window.location.hash="";
+	if(uid!=""){
+		if (act == "menu") {
+		//	menu();
+			loadGatherUps();
+		} else if (act == "add") {
+			start();
+		} else if (act == "home") {
+			feed();
+		}
+	}
 }
 
 function clear(e){
-    document.querySelectorAll(".body")[0].innerHTML="";
+	document.querySelectorAll(".body")[0].innerHTML="";
 } 
 
 function reverse(snapshot) {
