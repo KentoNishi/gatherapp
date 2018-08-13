@@ -161,13 +161,11 @@ function saveGatherUp(id){
 	}
 	if(title!=null&&title!=""){
 		var key=id;
-		firebase.database().ref("gatherups/"+key).update({
-			info:{
-				title:title,
-				location:loc,
-				gps:gps,
-				date:date
-			}
+		firebase.database().ref("gatherups/"+key+"/info").update({
+			title:title,
+			location:loc,
+			gps:gps,
+			date:date
 		}).then(function(){
 			loadGatherUp(key);
 		});
