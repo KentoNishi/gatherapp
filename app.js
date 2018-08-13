@@ -19,7 +19,6 @@ var worker;
 function menu(){
 	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
-//	write("My Gather-Ups",null,null,"loadGatherUps();");
 }
 
 function feed(){
