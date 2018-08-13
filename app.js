@@ -235,13 +235,13 @@ function loadGatherUp(id){
 					value=(-value);
 					check="";
 				}
-				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+				var cb="<input type='checkbox' style='width:3*1.5vw;height:3*1.5vw;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
 				var extra="";
 				if(Notification.permission!="granted"){
 					extra="<button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member.val()!=null){
-					contents.push({html:cb+"Remind me <input type='number' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"+extra});
+					contents.push({html:cb+"Remind me <input type='number' style='width:10*1.5vw;text-align:center;' value='"+value+"' step='5' min='0' onchange='saveReminderTime(this.classList[0]);' class='"+id+"'></input> minutes before the event"+extra});
 				}
 				if(navigator.share){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
@@ -441,7 +441,7 @@ function write(title,contents,links,href){
 		}
 		if((title==null&&contents!=null)){
 		}else{
-			body+='<span style="font-size:5.5vh;">';
+			body+='<span style="font-size:5.5*1.5vw;">';
 			body+='<strong>';
 			body+=encode(title);
 			body+='</strong>';
@@ -452,7 +452,7 @@ function write(title,contents,links,href){
 			if(contents[i].html!=null){
 				body+=contents[i].html;
 			}else if(contents[i].text!=null){
-				body+='<span style="font-size:4vh">';
+				body+='<span style="font-size:4*1.5vw">';
 				body+=encode(contents[i].text);
 				body+='</span>';
 			}
@@ -460,7 +460,7 @@ function write(title,contents,links,href){
 		}
 		for(var i=0;i<links.length;i++){
 			if(links[i].href!=null&&links[i].text!=null){
-				body+='<span style="font-size:4vh">';
+				body+='<span style="font-size:4*1.5vw">';
 				body+='<a href="#" onclick="'+links[i].href+';return false;">';
 				body+=encode(links[i].text);
 				body+='</a>';
