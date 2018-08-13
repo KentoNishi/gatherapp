@@ -84,14 +84,16 @@ function fillInAddress() {
 		if(permission.state!="granted"){
 			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 		}
-		contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
+		contents.push({html:""+extra+"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
 		contents.push({html:"<input placeholder='Address/Location'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"</div>"});
 		contents.push({html:"<button onclick='newGatherUp();'>Schedule</button>"});
-		write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);/*
+		write("New Gather-Up",contents,[{href:"feed();",text:"Cancel"}]);
+		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+		/*
 		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 15,
 			center: {lat:lat,lng:lng}
@@ -127,7 +129,7 @@ function editGatherUp(id){
 			if(permission.state!="granted"){
 				extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 			}
-			contents.push({html:"<div id='map' class='pic'></div>"+extra+"<div class='inputs'>"});
+			contents.push({html:""+extra+"<div class='inputs'>"});
 			contents.push({html:"<input placeholder='Title' onclick='this.value=prompt(this.placeholder+"+'":"'+",this.value)||this.value;this.blur();'></input>"});
 			contents.push({html:"<input placeholder='Location'></input>"});
 			//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
@@ -139,7 +141,7 @@ function editGatherUp(id){
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=info.val().location||null;
 			//document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=info.val().gps||null;
 			if(info.val().date!=null){
-				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(info.val().date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
 			}
 			autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
  //      			autocomplete.addListener('place_changed', fillInAddress);
