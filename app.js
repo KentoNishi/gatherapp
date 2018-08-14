@@ -94,6 +94,9 @@ function fillInAddress() {
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>Schedule</button>"});
 		write(((id==null)?"New":"Edit")+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+		google.maps.event.addListener(autocomplete, 'place_changed', function () {
+		    console.log(autocomplete.getPlace().reference);
+		});
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 		if(date!=null){
