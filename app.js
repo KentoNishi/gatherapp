@@ -98,6 +98,10 @@ function fillInAddress() {
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].style.display="block";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		});
+		if(id!=null){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].style.display="block";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+		}
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 		if(date!=null){
