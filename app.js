@@ -94,9 +94,11 @@ function fillInAddress() {
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>Schedule</button>"});
 		write((id==null)?"New":"Save"+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title;
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc;
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
+		if(date!=null){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
+		}
 		/*
 		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 15,
