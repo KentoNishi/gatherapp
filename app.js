@@ -89,13 +89,14 @@ function fillInAddress() {
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 		contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-		contents.push({html:"<input type='datetime-local'></input>"});
+		contents.push({html:"<input type='datetime-local'></input><iframe frameborder='0' style='border:0;width:75vw;height:75vw;display:none;' allowfullscreen></iframe>"});
 		contents.push({html:"</div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>Schedule</button>"});
 		write(((id==null)?"New":"Edit")+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
-		    console.log(autocomplete.getPlace().reference);
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].style.display="block";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		});
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
