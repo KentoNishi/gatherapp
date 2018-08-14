@@ -83,7 +83,7 @@ function fillInAddress() {
 		var contents=[];
 		var extra="";
 		if(permission.state!="granted"){
-			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
+//			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
 		}
 		contents.push({html:""+extra+"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
