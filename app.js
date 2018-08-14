@@ -141,7 +141,8 @@ function saveGatherUp(id){
 function newGatherUp(id){
 	if(autocomplete.getPlace()!=null){
 		var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
-		var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
+//		var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
+		var loc=autocomplete.getPlace().formatted_address||null;
 	//	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 		var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 		if(date!=null){
