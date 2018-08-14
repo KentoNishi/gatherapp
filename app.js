@@ -69,7 +69,7 @@ function start(){/*
 
 
 var map;
-function requestGatherUp(id,title,loc,date){
+function requestGatherUp(id,title,loc,date,place){
 //	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
 /*
         var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
@@ -98,9 +98,9 @@ function fillInAddress() {
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].style.display="block";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		});
-		if(id!=null){
+		if(place!=null){
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].style.display="block";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+place+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		}
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
@@ -130,7 +130,7 @@ function fillInAddress() {
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
-		requestGatherUp(id,info.val().title,info.val().location,info.val().date);
+		requestGatherUp(id,info.val().title,info.val().location,info.val().date,info.val().place);
 	});
 }
 
@@ -152,6 +152,7 @@ function newGatherUp(id){
 			info:{
 				title:title,
 				location:loc,
+				place:autocomplete.getPlace()!=null?autocomplete.getPlace().place_id:null
 //				gps:gps,
 				date:date
 			}
