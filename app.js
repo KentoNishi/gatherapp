@@ -87,7 +87,7 @@ function fillInAddress() {
 		}
 		contents.push({html:""+extra+"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
-		contents.push({html:"<input placeholder='Address/Location'></input>"});
+		contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"</div>"});
