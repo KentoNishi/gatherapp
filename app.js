@@ -139,34 +139,38 @@ function saveGatherUp(id){
 }
 
 function newGatherUp(id){
-	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
-	var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
-//	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	if(date!=null){
-		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
-	}
-	if(title!=null&&title!=""){
-		var key=id||firebase.database().ref("gatherups/").push().key;
-		var info={
-			info:{
-				title:title,
-				location:loc,
-				place:autocomplete.getPlace()!=null?autocomplete.getPlace().place_id:null,
-//				gps:gps,
-				date:date
-			}
+	if(autocomplete.getPlace()!=null){
+		var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
+		var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
+	//	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+		var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+		if(date!=null){
+			date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
 		}
-		if(id==null){
-			info.members={
-				[uid]:15
+		if(title!=null&&title!=""){
+			var key=id||firebase.database().ref("gatherups/").push().key;
+			var info={
+				info:{
+					title:title,
+					location:loc,
+					place:autocomplete.getPlace().place_id,
+	//				gps:gps,
+					date:date
+				}
 			}
+			if(id==null){
+				info.members={
+					[uid]:15
+				}
+			}
+			firebase.database().ref("gatherups/"+key).update(info).then(function(){
+				loadGatherUp(key);
+			});
+		}else{
+			alert("A title is required to schedule a gather-up.");
 		}
-		firebase.database().ref("gatherups/"+key).update(info).then(function(){
-			loadGatherUp(key);
-		});
 	}else{
-		alert("A title is required to schedule a gather-up.");
+		alert("Enter a valid location.");
 	}
 }
 
