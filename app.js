@@ -218,7 +218,7 @@ function loadGatherUps(){
 		}
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				write(gatherup.val().title,null,null,"loadGatherUp('"+gather.key+"');");
+				write(gatherup.val().title,[{text:gatherup.val().date||"Unknown Date"},{text:gatherup.val().location||"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
