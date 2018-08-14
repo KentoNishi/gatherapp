@@ -170,7 +170,7 @@ function newGatherUp(id){
 			alert("A title is required to schedule a gather-up.");
 		}
 	}else{
-		alert("Enter a valid location.");
+		alert("Pick a valid location.");
 	}
 }
 
