@@ -70,7 +70,7 @@ function start(){/*
 
 var map;
 function requestGatherUp(id,title,loc,date){
-	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
+//	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
 /*
         var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
 
@@ -82,9 +82,9 @@ function fillInAddress() {
 		clear();
 		var contents=[];
 		var extra="";
-		if(permission.state!="granted"){
+//		if(permission.state!="granted"){
 //			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
-		}
+//		}
 		contents.push({html:""+extra+"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 		contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
@@ -120,7 +120,7 @@ function fillInAddress() {
 		moveMapView(lat,lng,true);*/
 	//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
 
-	});
+//	});
 }
 
 var autocomplete;
@@ -307,7 +307,7 @@ if(navigator.onLine){
 			name = me.displayName;
 			pic = me.photoURL;
 			me.getIdToken().then(function(userToken) {
-			});
+			});/*
 			$.get("https://ipinfo.io", function(response) {
 	//				city=response.city+", "+response.country;
 				lat=parseFloat(response.loc.split(",")[0]);
@@ -317,7 +317,7 @@ if(navigator.onLine){
 				geolocation();
 			}).catch(function(){
 				geolocation();
-			});
+			});*/
 			firebase.database().ref("users/"+uid+"/info").update({
 				name:name,
 	//				search:name.toLowerCase().replace(/ /g,""),
