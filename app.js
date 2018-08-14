@@ -93,9 +93,7 @@ function fillInAddress() {
 		contents.push({html:"</div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>Schedule</button>"});
 		write(((id==null)?"New":"Edit")+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
-		if(autocomplete==null){
-			autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
-		}
+		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 		if(date!=null){
