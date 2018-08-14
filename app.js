@@ -89,7 +89,7 @@ function fillInAddress() {
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 		contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-		contents.push({html:"<input type='datetime-local'></input>"});
+		contents.push({html:"<input type='datetime-local' style='font-size:2.5vh;'></input>"});
 		contents.push({html:"<br /><div><iframe frameborder='0' style='border:0;width:75vw;height:75vw;display:none;' allowfullscreen></iframe></div></div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>Schedule</button>"});
 		write(((id==null)?"New":"Edit")+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
