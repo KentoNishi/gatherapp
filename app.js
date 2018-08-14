@@ -186,7 +186,7 @@ function loadGatherUp(id){
 					date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
 				}
-				var contents=[{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2):"Unknown Location"},{text:date||"Unknown Date"}];
+				var contents=[{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2).join(","):"Unknown Location"},{text:date||"Unknown Date"}];
 				var check="checked";
 				if(value<0){
 					value=(-value);
@@ -238,7 +238,7 @@ function loadGatherUps(){
 					date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
 				}
-				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
