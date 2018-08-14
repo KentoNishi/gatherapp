@@ -152,7 +152,7 @@ function newGatherUp(id){
 			info:{
 				title:title,
 				location:loc,
-				place:autocomplete.getPlace()!=null?autocomplete.getPlace().place_id:null
+				place:autocomplete.getPlace()!=null?autocomplete.getPlace().place_id:null,
 //				gps:gps,
 				date:date
 			}
