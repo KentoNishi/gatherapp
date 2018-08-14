@@ -174,7 +174,15 @@ function loadGatherUp(id){
 					link.unshift({text:"Edit Info",href:"editGatherUp('"+id+"');"});
 				}
 				var value=member.val();
-				var contents=[{text:gather.val().location||"Unknown Location"},{text:gather.val().date||"Unknown Date"}];
+				var date="";
+				if(gather.val().date!=null){
+					date="0".repeat(2-(new Date(gather.val().date).getMonth()+1).toString().length)+(new Date(gather.val().date).getMonth()+1);
+					date+="/"+"0".repeat(2-(new Date(gather.val().date).getDate()).toString().length)+(new Date(gather.val().date).getDate());
+					date+="/"+new Date(gather.val().date).getFullYear();
+					date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
+					date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
+				}
+				var contents=[{text:gather.val().location||"Unknown Location"},{text:date||"Unknown Date"}];
 				var check="checked";
 				if(value<0){
 					value=(-value);
@@ -218,7 +226,15 @@ function loadGatherUps(){
 		}
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				write(gatherup.val().title,[{text:gatherup.val().date||"Unknown Date"},{text:gatherup.val().location||"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				var date="";
+				if(gatherup.val().date!=null){
+					date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
+					date+="/"+"0".repeat(2-(new Date(gatherup.val().date).getDate()).toString().length)+(new Date(gatherup.val().date).getDate());
+					date+="/"+new Date(gatherup.val().date).getFullYear();
+					date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
+					date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
+				}
+				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gatherup.val().location||"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
