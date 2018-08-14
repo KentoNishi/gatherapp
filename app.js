@@ -238,7 +238,7 @@ function loadGatherUps(){
 					date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
 				}
-				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gatherup.val().location!=null?gatherup.val().location.split(",").slice(0,gatherup.val().location.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
