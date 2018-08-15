@@ -149,24 +149,23 @@ function newGatherUp(id){
 	if(title!=null&&title!=""){
 		var key=id||firebase.database().ref("gatherups/").push().key;
 		var info={
-			info:{
-				title:title,
+			title:title,
 //				gps:gps,
-				date:date
-			}
+			date:date
 		}
 		if(autocomplete.getPlace()!=null){
-			var loc=autocomplete.getPlace().formatted_address||null;	
-			info.info.place=autocomplete.getPlace().place_id;
-			info.info.location=loc;
+			var loc=autocomplete.getPlace().formatted_address;	
+			info.place=autocomplete.getPlace().place_id;
+			info.location=loc;
 		}
-		if(id==null){
-			info.members={
-				[uid]:15
+		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
+			if(id==null){
+				firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
+					loadGatherUp(key);
+				});
+			}else{
+				loadGatherUp(key);
 			}
-		}
-		firebase.database().ref("gatherups/"+key).update(info).then(function(){
-			loadGatherUp(key);
 		});
 	}else{
 		alert("A title is required to schedule a gather-up.");
@@ -194,7 +193,7 @@ function loadGatherUp(id){
 					date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
 				}
-				var contents=[{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2).join(","):"Unknown Location"},{text:date||"Unknown Date"}];
+				var contents=[{text:date||"Unknown Date"},{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2).join(","):"Unknown Location"}];
 				var check="checked";
 				if(value<0){
 					value=(-value);
