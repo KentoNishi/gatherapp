@@ -134,7 +134,7 @@ function fillInAddress() {
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
-		requestGatherUp(id,info.val().title,info.val().location,info.val().date,info.val().place);
+		requestGatherUp(id,info.val().title,info.val().location.formatted_address,info.val().date,info.val().place);
 	});
 }
 
@@ -158,8 +158,7 @@ function newGatherUp(id){
 			date:date
 		}
 		if(autocomplete.getPlace()!=null){
-			var loc=autocomplete.getPlace().formatted_address;	
-			info.place=autocomplete.getPlace().place_id;
+			var loc=autocomplete.getPlace();	
 			info.location=loc;
 		}
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
@@ -197,7 +196,7 @@ function loadGatherUp(id){
 					date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
 				}
-				var contents=[{text:date||"Unknown Date"},{text:gather.val().location!=null?gather.val().location.split(",").slice(0,gather.val().location.split(",").length-2).join(","):"Unknown Location"}];
+				var contents=[{text:date||"Unknown Date"},{text:gather.val().location.formatted_address!=null?gather.val().location.formatted_address.split(",").slice(0,gather.val().location.formatted_address.split(",").length-2).join(","):"Unknown Location"}];
 				var check="checked";
 				if(value<0){
 					value=(-value);
@@ -249,7 +248,7 @@ function loadGatherUps(){
 					date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
 				}
-				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gatherup.val().location!=null?gatherup.val().location.split(",").slice(0,gatherup.val().location.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:gatherup.val().location.formatted_address!=null?gatherup.val().location.formatted_address.split(",").slice(0,gatherup.val().location.formatted_address.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
