@@ -93,10 +93,12 @@ function fillInAddress() {
 		contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
 		write(((id==null)?"New":"Edit")+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
-		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{types:["administrative_area_level_3"]});
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
-			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+			if(autocomplete.getPlace().formatted_address.split(",").length>3){
+				document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
+				document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+			}
 		});/*
 		if(place!=null){
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
