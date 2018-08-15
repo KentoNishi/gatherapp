@@ -217,7 +217,6 @@ function loadGatherUp(id){
 				if(navigator.share){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				contents.push({html:""});
 				write(gather.val().title,contents,link);
 			}catch(TypeError){
 				write("Error",[{text:"Error loading gather-up."}]);
