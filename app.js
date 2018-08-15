@@ -134,7 +134,11 @@ function fillInAddress() {
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
-		requestGatherUp(id,info.val().title,info.val().location.name+","+info.val().location.formatted_address.split(",").slice(1,info.val().location.formatted_address.split(",").length).join(","),info.val().date,info.val().place);
+		var addr;
+		if(info.val().location!=null){
+			addr=info.val().location.name+","+info.val().location.formatted_address.split(",").slice(1,info.val().location.formatted_address.split(",").length).join(",");
+		}
+		requestGatherUp(id,info.val().title,addr||null,info.val().date,info.val().place);
 	});
 }
 
@@ -196,7 +200,10 @@ function loadGatherUp(id){
 					date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
 				}
-				var addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
+				var addr;
+				if(gather.val().location!=null){
+					addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
+				}
 				var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
 				var check="checked";
 				if(value<0){
@@ -251,7 +258,10 @@ function loadGatherUps(){
 					date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
 					date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
 				}
-				var addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
+				var addr;
+				if(gatherup.val().location!=null){
+					addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
+				}
 				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
@@ -451,8 +461,8 @@ function getFormattedDate(date) {
 	day = day.length > 1 ? day : '0' + day;
 	return month + '/' + day + '/' + year;
 }
-
+/*
 window.onerror = function (message, file, line, col, error) {
 	clear();
 	write();
-};
+};*/
