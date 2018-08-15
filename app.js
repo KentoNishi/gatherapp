@@ -134,7 +134,7 @@ function fillInAddress() {
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
-		requestGatherUp(id,info.val().title,info.val().location.formatted_address,info.val().date,info.val().place);
+		requestGatherUp(id,info.val().title,info.val().location.name+","+info.val().location.formatted_address.split(",").slice(1,info.val().location.formatted_address.split(",").length).join(","),info.val().date,info.val().place);
 	});
 }
 
