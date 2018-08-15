@@ -310,6 +310,9 @@ function signOut() {
 if(navigator.onLine){
 	firebase.auth().onAuthStateChanged(function(me) {
 		if (me) {
+			if(Notification.permission=="granted"){
+				offerNotifications();
+			}
 			uid = me.uid;
 			name = me.displayName;
 			pic = me.photoURL;
