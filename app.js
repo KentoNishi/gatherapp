@@ -272,23 +272,6 @@ function leaveGatherUp(id){
 	});
 }
 
-function moveMapView(x,y,z){
-	map.setCenter(new google.maps.LatLng(x,y));
-	new google.maps.Geocoder().geocode({'latLng' : {lat:x,lng:y}}, function(results, status) {
-    		if (status == google.maps.GeocoderStatus.OK) {
-			if (results[0]) {
-				if(z==null){
-					document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=results[0].formatted_address;
-				}
-			}
-		}
-		if(z==null){
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=x+","+y;
-		}
-	});
-}
-
-
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
 		firebase.messaging().useServiceWorker(reg);
@@ -374,14 +357,6 @@ function urlBase64ToUint8Array(base64String) {
 	return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
-function geolocation(){
-	navigator.permissions.query({'name': 'geolocation'}) .then( permission => {
-		if (navigator.geolocation&&permission.state=="granted") {
-			navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;});
-		}
-	});
-}
-
 function action(act) {
 	window.location.hash="";
 	if(uid!=""){
@@ -410,6 +385,9 @@ function reverse(snapshot) {
 
 function write(title,contents,links,href){
 	try{
+		if(title==null&&contents==null){
+			throw("");
+		}
 		var body='';
 		contents=contents||[];
 		links=links||[];
