@@ -158,7 +158,7 @@ function newGatherUp(id){
 			date:date
 		}
 		if(autocomplete.getPlace()!=null){
-			var loc=autocomplete.getPlace();	
+			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
 			info.location=loc;
 		}
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
