@@ -353,7 +353,9 @@ function offerNotifications(id){
 				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
 			}).then(function(sub){
 				firebase.database().ref("users/"+uid+"/info").update({sub:sub}).then(function(){
-					loadGatherUp(id);
+					if(id!=null){
+						loadGatherUp(id);
+					}
 				});
 			});
 		 }
