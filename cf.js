@@ -19,6 +19,48 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
 		});
 	});
 });
+exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((change, context) => {
+    let id = context.params.id;
+    let fireDB = change.after.ref.root;
+    if(change.after.val()!==null){
+	    return fireDB.child(`/gatherups/${id}/members/`).once(`value`).then(members => {
+	    	var returns=[];
+	    	members.forEach(member=>{
+	    		var uid=member.key;
+	    		var edits=difference(change.before.val(),change.after.val());
+	    		edits.forEach(edit=>{
+		    		if(edit==="title"||edit==="date"||edit==="location"){
+			    		returns.push(fireDB.child(`/users/${uid}/feed`).push({
+			    			title:change.before.val().title+" - Edited",
+			    			content:"Gather-Up "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+","+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length).join(",")):"an unknown location"))):"")+".",
+			    			tag:id
+						}));
+					}else{
+						returns.push(Promise.resolve());
+					}
+				});
+	    	});
+	    	return Promise.all(returns);
+		});
+	}else{
+    	return Promise.resolve();
+	}
+});
+
+function difference(o1, o2) {
+	var returns=[];
+	if(o1!==null&&o2!==null){
+		if(o1.title!==o2.title){
+			returns.push("title");
+		}if(o1.date!==o2.date){
+			returns.push("date");
+		}if(o1.location!==o2.location){
+			returns.push("location");
+		}
+	}
+	return returns;
+}
+
 exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).onWrite((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
@@ -101,8 +143,8 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 			returns.push(fireDB.child(`/gatherups/${id}/info`).once(`value`).then(gather => {
 				var promises=[];
 				alert.forEach(user=>{
-					var uid=user.key
-					var info={title:gather.val().title,content:"Gather-Up at "+(gather.val().location||"unknown location")+" in "+user.val()+" minutes!",tag:id};
+					var uid=user.key;
+					var info={title:gather.val().title+" - Gather-Up",content:(gather.val().location!==null?(gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",")):"unknown location")+", in "+user.val()+" minutes.",tag:id};
 					promises.push(fireDB.child(`/users/${uid}/feed/`).push(info));
 				});
 				return Promise.all(promises);
