@@ -92,7 +92,7 @@ function fillInAddress() {
 		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
-		write(((id==null)?"New":"Edit")+" Gather-Up",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
+		write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?"feed();":("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
 			if(autocomplete.getPlace().formatted_address.split(",").length>2){
@@ -175,7 +175,7 @@ function newGatherUp(id){
 			}
 		});
 	}else{
-		alert("A title is required to schedule a gather-up.");
+		alert("A title is required to schedule a event.");
 	}
 }
 
@@ -185,9 +185,9 @@ function loadGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
 			try{
-				var link=[{text:"Leave Gather-Up",href:"if(confirm('Are you sure you want to leave "+gather.val().title+"?')){leaveGatherUp('"+id+"');}"}];
+				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave "+gather.val().title+"?')){leaveGatherUp('"+id+"');}"}];
 				if(member.val()==null){
-					link=[{text:"Join Gather-Up",href:"joinGatherUp('"+id+"');"}];
+					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
 				}else{
 					link.unshift({text:"Edit Info",href:"editGatherUp('"+id+"');"});
 				}
@@ -227,7 +227,7 @@ function loadGatherUp(id){
 				}
 				write(gather.val().title,contents,link);
 			}catch(TypeError){
-				write("Error",[{text:"Error loading gather-up."}]);
+				write("Error",[{text:"Error loading event."}]);
 			}
 		});
 	});
@@ -249,7 +249,7 @@ function loadGatherUps(){
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		if(gathers.val()==null){
-			write("No Gather-Ups",[{text:"You have no scheduled gather-ups."}]);
+			write("No Events",[{text:"You have no scheduled events."}]);
 		}
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
