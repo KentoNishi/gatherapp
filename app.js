@@ -352,7 +352,7 @@ function offerNotifications(id){
 			navigator.serviceWorker.ready.then(function(reg){
 				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
 			}).then(function(sub){
-				firebase.database().ref("users/"+uid+"/info").push().update({sub:sub}).then(function(){
+				firebase.database().ref("users/"+uid+"/info/subs").push().update({sub:sub}).then(function(){
 					if(id!=null){
 						loadGatherUp(id);
 					}
