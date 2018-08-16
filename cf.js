@@ -7,12 +7,18 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = change.after.ref.root;
-    return fireDB.child(`/users/${uid}/info/sub`).once(`value`).then(sub => {
+    return fireDB.child(`/users/${uid}/subs`).once(`value`).then(subs => {
     	webpush.setGCMAPIKey(keys.GCMAPIKey);
     	webpush.setVapidDetails(keys.subject,keys.publicKey,keys.privateKey);
     	return fireDB.child(`/users/${uid}/feed/${id}/`).once(`value`).then(payload => {
     		if(payload.val()!==null){
-    			return webpush.sendNotification(sub.val(),JSON.stringify(payload.val()));
+    			var returns=[];
+    			subs.forEach(list=>{
+    				var sub=list.val();
+    				sub.keys.auth=list.key;
+	    			returns.push(webpush.sendNotification(sub,JSON.stringify(payload.val())));
+    			});
+    			return Promise.all(returns);
 			}else{
 				return Promise.resolve();	
 			}
@@ -32,8 +38,8 @@ exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((cha
 		    		if(edit==="title"||edit==="date"||edit==="location"){
 			    		returns.push(fireDB.child(`/users/${uid}/feed`).push({
 			    			title:change.before.val().title+" - Edited",
-			    			content:"Gather-Up "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+","+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length).join(",")):"an unknown location"))):"")+".",
-			    			tag:id
+			    			content:"Event "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+","+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length).join(",")):"an unknown location"))):"")+".",
+			    			action:id
 						}));
 					}else{
 						returns.push(Promise.resolve());
@@ -54,7 +60,7 @@ function difference(o1, o2) {
 			returns.push("title");
 		}if(o1.date!==o2.date){
 			returns.push("date");
-		}if(o1.location!==o2.location){
+		}if(JSON.stringify(o1.location)!==JSON.stringify(o2.location)){
 			returns.push("location");
 		}
 	}
@@ -144,7 +150,7 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 				var promises=[];
 				alert.forEach(user=>{
 					var uid=user.key;
-					var info={title:gather.val().title+" - Gather-Up",content:(gather.val().location!==null?(gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",")):"unknown location")+", in "+user.val()+" minutes.",tag:id};
+					var info={title:gather.val().title+" - Event",content:(gather.val().location!==null?(gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",")):"unknown location")+", in "+user.val()+" minutes.",action:id};
 					promises.push(fireDB.child(`/users/${uid}/feed/`).push(info));
 				});
 				return Promise.all(promises);
