@@ -5,6 +5,7 @@ self.addEventListener('push', function(event) {
     var notification = self.registration.showNotification(data.title, {
         body: data.content,
         tag:Date.now()+":"+data.tag,
+        badge:'/gatherapp/512x512.png',
         icon: '/gatherapp/512x512.png'
     });
 });
