@@ -150,7 +150,7 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 				var promises=[];
 				alert.forEach(user=>{
 					var uid=user.key;
-					var info={title:gather.val().title+" - Event",content:(gather.val().location!==null?(gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",")):"unknown location")+", in "+user.val()+" minutes.",action:id};
+					var info={title:gather.val().title+" - Event",content:(gather.val().location!==null?(gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"unknown location")+", in "+user.val()+" minutes.",action:id};
 					promises.push(fireDB.child(`/users/${uid}/feed/`).push(info));
 				});
 				return Promise.all(promises);
