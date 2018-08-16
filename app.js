@@ -212,7 +212,7 @@ function loadGatherUp(id){
 				}
 				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
 				var extra="";
-				if(Notification.permission!="granted"){
+				if(Notification.permission!="granted"&&Notification.permission!="denied"){
 					extra="<button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member.val()!=null){
