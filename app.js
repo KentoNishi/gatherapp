@@ -478,4 +478,4 @@ window.onerror = function (message, file, line, col, error) {
 	clear();
 	write();
 };*/
-tg
+
