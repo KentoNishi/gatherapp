@@ -356,7 +356,7 @@ function offerNotifications(id){
 				var subscr=sub;
 				var key=sub.keys.auth;
 				subscr.keys.auth=null;
-				firebase.database().ref("users/"+uid+"/subs/"+key).update({sub:subscr}).then(function(){
+				firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
 					if(id!=null){
 						loadGatherUp(id);
 					}
