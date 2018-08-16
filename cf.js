@@ -38,7 +38,7 @@ exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((cha
 		    		if(edit==="title"||edit==="date"||edit==="location"){
 			    		returns.push(fireDB.child(`/users/${uid}/feed`).push({
 			    			title:change.before.val().title+" - Edited",
-			    			content:"Event "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+","+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length).join(",")):"an unknown location"))):"")+".",
+			    			content:"Event "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+","+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
 			    			action:id
 						}));
 					}else{
