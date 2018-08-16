@@ -352,7 +352,9 @@ function offerNotifications(id){
 			navigator.serviceWorker.ready.then(function(reg){
 				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
 			}).then(function(sub){
-				firebase.database().ref("users/"+uid+"/subs").push().update({sub:sub}).then(function(){
+				var subscr=sub;
+				subscr.keys.auth=null;
+				firebase.database().ref("users/"+uid+"/subs/"+sub.keys.auth).update({sub:subscr}).then(function(){
 					if(id!=null){
 						loadGatherUp(id);
 					}
