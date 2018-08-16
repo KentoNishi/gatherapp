@@ -4,7 +4,7 @@ self.addEventListener('push', function(event) {
     var data = event.data.json();
     var notification = self.registration.showNotification(data.title, {
         body: data.content,
-        tag:data.tag,
+        action:data.action,
         icon: '/gatherapp/512x512.png'
     });
 });
@@ -15,12 +15,12 @@ self.addEventListener('notificationclick', function(event) {
             var client = clientList[i];
             if ('focus' in client){
                 return client.focus().then(function(){
-                    client.navigate('https://kentonishi.github.io/gatherapp/#'+event.notification.tag);
+                    client.navigate('https://kentonishi.github.io/gatherapp/#'+event.notification.action);
                 });
             }
         }
         if (clients.openWindow){
-            return clients.openWindow('https://kentonishi.github.io/gatherapp/#'+event.notification.tag);
+            return clients.openWindow('https://kentonishi.github.io/gatherapp/#'+event.notification.action);
         }
     }));
 });
