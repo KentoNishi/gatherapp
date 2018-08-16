@@ -136,7 +136,7 @@ function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
 		var addr;
 		if(info.val().location!=null){
-			addr=info.val().location.name+", "+info.val().location.formatted_address.split(",").slice(0,info.val().location.formatted_address.split(",").length).join(",");
+			addr=info.val().location.name+", "+info.val().location.formatted_address.split(",").slice(1,info.val().location.formatted_address.split(",").length).join(",");
 		}
 		requestGatherUp(id,info.val().title,addr||null,info.val().date,info.val().place);
 	});
@@ -202,9 +202,9 @@ function loadGatherUp(id){
 				}
 				var addr;
 				if(gather.val().location!=null){
-					addr=gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(0,gather.val().location.formatted_address.split(",").length).join(",");
+					addr=gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
 				}
-				var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+				var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(1,addr.split(",").length-2).join(","):"Unknown Location"}];
 				var check="checked";
 				if(value<0){
 					value=(-value);
@@ -263,9 +263,9 @@ function loadGatherUps(){
 				}
 				var addr;
 				if(gatherup.val().location!=null){
-					addr=gatherup.val().location.name+", "+gatherup.val().location.formatted_address.split(",").slice(0,gatherup.val().location.formatted_address.split(",").length).join(",");
+					addr=gatherup.val().location.name+", "+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
 				}
-				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(1,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
@@ -348,6 +348,12 @@ if(navigator.onLine){
 	clear();
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
+
+$(window).on('hashchange', function() {
+	if(window.location.hash.substr(1,window.location.hash.length)!=""){
+		loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+	}
+});
 
 function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
