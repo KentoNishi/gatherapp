@@ -175,7 +175,7 @@ function newGatherUp(id){
 			}
 		});
 	}else{
-		alert("A title is required to schedule a event.");
+		alert("A title is required to schedule an event.");
 	}
 }
 
