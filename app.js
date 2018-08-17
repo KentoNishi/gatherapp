@@ -132,6 +132,51 @@ function fillInAddress() {
 //	});
 }
 
+function newPost(id){
+//	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
+/*
+        var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
+
+        autocomplete.addListener('place_changed', fillInAddress);
+function fillInAddress() {
+	console.log(autocomplete.getPlace());
+}
+*/
+		clear();
+		var contents=[];
+		contents.push({html:"<div class='inputs'>"});
+		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
+		contents.push({html:"<textarea></textarea>"});
+		contents.push({html:"</div>"});
+		contents.push({html:"<button onclick='"+"newBoardPost('"+id+"');"+"'>Publish</button>"});
+		write("New Post",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
+		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
+		google.maps.event.addListener(autocomplete, 'place_changed', function () {
+			if(autocomplete.getPlace().formatted_address.split(",").length>3){
+				document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
+				document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+			}else{
+				alert("You must choose a valid location.");
+			}
+		});
+}
+
+function newBoardPost(id){
+	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
+	var content=document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value||null;
+	if(title!=null&&contents==null&&uid!=null){
+		firebase.database().ref("gatherups/"+id+"/board").push({
+			title:title,
+			content:content,
+			author:uid
+		}).then(function(){
+			loadEventBoard(id);
+		});
+	}else{
+		alert("You have not completed all required fields.");
+	}
+}
+
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
@@ -227,7 +272,9 @@ function loadGatherUp(id){
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				write("Event Board",null,null,"loadEventBoard('"+id+"');");
+				if(member!=null){
+					write("Event Board",null,null,"loadEventBoard('"+id+"');");
+				}
 				write("Members",[{html:"<span class='members'></span>"}]);
 				write(gather.val().title,contents,link);
 				users.forEach(user=>{
@@ -255,6 +302,7 @@ function loadEventBoard(id){
 			var postinner=[{text:post.val().content},{text:post.val().author}];
 			write(post.val().title,postinner);
 		});
+		write("New Post",null,null,"newPost('"+id+"');");
 		write("Return to Event",null,null,"loadGatherUp('"+id+"');");
 	});
 }
