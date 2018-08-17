@@ -181,7 +181,6 @@ function newGatherUp(id){
 
 function loadGatherUp(id){
 	clear();
-	window.location.hash=id;
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
 			try{
@@ -349,14 +348,14 @@ if(navigator.onLine){
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
-/*
+
 $(window).on('hashchange', function() {
 	if(uid!=null){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 		}
 	}
-});*/
+});
 
 function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
