@@ -146,7 +146,7 @@ function fillInAddress() {
 		var contents=[];
 		contents.push({html:"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
-		contents.push({html:"<textarea></textarea>"});
+		contents.push({html:"<textarea style='height:16vh;'></textarea>"});
 		contents.push({html:"</div>"});
 		contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>Publish</button>"});
 		write("New Post",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
@@ -292,7 +292,11 @@ function loadEventBoard(id){
 		reverse(posts).forEach(post=>{
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",function(name){
 				var postinner=[{text:post.val().content},{text:name.val().name}];
-				write(post.val().title,postinner);
+				var links=[];
+				if(post.val().author==uid){
+					links.push({text:"Edit",href:"editPost('"+id+"');"});
+				}
+				write(post.val().title,postinner,links);
 				if(post.key==Object.keys(posts.val())[Object.keys(posts.val()).length-1]){
 					write("New Post",null,null,"newPost('"+id+"');");
 					write("Return to Event",null,null,"loadGatherUp('"+id+"');");
@@ -300,6 +304,10 @@ function loadEventBoard(id){
 			});
 		});
 	});
+}
+
+function editPost(id){
+	alert("Cannot edit post.");
 }
 
 function saveReminderTime(id){
