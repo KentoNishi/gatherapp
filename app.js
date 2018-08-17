@@ -215,7 +215,7 @@ function loadGatherUp(id){
 				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
 				var extra="";
 				if(Notification.permission!="granted"&&Notification.permission!="denied"){
-					extra="<button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
+					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member!=null){
 					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
