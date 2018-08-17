@@ -290,8 +290,10 @@ function loadEventBoard(id){
 			write("No Posts",[{text:"This event has no posts."}]);
 		}
 		posts.forEach(post=>{
-			var postinner=[{text:post.val().content},{text:post.val().author}];
-			write(post.val().title,postinner);
+			firebase.database().ref("users/"+post.val().author+"/info").once("value",function(name){
+				var postinner=[{text:post.val().content},{text:name.val().name}];
+				write(post.val().title,postinner);
+			});
 		});
 		write("New Post",null,null,"newPost('"+id+"');");
 		write("Return to Event",null,null,"loadGatherUp('"+id+"');");
