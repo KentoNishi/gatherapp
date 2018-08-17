@@ -96,7 +96,7 @@ function fillInAddress() {
 		write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
-			if(autocomplete.getPlace().formatted_address.split(",").length>2){
+			if(autocomplete.getPlace().formatted_address.split(",").length>3){
 				document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
 				document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 			}else{
