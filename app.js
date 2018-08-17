@@ -15,7 +15,7 @@ var pic = "";
 var lat;
 var lng;
 var worker;
-var back="feed";
+var back=["feed()"];
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
@@ -93,7 +93,7 @@ function fillInAddress() {
 		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
-		write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back+"();"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
+		write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
 		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
 			if(autocomplete.getPlace().formatted_address.split(",").length>2){
@@ -181,6 +181,7 @@ function newGatherUp(id){
 }
 
 function loadGatherUp(id){
+	back.push("loadGatherUp('"+id+"');");
 	clear();
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
@@ -393,13 +394,13 @@ function action(act) {
 	if(uid!=""){
 		if (act == "menu") {
 		//	menu();
-			back=act;
+			back.push("loadGatherUps()");
 			loadGatherUps();
 		} else if (act == "add") {
-			back=act;
+			back.push("start()");
 			start();
 		} else if (act == "home") {
-			back=act;
+			back.push("feed()");
 			feed();
 		}
 	}
