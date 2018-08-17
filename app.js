@@ -349,13 +349,14 @@ if(navigator.onLine){
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
+/*
 $(window).on('hashchange', function() {
 	if(uid!=null){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 		}
 	}
-});
+});*/
 
 function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
