@@ -339,8 +339,13 @@ if(navigator.onLine){
 			});
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
 				firebase.database().ref("users/"+uid+"/feed/"+window.location.hash.substr(1,window.location.hash.length)).once("value",function(info){
-					loadGatherUp(info.val().tag);
-					clearFeed(window.location.hash.substr(1,window.location.hash.length));
+					try{
+						loadGatherUp(info.val().tag);
+						clearFeed(window.location.hash.substr(1,window.location.hash.length));
+					}catch(TypeError){
+						clear();
+						write("Error finding event.");
+					}
 				});
 			}else{
 				action("home");
