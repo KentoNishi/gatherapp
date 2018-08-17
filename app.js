@@ -18,11 +18,12 @@ var worker;
 var back=["feed()"];
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
-document.addEventListener("deviceready", function(){
-	document.addEventListener("backbutton", function(){
+$(window).on("navigate", function (event, data) {
+	var direction = data.state.direction;
+	if (direction == "back") {
 		eval(back[back.length-2]+";");
-	}, false);
-}, false);
+	}
+});
 
 function menu(){
 	clear();
