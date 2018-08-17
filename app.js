@@ -184,7 +184,7 @@ function loadGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
 			try{
-				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave "+gather.val().title+"?')){leaveGatherUp('"+id+"');}"}];
+				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveGatherUp('"+id+"');}"}];
 				if(member.val()==null){
 					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
 				}else{
