@@ -289,11 +289,11 @@ function loadEventBoard(id){
 		if(posts.val()==null){
 			write("No Posts",[{text:"This event has no posts."}]);
 		}
-		posts.forEach(post=>{
+		reverse(posts).forEach(post=>{
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",function(name){
 				var postinner=[{text:post.val().content},{text:name.val().name}];
 				write(post.val().title,postinner);
-				if(post.key==Object.keys(posts.val())[0]){
+				if(post.key==Object.keys(posts.val())[-1]){
 					write("New Post",null,null,"newPost('"+id+"');");
 					write("Return to Event",null,null,"loadGatherUp('"+id+"');");
 				}
