@@ -293,11 +293,11 @@ function loadEventBoard(id){
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",function(name){
 				var postinner=[{text:post.val().content},{text:name.val().name}];
 				write(post.val().title,postinner);
+				if(post.key==Object.keys(posts.val())[Object.keys(posts.val()).length-1]){
+					write("New Post",null,null,"newPost('"+id+"');");
+					write("Return to Event",null,null,"loadGatherUp('"+id+"');");
+				}
 			});
-			if(post.key==Object.keys(posts.val)[Object.keys(posts.val()).length-1]){
-				write("New Post",null,null,"newPost('"+id+"');");
-				write("Return to Event",null,null,"loadGatherUp('"+id+"');");
-			}
 		});
 	});
 }
