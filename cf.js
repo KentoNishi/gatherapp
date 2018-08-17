@@ -16,7 +16,9 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
     			subs.forEach(list=>{
     				var sub=list.val();
     				sub.keys.auth=list.key;
-	    			returns.push(webpush.sendNotification(sub,JSON.stringify(payload.val())));
+	    			returns.push(webpush.sendNotification(sub,JSON.stringify(payload.val())).catch(error=>{
+	    				return fireDB.child(`/users/${uid}/subs/`+list.key).remove();
+	    			}));
     			});
     			return Promise.all(returns);
 			}else{
@@ -36,10 +38,10 @@ exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((cha
 	    		var edits=difference(change.before.val(),change.after.val());
 	    		edits.forEach(edit=>{
 		    		if(edit==="title"||edit==="date"||edit==="location"){
-			    		returns.push(fireDB.child(`/users/${uid}/feed`).push({
+			    		returns.push(fireDB.child(`/users/${uid}/feed/`).push().update({
 			    			title:change.before.val().title+" - Edited",
 			    			content:"Event "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
-			    			action:id
+			    			tag:id
 						}));
 					}else{
 						returns.push(Promise.resolve());
@@ -150,8 +152,8 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 				var promises=[];
 				alert.forEach(user=>{
 					var uid=user.key;
-					var info={title:gather.val().title+" - Event",content:(gather.val().location!==null?(gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"unknown location")+", in "+user.val()+" minutes.",action:id};
-					promises.push(fireDB.child(`/users/${uid}/feed/`).push(info));
+					var info={title:gather.val().title+" - Event",content:(gather.val().location!==null?(gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"unknown location")+", in "+user.val()+" minutes.",tag:id};
+					promises.push(fireDB.child(`/users/${uid}/feed/`).push().update(info));
 				});
 				return Promise.all(promises);
 			}));
