@@ -227,7 +227,7 @@ function loadGatherUp(id){
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				write("Members",[{html:"<div class='members'></div>"}]);
+				write("Members",[{html:"<span class='members'></span>"}]);
 				write(gather.val().title,contents,link);
 				users.forEach(user=>{
 					firebase.database().ref("users/"+user.key+"/info").once("value",info=>{
@@ -458,9 +458,7 @@ function write(title,contents,links,href){
 				body+=encode(contents[i].text);
 				body+='</span>';
 			}
-			if(i!=contents.length-1||links!=null){
-				body+='<br />';
-			}
+			body+='<br />';
 		}
 		for(var i=0;i<links.length;i++){
 			if(links[i].href!=null&&links[i].text!=null){
