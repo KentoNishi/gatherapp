@@ -148,7 +148,7 @@ function fillInAddress() {
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 		contents.push({html:"<textarea></textarea>"});
 		contents.push({html:"</div>"});
-		contents.push({html:"<button onclick='"+"newBoardPost('"+id+"');"+"'>Publish</button>"});
+		contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>Publish</button>"});
 		write("New Post",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
 }
 
