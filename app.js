@@ -227,6 +227,7 @@ function loadGatherUp(id){
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
+				write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				write("Members",[{html:"<span class='members'></span>"}]);
 				write(gather.val().title,contents,link);
 				users.forEach(user=>{
@@ -240,6 +241,19 @@ function loadGatherUp(id){
 			}catch(TypeError){
 				write("Error",[{text:"Error loading event."}]);
 			}
+		});
+	});
+}
+
+function loadEventBoard(id){
+	write("Return to Event",null,null,"loadGatherUp('"+id+"');");
+	firebase.database().ref("gatherups/"+id+"/board").once("value",posts=>{
+		if(posts.val()==null){
+			write("No Posts",[{text:"This event has no posts."}]);
+		}
+		posts.forEach(post=>{
+			var postinner=[{text:post.val().content},{text:post.val().author}];
+			write(post.val().title,postinner);
 		});
 	});
 }
