@@ -184,15 +184,16 @@ function loadGatherUp(id){
 	back.push("loadGatherUp('"+id+"');");
 	clear();
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
-		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(member){
+		firebase.database().ref("gatherups/"+id+"/members/").once("value",function(users){
 			try{
+				var member=users.val()[uid]||null;
 				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveGatherUp('"+id+"');}"}];
-				if(member.val()==null){
+				if(member==null){
 					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
 				}else{
 					link.unshift({text:"Edit Info",href:"editGatherUp('"+id+"');"});
 				}
-				var value=member.val();
+				var value=member;
 				var date="";
 				if(gather.val().date!=null){
 					date="0".repeat(2-(new Date(gather.val().date).getMonth()+1).toString().length)+(new Date(gather.val().date).getMonth()+1);
@@ -216,17 +217,26 @@ function loadGatherUp(id){
 				if(Notification.permission!="granted"&&Notification.permission!="denied"){
 					extra="<button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
-				if(member.val()!=null){
+				if(member!=null){
 					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 					contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes before the event"+extra});
 				}
 				if(gather.val().location!=null){
 					contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></div>"});
 				}
-				if(navigator.share&&member.val()!=null){
+				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
+				write("Members",[{html:"<div class='members'></div>"}]);
 				write(gather.val().title,contents,link);
+				users.forEach(user=>{
+					firebase.database().ref("users/"+user.key+"/info").once("value",info=>{
+						document.querySelectorAll(".members")[0].innerHTML+=info.val().name;
+						if(Object.keys(users.val())[Object.keys(users.val()).length-1]!=user.key){
+							document.querySelectorAll(".members")[0].innerHTML+="<br />";
+						}
+					});
+				});
 			}catch(TypeError){
 				write("Error",[{text:"Error loading event."}]);
 			}
@@ -448,7 +458,9 @@ function write(title,contents,links,href){
 				body+=encode(contents[i].text);
 				body+='</span>';
 			}
-			body+='<br />';
+			if(i!=contents.length-1||links!=null){
+				body+='<br />';
+			}
 		}
 		for(var i=0;i<links.length;i++){
 			if(links[i].href!=null&&links[i].text!=null){
