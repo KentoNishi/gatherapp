@@ -155,7 +155,7 @@ function fillInAddress() {
 function newBoardPost(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var content=document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value||null;
-	if(title!=null&&content==null&&uid!=null){
+	if(title!=null&&content!=null&&uid!=null){
 		firebase.database().ref("gatherups/"+id+"/board").push({
 			title:title,
 			content:content,
