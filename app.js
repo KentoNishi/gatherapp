@@ -338,7 +338,10 @@ if(navigator.onLine){
 	//				city:city
 			});
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
-				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+				firebase.database().ref("users/"+uid+"/feed/"+window.location.hash.substr(1,window.location.hash.length)).once("value",function(info){
+					loadGatherUp(info.val().tag);
+					clearFeed(window.location.hash.substr(1,window.location.hash.length));
+				});
 			}else{
 				action("home");
 			}
