@@ -246,7 +246,6 @@ function loadGatherUp(id){
 }
 
 function loadEventBoard(id){
-	write("Return to Event",null,null,"loadGatherUp('"+id+"');");
 	firebase.database().ref("gatherups/"+id+"/board").once("value",posts=>{
 		if(posts.val()==null){
 			write("No Posts",[{text:"This event has no posts."}]);
@@ -255,6 +254,7 @@ function loadEventBoard(id){
 			var postinner=[{text:post.val().content},{text:post.val().author}];
 			write(post.val().title,postinner);
 		});
+		write("Return to Event",null,null,"loadGatherUp('"+id+"');");
 	});
 }
 
