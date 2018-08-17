@@ -350,7 +350,7 @@ if(navigator.onLine){
 }
 
 $(window).on('hashchange', function() {
-	id(uid!=null){
+	if(uid!=null){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 		}
