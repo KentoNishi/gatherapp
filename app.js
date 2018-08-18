@@ -294,6 +294,7 @@ function loadEventBoard(id){
 		if(posts.val()==null){
 			write("No Posts",[{text:"This event has no posts."}]);
 		}
+		var i=0;
 		reverse(posts).forEach(post=>{
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",function(name){
 				var postinner=[{text:post.val().content},{text:name.val().name}];
@@ -302,10 +303,11 @@ function loadEventBoard(id){
 					links.push({text:"Edit",href:"editPost('"+id+"','"+post.key+"');"});
 				}
 				write(post.val().title,postinner,links);
-				if(post.key==Object.keys(posts.val())[Object.keys(posts.val()).length-1]){
+				if(Object.keys(posts.val()).length-1==i){
 					write("New Post",null,null,"newPost('"+id+"');");
 					write("Return to Event",null,null,"loadGatherUp('"+id+"');");
 				}
+				i++;
 			});
 		});
 	});
