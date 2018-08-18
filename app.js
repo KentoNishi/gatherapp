@@ -293,6 +293,8 @@ function loadEventBoard(id){
 	firebase.database().ref("gatherups/"+id+"/board").once("value",posts=>{
 		if(posts.val()==null){
 			write("No Posts",[{text:"This event has no posts."}]);
+			write("New Post",null,null,"newPost('"+id+"');");
+			write("Return to Event",null,null,"loadGatherUp('"+id+"');");
 		}
 		var i=0;
 		reverse(posts).forEach(post=>{
