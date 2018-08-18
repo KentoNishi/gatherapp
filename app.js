@@ -278,22 +278,10 @@ if(navigator.onLine){
 			name = me.displayName;
 			pic = me.photoURL;
 			me.getIdToken().then(function(userToken) {
-			});/*
-			$.get("https://ipinfo.io", function(response) {
-	//				city=response.city+", "+response.country;
-				lat=parseFloat(response.loc.split(",")[0]);
-				lng=parseFloat(response.loc.split(",")[1]);
-				city=response.city+", "+response.country;
-			}, "jsonp").then(function(){
-				geolocation();
-			}).catch(function(){
-				geolocation();
-			});*/
+			});
 			firebase.database().ref("users/"+uid+"/info").update({
 				name:name,
-	//				search:name.toLowerCase().replace(/ /g,""),
 				pic:pic
-	//				city:city
 			});
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
