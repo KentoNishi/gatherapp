@@ -11,7 +11,6 @@ firebase.initializeApp(config);
 var uid = "";
 var name = "";
 var pic = "";
-//var city="";
 var lat;
 var lng;
 var worker;
@@ -42,94 +41,38 @@ function clearFeed(id){
 	});
 }
 
-//http://jsfiddle.net/gydL0epa/542/
-/*
-function clearFeed(){
-	firebase.database().ref("users/"+uid+"/feed").remove().then(function(){
-		feed();
-	});
-}
-*/
-
-/*
-function sendFeed(path,title,content){
-	firebase.database().ref("users/"+path+"/feed").push().update({
-		title:title,
-		content:content
-	});
-}
-*/
-
-function start(){/*
-	clear();
-	write("New Group",null,null,"newGroup();");
-	write("Find Groups",null,null,"findGroups();");
-	write("My Groups",null,null,"myGroups();");*/
+function start(){
 	requestGatherUp();
 }
 
 
 var map;
 function requestGatherUp(id,title,loc,date,place){
-//	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
-/*
-        var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
-
-        autocomplete.addListener('place_changed', fillInAddress);
-function fillInAddress() {
-	console.log(autocomplete.getPlace());
-}
-*/
-		clear();
-		var contents=[];
-		var extra="";
-//		if(permission.state!="granted"){
-//			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
-//		}
-		contents.push({html:""+extra+"<div class='inputs'>"});
-		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
-		contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
-		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
-		contents.push({html:"<input type='datetime-local'></input>"});
-		contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
-		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
-		write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
-		autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
-		google.maps.event.addListener(autocomplete, 'place_changed', function () {
-			if(autocomplete.getPlace().formatted_address.split(",").length>3){
-				document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
-				document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
-			}else{
-				alert("You must choose a valid location.");
-			}
-		});/*
-		if(place!=null){
+	clear();
+	var contents=[];
+	var extra="";
+	contents.push({html:""+extra+"<div class='inputs'>"});
+	contents.push({html:"<input placeholder='Title' onclick=''></input>"});
+	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
+	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
+	contents.push({html:"<input type='datetime-local'></input>"});
+	contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
+	contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
+	write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
+	autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
+	google.maps.event.addListener(autocomplete, 'place_changed', function () {
+		if(autocomplete.getPlace().formatted_address.split(",").length>3){
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+place+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
-		}*/
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
-		if(date!=null){
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+		}else{
+			alert("You must choose a valid location.");
 		}
-		/*
-		map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 15,
-			center: {lat:lat,lng:lng}
-		});
-		var marker = new google.maps.Marker({
-			position: {lat:lat,lng:lng},
-			map: map,
-			draggable:true
-		});
-		google.maps.event.addListener(marker, 'dragend', function(evt){
-			map.panTo(marker.getPosition());
-			moveMapView(evt.latLng.lat(),evt.latLng.lng());
-		});
-		moveMapView(lat,lng,true);*/
-	//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
-
-//	});
+	});
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
+	if(date!=null){
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
+	}
 }
 
 var autocomplete;
@@ -149,17 +92,14 @@ function saveGatherUp(id){
 
 function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
-//		var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
-//	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	if(date!=null){
-		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
+		date=new Date(new Date(date).getTime());
 	}
 	if(title!=null&&title!=""){
 		var key=id||firebase.database().ref("gatherups/").push().key;
 		var info={
 			title:title,
-//				gps:gps,
 			date:date
 		}
 		if(autocomplete.getPlace()!=null){
@@ -331,22 +271,10 @@ if(navigator.onLine){
 			name = me.displayName;
 			pic = me.photoURL;
 			me.getIdToken().then(function(userToken) {
-			});/*
-			$.get("https://ipinfo.io", function(response) {
-	//				city=response.city+", "+response.country;
-				lat=parseFloat(response.loc.split(",")[0]);
-				lng=parseFloat(response.loc.split(",")[1]);
-				city=response.city+", "+response.country;
-			}, "jsonp").then(function(){
-				geolocation();
-			}).catch(function(){
-				geolocation();
-			});*/
+			});
 			firebase.database().ref("users/"+uid+"/info").update({
 				name:name,
-	//				search:name.toLowerCase().replace(/ /g,""),
 				pic:pic
-	//				city:city
 			});
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
@@ -391,10 +319,7 @@ function offerNotifications(id){
 
 function urlBase64ToUint8Array(base64String) {
 	const padding = '='.repeat((4 - base64String.length % 4) % 4);
-	const base64 = (base64String + padding)
-	.replace(/\-/g, '+')
-	.replace(/_/g, '/')
-	;
+	const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
 	const rawData = window.atob(base64);
 	return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
@@ -403,7 +328,6 @@ function action(act) {
 	window.location.hash="";
 	if(uid!=""){
 		if (act == "menu") {
-		//	menu();
 			back.push("loadGatherUps()");
 			loadGatherUps();
 		} else if (act == "add") {
