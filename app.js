@@ -14,7 +14,7 @@ var pic = "";
 var lat;
 var lng;
 var worker;
-var back=["feed()"];
+var back=["feed()","feed()"];
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
