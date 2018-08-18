@@ -132,47 +132,6 @@ function fillInAddress() {
 //	});
 }
 
-function newPost(id,key,title,content){
-//	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
-/*
-        var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
-
-        autocomplete.addListener('place_changed', fillInAddress);
-function fillInAddress() {
-	console.log(autocomplete.getPlace());
-}
-*/
-	clear();
-	var contents=[];
-	contents.push({html:"<div class='inputs'>"});
-	contents.push({html:"<input placeholder='Title' onclick=''></input>"});
-	contents.push({html:"<textarea style='height:16vh;'></textarea>"});
-	contents.push({html:"</div>"});
-	contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>"+(key==null?"Publish":"Save")+"</button>"});
-	write((key==null?"New":"Edit"+" Post"),contents,[{href:"loadEventBoard('"+id+"'"+(key!=null?(",'"+key+"'"):"")+");",text:"Cancel"}]);
-	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
-	document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value=content||null;
-}
-
-function newBoardPost(id,key){
-	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
-	var content=document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value||null;
-	if(title!=null&&content!=null&&uid!=null){
-		if(key==null){
-			key=firebase.database().ref("gatherups/"+id+"/board/").push().key;
-		}
-		firebase.database().ref("gatherups/"+id+"/board/"+key).update({
-			title:title,
-			content:content,
-			author:uid
-		}).then(function(){
-			loadEventBoard(id);
-		});
-	}else{
-		alert("You have not completed all required fields.");
-	}
-}
-
 var autocomplete;
 function editGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
@@ -268,9 +227,6 @@ function loadGatherUp(id){
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				if(member!=null){
-					write("Event Board",null,null,"loadEventBoard('"+id+"');");
-				}
 				write("Members",[{html:"<span class='members'></span>"}]);
 				write(gather.val().title,contents,link);
 				users.forEach(user=>{
@@ -285,39 +241,6 @@ function loadGatherUp(id){
 				write("Error",[{text:"Error loading event."}]);
 			}
 		});
-	});
-}
-
-function loadEventBoard(id){
-	clear();
-	firebase.database().ref("gatherups/"+id+"/board").once("value",posts=>{
-		if(posts.val()==null){
-			write("No Posts",[{text:"This event has no posts."}]);
-			write("New Post",null,null,"newPost('"+id+"');");
-			write("Return to Event",null,null,"loadGatherUp('"+id+"');");
-		}
-		var i=0;
-		reverse(posts).forEach(post=>{
-			firebase.database().ref("users/"+post.val().author+"/info").once("value",function(name){
-				var postinner=[{text:post.val().content},{text:name.val().name}];
-				var links=[];
-				if(post.val().author==uid){
-					links.push({text:"Edit",href:"editPost('"+id+"','"+post.key+"');"});
-				}
-				write(post.val().title,postinner,links);
-				if(Object.keys(posts.val()).length-1==i){
-					write("New Post",null,null,"newPost('"+id+"');");
-					write("Return to Event",null,null,"loadGatherUp('"+id+"');");
-				}
-				i++;
-			});
-		});
-	});
-}
-
-function editPost(id,key){
-	firebase.database().ref("gatherups/"+id+"/board/"+key).once("value",function(info){
-		newPost(id,key,info.val().title,info.val().content);
 	});
 }
 
