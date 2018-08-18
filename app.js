@@ -132,7 +132,7 @@ function fillInAddress() {
 //	});
 }
 
-function newPost(id){
+function newPost(id,key,title,content){
 //	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
 /*
         var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
@@ -142,21 +142,26 @@ function fillInAddress() {
 	console.log(autocomplete.getPlace());
 }
 */
-		clear();
-		var contents=[];
-		contents.push({html:"<div class='inputs'>"});
-		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
-		contents.push({html:"<textarea style='height:16vh;'></textarea>"});
-		contents.push({html:"</div>"});
-		contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>Publish</button>"});
-		write("New Post",contents,[{href:"loadGatherUp('"+id+"');",text:"Cancel"}]);
+	clear();
+	var contents=[];
+	contents.push({html:"<div class='inputs'>"});
+	contents.push({html:"<input placeholder='Title' onclick=''></input>"});
+	contents.push({html:"<textarea style='height:16vh;'></textarea>"});
+	contents.push({html:"</div>"});
+	contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>Publish</button>"});
+	write((key==null?"New":"Edit"+" Post"),contents,[{href:"loadEventBoard('"+id+"'"+(key!=null?(",'"+key+"'"):"")+");",text:"Cancel"}]);
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
+	document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value=content||null;
 }
 
-function newBoardPost(id){
+function newBoardPost(id,key){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var content=document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value||null;
 	if(title!=null&&content!=null&&uid!=null){
-		firebase.database().ref("gatherups/"+id+"/board").push({
+		if(key==null){
+			key=firebase.database().ref("gatherups/"+id+"/board/").push().key;
+		}
+		firebase.database().ref("gatherups/"+id+"/board/"+key).update({
 			title:title,
 			content:content,
 			author:uid
@@ -294,7 +299,7 @@ function loadEventBoard(id){
 				var postinner=[{text:post.val().content},{text:name.val().name}];
 				var links=[];
 				if(post.val().author==uid){
-					links.push({text:"Edit",href:"editPost('"+id+"');"});
+					links.push({text:"Edit",href:"editPost('"+id+"','"+post.key+"');"});
 				}
 				write(post.val().title,postinner,links);
 				if(post.key==Object.keys(posts.val())[Object.keys(posts.val()).length-1]){
@@ -306,8 +311,10 @@ function loadEventBoard(id){
 	});
 }
 
-function editPost(id){
-	alert("Cannot edit post.");
+function editPost(id,key){
+	firebase.database().ref("gatherups/"+id+"/board/"+key).once("value",function(info){
+		newPost(id,key,info.val().title,info.val().content);
+	});
 }
 
 function saveReminderTime(id){
