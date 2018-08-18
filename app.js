@@ -14,12 +14,13 @@ var pic = "";
 var lat;
 var lng;
 var worker;
-var back=["feed()","feed()"];
+var back=["loadGatherUps();","loadGatherUps();"];
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
 	clear();
+	write("Notification History",[{text:"View your most recent notifications."}],null,"feed();");
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
@@ -27,24 +28,25 @@ function feed(){
 	clear();
 	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
 		if(notifications.val()==null){
-			write("Welcome!",[{text:"Welcome to GatherApp, "+name+"!"}]);
+			write("Welcome!",[{text:"You have no recent notifications."}]);
 		}
 		notifications.forEach(function(notification){
-			write(notification.val().title,[{text:notification.val().content}],[{text:"Dismiss",href:"clearFeed('"+notification.key+"');event.stopPropagation();"}],"loadGatherUp('"+notification.val().tag+"');");
+			write(notification.val().title,[{text:notification.val().content}],null,"loadGatherUp('"+notification.val().tag+"');");
 		});
 	});
 }
 
+/*
 function clearFeed(id){
 	firebase.database().ref("users/"+uid+"/feed/"+id).remove().then(function(){
 		feed();
 	});
 }
+*/
 
 function start(){
 	requestGatherUp();
 }
-
 
 var map;
 function requestGatherUp(id,title,loc,date,place){
@@ -328,14 +330,14 @@ function action(act) {
 	window.location.hash="";
 	if(uid!=""){
 		if (act == "menu") {
-			back.push("loadGatherUps()");
-			loadGatherUps();
+			back.push("menu();");
+			menu();
 		} else if (act == "add") {
-			back.push("start()");
+			back.push("start();");
 			start();
 		} else if (act == "home") {
-			back.push("feed()");
-			feed();
+			back.push("loadGatherUps();");
+			loadGatherUps();
 		}
 	}
 }
