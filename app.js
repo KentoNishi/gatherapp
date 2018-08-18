@@ -148,7 +148,7 @@ function fillInAddress() {
 	contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 	contents.push({html:"<textarea style='height:16vh;'></textarea>"});
 	contents.push({html:"</div>"});
-	contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>Publish</button>"});
+	contents.push({html:"<button onclick='"+"newBoardPost("+'"'+id+'"'+");"+"'>"+key==null?"Publish":"Save"+"</button>"});
 	write((key==null?"New":"Edit"+" Post"),contents,[{href:"loadEventBoard('"+id+"'"+(key!=null?(",'"+key+"'"):"")+");",text:"Cancel"}]);
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 	document.querySelectorAll(".inputs")[0].querySelectorAll("textarea")[0].value=content||null;
