@@ -96,7 +96,7 @@ function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	if(date!=null){
-		date=new Date(new Date(date).getTime());
+		date=new Date(new Date(date).getTime()).getTime();
 	}
 	if(title!=null&&title!=""){
 		var key=id||firebase.database().ref("gatherups/").push().key;
