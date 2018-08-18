@@ -11,7 +11,6 @@ firebase.initializeApp(config);
 var uid = "";
 var name = "";
 var pic = "";
-//var city="";
 var lat;
 var lng;
 var worker;
@@ -40,56 +39,21 @@ function clearFeed(id){
 	firebase.database().ref("users/"+uid+"/feed/"+id).remove().then(function(){
 		feed();
 	});
-}
 
-//http://jsfiddle.net/gydL0epa/542/
-/*
-function clearFeed(){
-	firebase.database().ref("users/"+uid+"/feed").remove().then(function(){
-		feed();
-	});
-}
-*/
 
-/*
-function sendFeed(path,title,content){
-	firebase.database().ref("users/"+path+"/feed").push().update({
-		title:title,
-		content:content
-	});
-}
-*/
-
-function start(){/*
-	clear();
-	write("New Group",null,null,"newGroup();");
-	write("Find Groups",null,null,"findGroups();");
-	write("My Groups",null,null,"myGroups();");*/
+function start(){
 	requestGatherUp();
 }
 
 
 var map;
 function requestGatherUp(id,title,loc,date,place){
-//	navigator.permissions.query({'name': 'geolocation'}).then( permission => {
-/*
-        var autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]));
-
-        autocomplete.addListener('place_changed', fillInAddress);
-function fillInAddress() {
-	console.log(autocomplete.getPlace());
-}
-*/
 		clear();
 		var contents=[];
 		var extra="";
-//		if(permission.state!="granted"){
-//			extra="<button onclick='if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{lat=pos.coords.latitude;lng=pos.coords.longitude;start();});}'>Use Precise Location</button>";
-//		}
 		contents.push({html:""+extra+"<div class='inputs'>"});
 		contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 		contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
-		//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 		contents.push({html:"<input type='datetime-local'></input>"});
 		contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
 		contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
@@ -102,34 +66,12 @@ function fillInAddress() {
 			}else{
 				alert("You must choose a valid location.");
 			}
-		});/*
-		if(place!=null){
-			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+place+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
-		}*/
+		});
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 		if(date!=null){
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
 		}
-		/*
-		map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 15,
-			center: {lat:lat,lng:lng}
-		});
-		var marker = new google.maps.Marker({
-			position: {lat:lat,lng:lng},
-			map: map,
-			draggable:true
-		});
-		google.maps.event.addListener(marker, 'dragend', function(evt){
-			map.panTo(marker.getPosition());
-			moveMapView(evt.latLng.lat(),evt.latLng.lng());
-		});
-		moveMapView(lat,lng,true);*/
-	//	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value=new Date(Date.now()-new Date().getTimezoneOffset()*60*1000+(60*60*1000*24)).toISOString().split(".")[0].slice(0,-3);
-
-//	});
 }
 
 var autocomplete;
@@ -149,17 +91,14 @@ function saveGatherUp(id){
 
 function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
-//		var loc=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value||null;
-//	var gps=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	if(date!=null){
-		date=new Date(new Date(date).getTime());//+(new Date().getTimezoneOffset()*60*1000));
+		date=new Date(new Date(date).getTime());
 	}
 	if(title!=null&&title!=""){
 		var key=id||firebase.database().ref("gatherups/").push().key;
 		var info={
 			title:title,
-//				gps:gps,
 			date:date
 		}
 		if(autocomplete.getPlace()!=null){
@@ -218,14 +157,21 @@ function loadGatherUp(id){
 					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member!=null){
-					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
-					contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes before the event"+extra});
+					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='0' class='"+id+"' ";
+					append+="onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input> ";
+					append+=" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;";
+					append+="document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> ";
+					append+="<span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;";
+					append+="document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> ";
+					contents.push({html:cb+append+"minutes before the event"+extra});
 				}
 				if(gather.val().location!=null){
-					contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></div>"});
+					var src="https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+					contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+src+"'></iframe></div>"});
 				}
 				if(navigator.share&&member!=null){
-					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
+					var text="text: 'Join '+decodeURIComponent('"+encodeURIComponent(gather.val().title)+"')+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#";
+					link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+encodeURIComponent(gather.val().title)+"')+' - GatherApp', "+text+id+"'})"});
 				}
 				write("Members",[{html:"<span class='members'></span>"}]);
 				write(gather.val().title,contents,link);
@@ -276,7 +222,8 @@ function loadGatherUps(){
 				if(gatherup.val().location!=null){
 					addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
 				}
-				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				var place={text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"};
+				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},place],null,"loadGatherUp('"+gather.key+"');");
 			});
 		});
 	});
@@ -373,7 +320,8 @@ function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
-				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
+				var vapid="BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo";
+				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(vapid)});
 			}).then(function(sub){
 				sub=JSON.parse(JSON.stringify(sub));
 				var subscr=sub;
