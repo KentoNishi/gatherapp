@@ -27,6 +27,15 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
 		});
 	});
 });
+
+exports.detectLeave = functions.database.ref(`/users/{uid}/gatherups/{id}`).onDelete((change, context) => {
+    let uid = context.params.uid;
+    let id = context.params.id;
+    let fireDB = admin.database().ref("/");
+    return fireDB.child(`/gatherups/${id}/members/${uid}`).remove();
+});
+
+
 exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -40,7 +49,7 @@ exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((cha
 		    		if(edit==="title"||edit==="date"||edit==="location"){
 			    		returns.push(fireDB.child(`/users/${uid}/feed/`).push().update({
 			    			title:change.before.val().title+" - Edited",
-			    			content:"Event "+edit+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
+			    			content:"Event "+edit.replace("date","time")+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
 			    			tag:id
 						}));
 					}else{
@@ -114,6 +123,35 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 		});
     });
 });
+
+exports.countMembersCreate = functions.database.ref(`/gatherups/{id}/members/{uid}`).onCreate((change, context) => {
+	let fireDB=admin.database().ref("/");
+	let id=context.params.id;
+	return fireDB.child(`/gatherups/${id}/members`).once("value").then(after=>{
+		var members=after.val();
+		var number=Object.keys(members).length;
+		return fireDB.child(`/gatherups/${id}/info`).update({
+			people:number
+		});	
+	});
+});
+
+exports.countMembers = functions.database.ref(`/gatherups/{id}/members/{uid}`).onDelete((change, context) => {
+	let fireDB=admin.database().ref("/");
+	let id=context.params.id;
+	return fireDB.child(`/gatherups/${id}/members`).once("value").then(after=>{
+		if(after.val()!==null){
+			var members=after.val();
+			var number=Object.keys(members).length;
+			return fireDB.child(`/gatherups/${id}/info`).update({
+				people:number
+			});	
+		}else{
+			return Promise.resolve();
+		}
+	});
+});
+
 exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -141,6 +179,7 @@ exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrit
     	return Promise.all(returns);
 	});
 });
+
 exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
     let fireDB = admin.database().ref("/");
     var time=Math.floor(new Date().getTime()/(60*1000));
