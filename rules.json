@@ -1,0 +1,39 @@
+{
+  "rules": {
+  ".read": false,
+  ".write": false,
+    "users":{
+      "$uid":{
+        "info":{
+          ".read":true,
+          ".write":"auth.uid===$uid"
+        },
+        "gatherups":{
+          ".read":"auth.uid===$uid",
+          ".write":"newData.val()===null"
+        }
+      }  
+    },
+    "gatherups":{
+      "$id":{
+        "info":{
+          ".read":true,
+          ".write":"root.child('gatherups').child($id).child('members').val()===null||(root.child('gatherups').child($id).child('members').child(auth.uid).val()!==null)"
+        },
+        "members":{
+          ".read":true,
+          ".write":false,
+        	"$uid":{
+            ".write":"auth.uid===$uid&&newData.val()!==0"
+          }
+        },
+        "board":{
+       		".read":true,
+          "$id":{
+    	      ".write":"(data.child('author').val()===auth.uid)||(newData.child('author').val()===auth.uid&&data.child('author').val()===null)"
+          }
+        }
+      }  
+    }
+  }
+}
