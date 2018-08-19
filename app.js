@@ -26,6 +26,10 @@ function menu(){
 //	
 }
 
+function alert(text){
+	confirm(text);
+}
+
 function settings(){
 	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
