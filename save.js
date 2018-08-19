@@ -19,6 +19,8 @@ var back=["loadGatherUps();","loadGatherUps();"];
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
+	back.push("menu();");
+	back=back.slice(back.length-2,back.length);
 	clear();
 	write("Settings",null,null,"settings();");
 	write("Advertise",null,null,"advertise();");
@@ -65,6 +67,8 @@ function clearFeed(id){
 */
 
 function start(){
+	back.push("start();");
+	back=back.slice(back.length-2,back.length);
 	requestGatherUp();
 }
 
@@ -162,6 +166,7 @@ function newGatherUp(id){
 
 function loadGatherUp(id){
 	back.push("loadGatherUp('"+id+"');");
+	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 		try{
@@ -223,6 +228,7 @@ function viewMembers(id){
 				if(i+1!=Object.keys(members.val()).length){
 					document.querySelectorAll(".members")[0].innerHTML+="<br />";
 				}
+			
 			});
 		});
 	});
@@ -245,6 +251,8 @@ function saveReminderTime(id){
 }
 
 function loadGatherUps(){
+	back.push("loadGatherUps();");
+	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		if(gathers.val()==null){
@@ -280,7 +288,7 @@ function joinGatherUp(id){
 
 function leaveGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/members/"+uid).remove().then(function(){
-		feed();
+		loadGatherUps();
 	});
 }
 
@@ -327,7 +335,7 @@ if(navigator.onLine){
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 			}else{
-				action("home");
+				loadGatherUps();
 			}
 		}
 	});
@@ -376,13 +384,10 @@ function action(act) {
 	window.location.hash="";
 	if(uid!=""){
 		if (act == "menu") {
-			back.push("menu();");
 			menu();
 		} else if (act == "add") {
-			back.push("start();");
 			start();
 		} else if (act == "home") {
-			back.push("loadGatherUps();");
 			loadGatherUps();
 		}
 	}
