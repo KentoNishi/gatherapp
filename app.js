@@ -26,10 +26,6 @@ function menu(){
 //	
 }
 
-function alert(text){
-	confirm(text);
-}
-
 function settings(){
 	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
@@ -79,7 +75,11 @@ function requestGatherUp(id,title,loc,date,place){
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		}else{
-			alert("You must choose a valid location.");
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="pink";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput=function(){
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="white";
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput=null;
+			};
 		}
 	});
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
@@ -110,7 +110,7 @@ function newGatherUp(id){
 	if(date!=null){
 		date=new Date(new Date(date).getTime()).getTime();
 	}
-	if(title!=null&&title!=""){
+	if(title!=null&&title!=""&&(autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
 		var key=id||firebase.database().ref("gatherups/").push().key;
 		var info={
 			title:title,
@@ -130,7 +130,11 @@ function newGatherUp(id){
 			}
 		});
 	}else{
-		alert("A title is required to schedule an event.");
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background="pink";
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput=function(){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background="white";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput=null;
+		};
 	}
 }
 
@@ -200,14 +204,18 @@ function loadGatherUp(id){
 
 function saveReminderTime(id){
 	var value=parseInt(document.querySelectorAll('input[type="number"]')[0].value||0);
-	if(!document.querySelectorAll('input[type="checkbox"]')[0].checked){
-		value=(-value);
+	if(value>0){
+		if(!document.querySelectorAll('input[type="checkbox"]')[0].checked){
+			value=(-value);
+		}
+		firebase.database().ref("gatherups/"+id+"/members").update({
+			[uid]:value
+		}).then(function(){
+			document.querySelectorAll('input[type="number"]')[0].id=value;
+		});
+	}else{
+		document.querySelectorAll("input[type=number]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=number]")[0].id));
 	}
-	firebase.database().ref("gatherups/"+id+"/members").update({
-		[uid]:value
-	}).then(function(){
-		document.querySelectorAll('input[type="number"]')[0].id=value;
-	});
 }
 
 function loadGatherUps(){
