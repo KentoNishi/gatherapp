@@ -130,10 +130,14 @@ function newGatherUp(id){
 			}
 		});
 	}else{
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background="pink";
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput=function(){
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background="white";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput=null;
+		var i=1;
+		if(title!=null&&title!=""){
+			i=0;
+		}
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].style.background="pink";
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].oninput=function(){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].style.background="white";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].oninput=null;
 		};
 	}
 }
