@@ -21,9 +21,21 @@ document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content
 function menu(){
 	clear();
 	write("Settings",null,null,"settings();");
-	write("Advertise",null,null,"alert('Coming Soon!');");
-	write("Event History",null,null,"alert('Coming Soon!');");
+	write("Advertise",null,null,"advertise();");
+	write("Event History",null,null,"history();");
 //	
+}
+
+function advertise(){
+	clear();
+	write("Coming Soon!");
+	write("Return to Menu",null,null,"menu();");
+}
+
+function history(){
+	clear();
+	write("Coming Soon!");
+	write("Return to Menu",null,null,"menu();");
 }
 
 function settings(){
