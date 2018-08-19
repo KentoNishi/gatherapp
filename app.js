@@ -334,7 +334,7 @@ if(navigator.onLine){
 
 
 $(window).on('hashchange', function() {
-	if(uid!=null){
+	if(uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 		}
