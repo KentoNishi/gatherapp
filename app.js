@@ -20,8 +20,16 @@ document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content
 
 function menu(){
 	clear();
-	write("Notification History",[{text:"View your most recent notifications."}],null,"feed();");
+	write("Settings",null,null,"settings();");
+	write("Advertise",null,null,"alert('Coming Soon!');");
+	write("Event History",null,null,"alert('Coming Soon!');");
+//	
+}
+
+function settings(){
+	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+	write("Return to Menu",null,null,"menu();");
 }
 
 function feed(){
