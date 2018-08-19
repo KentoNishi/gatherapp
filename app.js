@@ -130,15 +130,20 @@ function newGatherUp(id){
 			}
 		});
 	}else{
-		var i=1;
-		if(title!=null&&title!=""){
-			i=0;
+		if(title==null||title==""){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background="pink";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput=function(){
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background="white";
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput=null;
+			};
 		}
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].style.background="pink";
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].oninput=function(){
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].style.background="white";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[i].oninput=null;
-		};
+		if(autocomplete.getPlace()!=null&&autocomplete.getPlace().formatted_address.split(",").length<3){
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="pink";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput=function(){
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="white";
+				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput=null;
+			};
+		}
 	}
 }
 
