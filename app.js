@@ -87,6 +87,7 @@ function requestGatherUp(id,title,loc,date,place){
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		}else{
+			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="none";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="pink";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput=function(){
 				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="white";
