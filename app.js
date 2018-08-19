@@ -19,6 +19,8 @@ var back=["loadGatherUps();","loadGatherUps();"];
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
+	back.push("menu();");
+	back=back.slice(back.length-2,back.length);
 	clear();
 	write("Settings",null,null,"settings();");
 	write("Advertise",null,null,"advertise();");
@@ -65,6 +67,8 @@ function clearFeed(id){
 */
 
 function start(){
+	back.push("start();");
+	back=back.slice(back.length-2,back.length);
 	requestGatherUp();
 }
 
@@ -129,6 +133,9 @@ function newGatherUp(id){
 			title:title,
 			date:date
 		}
+		if(id!=null){
+			info.people=1;
+		}
 		if(autocomplete.getPlace()!=null){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
 			info.location=loc;
@@ -162,11 +169,12 @@ function newGatherUp(id){
 
 function loadGatherUp(id){
 	back.push("loadGatherUp('"+id+"');");
+	back=back.slice(back.length-2,back.length);
 	clear();
-	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
-		firebase.database().ref("gatherups/"+id+"/members/").once("value",function(users){
+	firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+		firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 			try{
-				var member=users.val()[uid]||null;
+				var member=me.val()||null;
 				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveGatherUp('"+id+"');}"}];
 				if(member==null){
 					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
@@ -207,19 +215,24 @@ function loadGatherUp(id){
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				write("Members",[{html:"<span class='members'></span>"}]);
+				write("Members",[{text:gather.val().people+" members"}]);
 				write(gather.val().title,contents,link);
-				users.forEach(user=>{
-					firebase.database().ref("users/"+user.key+"/info").once("value",info=>{
-						document.querySelectorAll(".members")[0].innerHTML+=info.val().name;
-						if(Object.keys(users.val())[Object.keys(users.val()).length-1]!=user.key){
-							document.querySelectorAll(".members")[0].innerHTML+="<br />";
-						}
-					});
-				});
 			}catch(TypeError){
-				write("Error",[{text:"Error loading event."}]);
+				write("Error",[{text:"Error loading event."}],null,"viewMembers('"+id+"');");
 			}
+		});
+	});
+}
+
+function viewMembers(id){
+	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
+		members.forEach(member=>{
+			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
+				document.querySelectorAll(".members")[0].innerHTML+=user.val().name;
+				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
+					document.querySelectorAll(".members")[0].innerHTML+="<br />";
+				}
+			});
 		});
 	});
 }
@@ -241,28 +254,31 @@ function saveReminderTime(id){
 }
 
 function loadGatherUps(){
+	back.push("loadGatherUps();");
+	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
-		if(gathers.val()==null){
+		if(gathers.val()==null){//||(id!=null&&Object.keys(gathers.val())[0]==id&&Object.keys(gathers.val()).length==1)){
 			write("No Events",[{text:"You have no scheduled events."}]);
-		}
-		gathers.forEach(gather=>{
-			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				var date="";
-				if(gatherup.val().date!=null){
-					date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
-					date+="/"+"0".repeat(2-(new Date(gatherup.val().date).getDate()).toString().length)+(new Date(gatherup.val().date).getDate());
-					date+="/"+new Date(gatherup.val().date).getFullYear();
-					date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
-					date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
-				}
-				var addr;
-				if(gatherup.val().location!=null){
-					addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
-				}
-				write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+		}else{
+			gathers.forEach(gather=>{
+				firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
+					var date="";
+					if(gatherup.val().date!=null){
+						date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
+						date+="/"+"0".repeat(2-(new Date(gatherup.val().date).getDate()).toString().length)+(new Date(gatherup.val().date).getDate());
+						date+="/"+new Date(gatherup.val().date).getFullYear();
+						date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
+						date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
+					}
+					var addr;
+					if(gatherup.val().location!=null){
+						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
+					}
+					write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				});
 			});
-		});
+		}
 	});
 }
 
@@ -275,8 +291,8 @@ function joinGatherUp(id){
 }
 
 function leaveGatherUp(id){
-	firebase.database().ref("gatherups/"+id+"/members/"+uid).remove().then(function(){
-		action("menu");
+	firebase.database().ref("users/"+uid+"/gatherups/"+id).remove().then(function(){
+		loadGatherUps();
 	});
 }
 
@@ -323,7 +339,7 @@ if(navigator.onLine){
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 			}else{
-				action("home");
+				loadGatherUps();
 			}
 		}
 	});
@@ -334,7 +350,7 @@ if(navigator.onLine){
 
 
 $(window).on('hashchange', function() {
-	if(uid!=""){
+	if(uid!=null){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 		}
@@ -372,13 +388,10 @@ function action(act) {
 	window.location.hash="";
 	if(uid!=""){
 		if (act == "menu") {
-			back.push("menu();");
 			menu();
 		} else if (act == "add") {
-			back.push("start();");
 			start();
 		} else if (act == "home") {
-			back.push("loadGatherUps();");
 			loadGatherUps();
 		}
 	}
