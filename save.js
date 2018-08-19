@@ -221,14 +221,12 @@ function loadGatherUp(id){
 
 function viewMembers(id){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
-		var i=0;
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
 				document.querySelectorAll(".members")[0].innerHTML+=user.val().name;
-				if(i+1!=Object.keys(members.val()).length){
+				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
 					document.querySelectorAll(".members")[0].innerHTML+="<br />";
 				}
-			
 			});
 		});
 	});
