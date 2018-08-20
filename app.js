@@ -140,13 +140,7 @@ function newGatherUp(id){
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
 			if(id==null){
 				firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
-					if(id==null){
-						firebase.database().ref("gatherups/"+key+"/stats").update({people:1}).then(function(){
-							loadGatherUp(key);
-						});
-					}else{
-						loadGatherUp(key);
-					}
+					loadGatherUp(key);
 				});
 			}else{
 				loadGatherUp(key);
