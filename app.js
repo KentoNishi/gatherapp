@@ -225,6 +225,7 @@ function loadGatherUp(id){
 
 function viewMembers(id){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
+		clear();
 		write("Members",[{html:"<span class='members'></span>"}]);
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
