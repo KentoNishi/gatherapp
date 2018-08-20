@@ -144,6 +144,8 @@ function newGatherUp(id){
 						firebase.database().ref("gatherups/"+key+"/stats").update({people:1}).then(function(){
 							loadGatherUp(key);
 						});
+					}else{
+						loadGatherUp(key);
 					}
 				});
 			}else{
