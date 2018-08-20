@@ -176,14 +176,18 @@ exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrit
 	    		}
     		}));
     	});
-    	return Promise.all(returns);
-	}).then(function(){
-		if(new Date().getTime()+(60*1000)>new Date(change.after.val()).getTime()){
-			var time=Math.ceil((new Date(change.after.val()).getTime()));
-			return fireDB.child(`/tasks/${time}`).update({[id]:0});
-		}else{
-			return Promise.resolve();	
-		}
+    	return Promise.all(returns).then(function(){
+			if(change.after.val()!==null){
+				if(new Date().getTime()+(60*1000)>new Date(change.after.val()).getTime()){
+					var time=Math.ceil((new Date(change.after.val()).getTime()));
+					return fireDB.child(`/tasks/${time}`).update({[id]:0});
+				}else{
+					return Promise.resolve();	
+				}
+			}else{
+				return Promise.resolve();
+			}
+		});
 	});
 });
 
