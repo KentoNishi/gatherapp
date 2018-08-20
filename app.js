@@ -133,7 +133,7 @@ function newGatherUp(id){
 			title:title,
 			date:date
 		}
-		if(id!=null){
+		if(id==null){
 			info.people=1;
 		}
 		if(autocomplete.getPlace()!=null){
