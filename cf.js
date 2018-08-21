@@ -22,9 +22,11 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
     			});
     			return Promise.all(returns);
 			}else{
-				return Promise.resolve();	
+				return Promise.resolve();
 			}
 		});
+	}).then(function(){
+		return fireDB.child(`users/${uid}/feed/${id}`).remove();
 	});
 });
 
@@ -199,5 +201,24 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 		return Promise.all(returns).then(function(){
 			return fireDB.child(`/notifications/${time}`).remove();
 		});
+	});
+});
+
+
+exports.min_task = functions.pubsub.topic('min-tick').onPublish((e) => {
+	let fireDB=admin.database().ref("/");
+	var time=Math.floor(new Date().getTime()/(60*1000));
+	return fireDB.child(`/tasks/${time}`).once(`value`).then(events => {
+		var promises=[];
+		events.forEach(event=>{
+			promises.push(fireDB.child(`gatherups/`+event.key+"/members").once("value").then(members=>{
+				var returns=[];
+				members.forEach(member=>{
+					returns.push(fireDB.child(`gatherups/`+event.key+"/members/").update({[member.key]:0}));
+				});
+				return Promise.all(returns);
+			}));
+		});
+		return Promise.all(promises);
 	});
 });
