@@ -172,7 +172,12 @@ function loadGatherUp(id){
 		firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 			firebase.database().ref("gatherups/"+id+"/stats").once("value",function(stats){
 				try{
-					var member=me.val()||null;
+					var member;
+					if(me.val()!==0){
+						member=me.val()||null;
+					}else{
+						member=me.val();
+					}
 					var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveGatherUp('"+id+"');}"}];
 					if(member==null){
 						link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
@@ -203,9 +208,11 @@ function loadGatherUp(id){
 					if(Notification.permission!="granted"&&Notification.permission!="denied"){
 						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 					}
-					if(member!=null){
+					if(member!=null&&member!=0){
 						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 						contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes before the event"+extra});
+					}else{
+						contents.push({html:"<span style='color:green;'>Completed Event</span>"});
 					}
 					if(gather.val().location!=null){
 						contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></div>"});
