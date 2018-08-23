@@ -90,7 +90,7 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
     			var time=Math.ceil((new Date(date).getTime()-change.before.val()*1000*60)/(60*1000)).toString();
 			    return fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
 			    	time=Math.ceil((new Date(date).getTime()-change.after.val()*1000*60)/(60*1000)).toString();
-			    	if(change.after.val()!==null&&change.after.val()>=0){
+			    	if(change.after.val()!==null&&change.after.val()>0){
 				    	return fireDB.child(`/notifications/${time}/${id}/`).update({
 				    		[uid]:change.after.val()
 				   		});
@@ -125,7 +125,7 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 	});
 });
 
-exports.countMembersCreate = functions.database.ref(`/gatherups/{id}/members/{uid}`).onCreate((change, context) => {
+exports.countMembersCrseate = functions.database.ref(`/gatherups/{id}/members/{uid}`).onCreate((change, context) => {
 	let fireDB=admin.database().ref("/");
 	let id=context.params.id;
 	return fireDB.child(`/gatherups/${id}/members`).once("value").then(after=>{
@@ -153,6 +153,30 @@ exports.countMembers = functions.database.ref(`/gatherups/{id}/members/{uid}`).o
 	});
 });
 
+exports.setTask = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
+	let fireDB=change.after.ref.root;
+	let id=context.params.id;
+	let date=change.after.val();
+	if(date!==null&&new Date(date).getTime()>Date.now()){
+		return fireDB.child("tasks/"+Math.ceil((new Date(change.after.val()).getTime())/(60*1000))).update({
+			[id]:0
+		}).then(function(){
+			if(change.before.val()!==null&&new Date(change.before.val()).getTime()!==null){
+				return fireDB.child("tasks/"+Math.ceil((new Date(change.before.val()).getTime())/(60*1000))+"/"+id).remove();
+			}else{
+				return Promise.resolve();
+			}
+		});
+	}else{
+			if(change.before.val()!==null&&new Date(change.before.val()).getTime()!==null){
+				return fireDB.child("tasks/"+Math.ceil((new Date(change.before.val()).getTime())/(60*1000))+"/"+id).remove();
+			}else{
+				return Promise.resolve();
+			}
+	}
+});
+
+
 exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -165,7 +189,7 @@ exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrit
     		returns.push(fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
 				if(date!==null&&new Date(new Date(date).getTime()-(member.val()*1000*60)).getTime()>new Date().getTime()){
 					time=Math.ceil((new Date(change.after.val()).getTime()-(member.val()*1000*60))/(1000*60));
-					if(member.val()>=0){
+					if(member.val()>0){
 						return fireDB.child(`/notifications/${time}/${id}/`).update({
 					    	[uid]:member.val()
 					    });
@@ -192,7 +216,11 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 				var promises=[];
 				alert.forEach(user=>{
 					var uid=user.key;
-					var info={title:gather.val().title+" - Event",content:(gather.val().location!==null?(gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"unknown location")+", in "+user.val()+" minutes.",tag:id};
+					var info={
+						title:gather.val().title+" - Event",
+						content:((gather.val().location!==null&&gather.val().location!==undefined)?(gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"unknown location")+", in "+user.val()+" minutes.",
+						tag:id
+					};
 					promises.push(fireDB.child(`/users/${uid}/feed/`).push().update(info));
 				});
 				return Promise.all(promises);
@@ -203,7 +231,6 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 		});
 	});
 });
-
 
 exports.min_task = functions.pubsub.topic('min-tick').onPublish((e) => {
 	let fireDB=admin.database().ref("/");
@@ -219,6 +246,8 @@ exports.min_task = functions.pubsub.topic('min-tick').onPublish((e) => {
 				return Promise.all(returns);
 			}));
 		});
-		return Promise.all(promises);
+		return Promise.all(promises).then(function(){
+			return fireDB.child(`/tasks/${time}`).remove();
+		});
 	});
 });
