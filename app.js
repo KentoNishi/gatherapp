@@ -269,11 +269,15 @@ function loadGatherUps(){
 	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
-		if(gathers.val()==null){//||(id!=null&&Object.keys(gathers.val())[0]==id&&Object.keys(gathers.val()).length==1)){
-			write("No Events",[{text:"You have no scheduled events."}]);
-		}else{
-			gathers.forEach(gather=>{
-				firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
+		write("No Events",[{text:"You have no scheduled events."}]);
+		var cleared=false;
+		gathers.forEach(gather=>{
+			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
+				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()>new Date().getTime()){
+					if(!cleared){
+						clear();
+						cleared=true;
+					}
 					var date="";
 					if(gatherup.val().date!=null){
 						date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
@@ -287,9 +291,9 @@ function loadGatherUps(){
 						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
 					}
 					write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
-				});
+				}
 			});
-		}
+		});
 	});
 }
 
