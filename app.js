@@ -35,9 +35,39 @@ function advertise(){
 }
 
 function history(){
+	back.push("history();");
+	back=back.slice(back.length-2,back.length);
 	clear();
-	write("Coming Soon!");
-	write("Return to Menu",null,null,"menu();");
+	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
+		write("No Events",[{text:"You have no scheduled events."}]);
+		var cleared=false;
+		gathers.forEach(gather=>{
+			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
+				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()<new Date().getTime()){
+					if(!cleared){
+						clear();
+						cleared=true;
+					}
+					var date="";
+					if(gatherup.val().date!=null){
+						date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
+						date+="/"+"0".repeat(2-(new Date(gatherup.val().date).getDate()).toString().length)+(new Date(gatherup.val().date).getDate());
+						date+="/"+new Date(gatherup.val().date).getFullYear();
+						date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
+						date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
+					}
+					var addr;
+					if(gatherup.val().location!=null){
+						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
+					}
+					write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+				}
+				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
+					write("Return to Menu",null,null,"menu();");
+				}
+			});
+		});
+	});
 }
 
 function settings(){
@@ -273,7 +303,7 @@ function loadGatherUps(){
 		var cleared=false;
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()>new Date().getTime()){
+				if((gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()>new Date().getTime())||gatherup.val().date==null){
 					if(!cleared){
 						clear();
 						cleared=true;
