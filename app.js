@@ -299,7 +299,7 @@ function loadGatherUps(){
 	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
-		write("No Events",[{text:"You have no scheduled events."}]);
+		write("No Events",[{text:"You have no upcoming events."}]);
 		var cleared=false;
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
