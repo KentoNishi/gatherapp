@@ -252,7 +252,7 @@ function loadGatherUp(id){
 					if(new Date(gather.val().date).getTime()+(gather.val().duration*60*1000)<new Date().getTime()){
 						contents.push({html:"<span style='color:green;'>Completed Event</span>"});
 					}else if(new Date(gather.val().date).getTime()<new Date().getTime()){
-						contents.push({html:"<span style='color:red;'>Ongoing Event</span>"});
+						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
 					if(gather.val().location!=null){
 						contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></div>"});
