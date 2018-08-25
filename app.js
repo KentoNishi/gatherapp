@@ -112,7 +112,7 @@ function requestGatherUp(id,title,loc,date,place,duration){
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
-	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?parseInt(duration.split(":")[0]):2)+"'></input>"+" hours <input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?parseInt(duration.split(":")[1]):0)+"'></input> minutes"});
+	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?parseInt(duration.split(":")[0]):2)+"'></input>"+" hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' value='"+(duration!=null?parseInt(duration.split(":")[1]):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
 	contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
@@ -156,7 +156,7 @@ function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	var duration="2:0";
-	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0){
+	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0&&(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)+":"+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)!="0:0")){
 		duration=parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)+":"+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
 	}
 	if(date!=null){
