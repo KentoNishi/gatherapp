@@ -234,6 +234,7 @@ function loadGatherUp(id){
 						addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
 					}
 					var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+					contents.push({text:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+"h"+"0".repeat(2-(gather.val().duration%60).toString().length)+(gather.val().duration%60)+"m"):"Unknown Duration"});
 					var check="checked";
 					if(value<0){
 						value=(-value);
@@ -259,7 +260,6 @@ function loadGatherUp(id){
 					if(navigator.share&&member!=null){
 						link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 					}
-					contents.push({html:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+":"+"0".repeat(2-(gather.val().duration%60).toString().length)+(gather.val().duration%60)+" long event"):"Unknown Duration"});
 					write("Members",[{text:(stats.val()!=null?stats.val().people:1)+" members"}],null,"viewMembers('"+id+"');");
 					write(gather.val().title,contents,link);
 				}catch(TypeError){
