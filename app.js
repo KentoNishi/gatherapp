@@ -310,6 +310,7 @@ function loadGatherUps(){
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		write("No Events",[{text:"You have no upcoming events."}]);
 		var cleared=false;
+		var writes=[];
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
 				if((gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)>new Date().getTime())||gatherup.val().date==null){
@@ -334,7 +335,13 @@ function loadGatherUps(){
 					if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()<new Date().getTime()){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
-					write(gatherup.val().title,contents,null,"loadGatherUp('"+gather.key+"');");
+					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
+					if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
+						var pushes=writes.sort((a,b)=>{return b.date-a.date});
+						pushes.forEach(push=>{
+							write(push.title,push.contents,push.links,push.href);
+						});
+					}
 				}
 			});
 		});
