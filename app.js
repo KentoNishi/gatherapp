@@ -346,7 +346,7 @@ function loadGatherUps(){
 					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-					var pushes=writes.sort((a,b)=>{return b.date-a.date});
+					var pushes=writes.sort((a,b)=>{return (b.date-a.date)||Infinity});
 					pushes.forEach(push=>{
 						write(push.title,push.contents,push.links,push.href);
 					});
