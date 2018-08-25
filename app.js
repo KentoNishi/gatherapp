@@ -112,7 +112,7 @@ function requestGatherUp(id,title,loc,date,place,duration){
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
-	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?parseInt(duration.split(":")[0]):2)+"'></input>"+" hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' value='"+(duration!=null?parseInt(duration.split(":")[1]):0)+"'></input> minutes"});
+	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?(duration%60):2)+"'></input>"+" hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' value='"+(duration!=null?(duration-(Math.floor(duration/60)*60)):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
 	contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
@@ -155,9 +155,9 @@ function saveGatherUp(id){
 function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
-	var duration="2:0";
+	var duration="120";
 	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)<60){
-		duration=parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)+":"+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
+		duration=(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)*60)+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
 	}
 	if(date!=null){
 		date=new Date(new Date(date).getTime()).getTime();
@@ -257,7 +257,7 @@ function loadGatherUp(id){
 					if(navigator.share&&member!=null){
 						link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 					}
-					contents.push({html:gather.val().duration!=null?(gather.val().duration.split(":")[0]+":"+"0".repeat(2-gather.val().duration.split(":")[1].length)+gather.val().duration.split(":")[1]+" long event"):"Unknown Duration"});
+					contents.push({html:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+":"+"0".repeat(2-(gather.val().duration-Math.floor(gather.val().duration/60)).toString().length)+(gather.val().duration-Math.floor(gather.val().duration/60))):"Unknown Duration"});
 					write("Members",[{text:(stats.val()!=null?stats.val().people:1)+" members"}],null,"viewMembers('"+id+"');");
 					write(gather.val().title,contents,link);
 				}catch(TypeError){
