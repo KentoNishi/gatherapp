@@ -156,7 +156,7 @@ function newGatherUp(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	var duration="2:0";
-	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0){
+	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)<60){
 		duration=parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)+":"+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
 	}
 	if(date!=null){
