@@ -353,7 +353,7 @@ function loadGatherUps(){
 					pushes.forEach(push=>{
 						write(push.title,push.contents,push.links,push.href);
 					});
-					var completes=comps.sort((a,b)=>{return (a.date-b.date)});
+					var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
 					completes.forEach(push=>{
 						write(push.title,push.contents,push.links,push.href);
 					});
