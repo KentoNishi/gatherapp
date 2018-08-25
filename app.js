@@ -331,8 +331,10 @@ function loadGatherUps(){
 					}
 					var contents=[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
 					if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()<new Date().getTime()){
-						contents.push({html:"<span style='color:red;'>Ongoing Event</span>"});
+						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
+					var gather=gatherup;
+					contents.push({text:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+"h"+(gather.val().duration%60)+"m Long"):"Unknown Duration"});
 					write(gatherup.val().title,contents,null,"loadGatherUp('"+gather.key+"');");
 				}
 			});
