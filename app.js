@@ -250,7 +250,7 @@ function loadGatherUp(id){
 						contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes early"+extra});
 					}
 					if(new Date(gather.val().date).getTime()+(gather.val().duration*60*1000)<new Date().getTime()){
-						contents.push({html:"<span style='color:green;'>Completed Event</span>"});
+						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
 					}else if(new Date(gather.val().date).getTime()<new Date().getTime()){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
