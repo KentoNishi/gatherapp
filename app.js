@@ -62,12 +62,13 @@ function history(){
 						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
 					}
 					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
-					if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-						var pushes=writes.sort((a,b)=>{return a.date-b.date});
-						pushes.forEach(push=>{
-							write(push.title,push.contents,push.links,push.href);
-						});
-					}				}
+				}
+				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
+					var pushes=writes.sort((a,b)=>{return a.date-b.date});
+					pushes.forEach(push=>{
+						write(push.title,push.contents,push.links,push.href);
+					});
+				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
 					write("Return to Menu",null,null,"menu();");
 				}
@@ -342,12 +343,12 @@ function loadGatherUps(){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
 					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
-					if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-						var pushes=writes.sort((a,b)=>{return b.date-a.date});
-						pushes.forEach(push=>{
-							write(push.title,push.contents,push.links,push.href);
-						});
-					}
+				}
+				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
+					var pushes=writes.sort((a,b)=>{return b.date-a.date});
+					pushes.forEach(push=>{
+						write(push.title,push.contents,push.links,push.href);
+					});
 				}
 			});
 		});
