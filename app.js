@@ -419,16 +419,16 @@ function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
-				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
-			}).then(function(sub){
-				sub=JSON.parse(JSON.stringify(sub));
-				var subscr=sub;
-				var key=sub.keys.auth;
-				subscr.keys.auth=null;
-				return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
-					if(id!=null){
-						loadGatherUp(id);
-					}
+				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")}).then(function(sub){
+					sub=JSON.parse(JSON.stringify(sub));
+					var subscr=sub;
+					var key=sub.keys.auth;
+					subscr.keys.auth=null;
+					return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
+						if(id!=null){
+							loadGatherUp(id);
+						}
+					});
 				});
 			});
 		 }
