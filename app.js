@@ -61,6 +61,7 @@ function history(){
 					if(gatherup.val().location!=null){
 						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
 					}
+					var contents=[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
 					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
