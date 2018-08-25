@@ -175,7 +175,7 @@ function newGatherUp(id){
 		}
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
 			if(id==null){
-				firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
+				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
 					loadGatherUp(key);
 				});
 			}else{
@@ -425,7 +425,7 @@ function offerNotifications(id){
 				var subscr=sub;
 				var key=sub.keys.auth;
 				subscr.keys.auth=null;
-				firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
+				return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
 					if(id!=null){
 						loadGatherUp(id);
 					}
