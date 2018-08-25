@@ -43,7 +43,7 @@ function history(){
 		var cleared=false;
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()<new Date().getTime()){
+				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)<new Date().getTime()){
 					if(!cleared){
 						clear();
 						cleared=true;
