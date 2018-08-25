@@ -41,6 +41,7 @@ function history(){
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		write("No Events",[{text:"You have no completed events."}]);
 		var cleared=false;
+		var writes=[];
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
 				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)<new Date().getTime()){
@@ -60,8 +61,13 @@ function history(){
 					if(gatherup.val().location!=null){
 						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
 					}
-					write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
-				}
+					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
+					if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
+						var pushes=writes.sort((a,b)=>{return a.date-b.date});
+						pushes.forEach(push=>{
+							write(push.title,push.contents,push.links,push.href);
+						});
+					}				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
 					write("Return to Menu",null,null,"menu();");
 				}
