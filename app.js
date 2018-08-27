@@ -22,7 +22,7 @@ function menu(){
 	back.push("menu();");
 	back=back.slice(back.length-2,back.length);
 	clear();
-	write("Settings",null,null,"settings();");
+	settings();
 	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"history();");
 //	
@@ -79,9 +79,7 @@ function history(){
 }
 
 function settings(){
-	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
-	write("Return to Menu",null,null,"menu();");
 }
 
 function feed(){
