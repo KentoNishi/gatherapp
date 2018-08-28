@@ -30,7 +30,7 @@
 			<a onclick="action(this.id);" id="menu" class="icon left" href="#">
 			<img alt="menu" src="/gatherapp/menu.svg" />
 			</a>
-			<a onclick="action(this.id);" id="home" style="position:fixed;z-index:2;top:1vh;left:25%;height:6vh;width:50%;text-align:center;font-size:4vh;text-decoration: none;color:orange;background-color:black;border-radius:6vh;" href="#">
+			<a onclick="action(this.id);" id="home" style="animation-name: glow; animation-duration: 4s; animation-iteration-count: infinite;position:fixed;z-index:2;top:1vh;left:25%;height:6vh;width:50%;text-align:center;font-size:4vh;text-decoration: none;color:orange;background-color:black;border-radius:6vh;" href="#">
 			<!--<img alt="home"style="height:8vh;width:100%;" src="/gatherapp/logo.png" />-->
 				<strong style="position:relative;top:0.5vh;">GATHERAPP</strong>
 			</a>
@@ -46,6 +46,17 @@
 		</div>
 	</body>
 	<style>
+	@-webkit-keyframes glow{
+		0%   {background-color:black; }
+		50%  {background-color:gray; }
+		100% {background-color:black; }
+	}
+
+	@keyframes glow{
+		0%   {background-color:black; }
+		50%  {background-color:gray; }
+		100% {background-color:black; }
+	}
 	body{
 		overflow:hidden;
 	}
