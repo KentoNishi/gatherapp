@@ -103,9 +103,12 @@ function clearFeed(id){
 */
 
 function start(){
-	back.push("start();");
-	back=back.slice(back.length-2,back.length);
-	requestGatherUp();
+	if(back[back.length-2]!="start();"){
+		back.push("start();");
+		back=back.slice(back.length-2,back.length);
+	}else{
+		requestGatherUp();
+	}
 }
 
 var map;
@@ -314,7 +317,7 @@ function loadGatherUps(){
 	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
-		write("No Events",[{text:"You have no upcoming events."}]);
+		write("No Events",[{text:"You can schedule a new event with the + icon at the top right."}]);
 		var cleared=false;
 		var writes=[];
 		var comps=[];
