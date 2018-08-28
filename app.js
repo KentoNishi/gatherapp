@@ -103,11 +103,11 @@ function clearFeed(id){
 */
 
 function start(){
-	if(back[back.length-2]!="start();"){
+	if(back[back.length-1]!="start();"){
 		back.push("start();");
 		back=back.slice(back.length-2,back.length);
-	}else{
 		requestGatherUp();
+	}else{
 	}
 }
 
