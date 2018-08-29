@@ -294,7 +294,7 @@ function loadEventBoard(id){
 			clear();
 			var contents=["<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>"];
 			if(posts.val()==null){
-				write("Event Board",[{html:"<div class='board' style='text-align:left;max-height:60vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message' oninput='autogrow(this);' style='height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+				write("Event Board",[{html:"<div class='board' style='text-align:left;max-height:60vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
 				document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
 			}else{
 				contents=[];
