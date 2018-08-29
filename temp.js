@@ -4,7 +4,7 @@ firebase.database().ref("gatherups/"+id+"/board/").push().update({
 });
 var onced=false;
 firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{
-	if(!onced||(document.querySelectorAll(".board").length>0&&posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].content!=null&&posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].title!=null)){
+	if(!onced||(document.querySelectorAll(".board").length>0&&posts.val()[Object.keys(posts.val())[0]].content!=null&&posts.val()[Object.keys(posts.val())[0]].title!=null)){
 		clear();
 		var contents=[];
 		reverse(posts).forEach(post=>{
