@@ -281,11 +281,13 @@ function loadGatherUp(id){
 }
 
 function newBoardPost(id){
-	firebase.database().ref("gatherups/"+id+"/board/").push().update({
-		content:document.querySelectorAll("textarea")[0].value,
-		author:uid,
-		date:new Date().getTime()
-	});
+	if(document.querySelectorAll("textarea")[0].value!=null&&document.querySelectorAll("textarea")[0].value.replace(/ /g,"").length>0){
+		firebase.database().ref("gatherups/"+id+"/board/").push().update({
+			content:document.querySelectorAll("textarea")[0].value,
+			author:uid,
+			date:new Date().getTime()
+		});
+	}
 }
 
 function loadEventBoard(id){
