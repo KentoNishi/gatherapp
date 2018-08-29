@@ -284,7 +284,7 @@ function newBoardPost(id){
 	firebase.database().ref("gatherups/"+id+"/board/").push().update({
 		content:document.querySelectorAll("textarea")[0].value,
 		author:uid
-		date:Date.now()
+		date:new Date().getTime()
 	});
 }
 
