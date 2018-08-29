@@ -284,6 +284,7 @@ function newBoardPost(id){
 	firebase.database().ref("gatherups/"+id+"/board/").push().update({
 		content:document.querySelectorAll("textarea")[0].value,
 		author:uid
+		date:Date.now()
 	});
 }
 
@@ -300,7 +301,7 @@ function loadEventBoard(id){
 				contents=[];
 			}
 			var i=0;
-			reverse(posts).forEach(post=>{
+			keys(posts).forEach(post=>{
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
 					contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div style='text-align:center;'><strong>"+encode(author.val().name)+"</strong></div></div>");
 					if(Object.keys(posts.val()).length-1==i){
@@ -313,6 +314,14 @@ function loadEventBoard(id){
 			});
 		}
 	});
+}
+
+function keys(obj){
+	var returns=[];
+	obj.forEach(child=>{
+		returns.push(child);
+	});
+	return returns.sort();
 }
 
 function autogrow(element) {
