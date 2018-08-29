@@ -317,6 +317,11 @@ function loadEventBoard(id){
 }
 
 function sortObj(list, key) {
+	temp=[];
+	list.forEach(item=>{
+		temp.push(item);
+	});
+	list=temp;
 	function compare(a, b) {
 		a = a.val().date;
 		b = b.val().date;
