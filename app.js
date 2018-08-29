@@ -269,6 +269,7 @@ function loadGatherUp(id){
 					if(navigator.share&&member!=null){
 						link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 					}
+					write("Event Board",null,null,"loadEventBoard('"+id+"');");
 					write("Members",[{text:(stats.val()!=null?stats.val().people:1)+" members"}],null,"viewMembers('"+id+"');");
 					write(gather.val().title,contents,link);
 				}catch(TypeError){
@@ -277,6 +278,38 @@ function loadGatherUp(id){
 			});
 		});
 	});
+}
+
+function newBoardPost(id){
+	firebase.database().ref("gatherups/"+id+"/board/").push().update({
+		content:document.querySelectorAll("textfield")[0].value,
+		author:uid
+	});
+}
+
+function loadEventBoard(id){
+	var onced=false;
+	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{
+		if(!onced||(document.querySelectorAll(".board").length>0&&posts.val()[Object.keys(posts.val())[0]].content!=null&&posts.val()[Object.keys(posts.val())[0]].title!=null)){
+			clear();
+			var contents=[];
+			reverse(posts).forEach(post=>{
+				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
+					contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0;width:fit-content;'>"+encode(post.val().content)+"<div style='text-align:center;'>"+encode(author.val().name)+"</div></div>");
+					if(post.key==Object.keys(posts.val())[Object.keys(posts.val()).length-1]){
+						write("Event Board",[{html:"<div class='board' style='text-align:left;max-height:60vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+contents.join("<br />")+"</div>"},{html:"<textarea oninput='autogrow(this);' style='height:4.5vh;max-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");'>Post</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+						document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
+					}else{
+					}
+				});
+			});
+		}
+	});
+}
+
+function autogrow(element) {
+	element.style.height = "0px";
+	element.style.height = (element.scrollHeight)+"px";
 }
 
 function viewMembers(id){
