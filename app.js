@@ -316,12 +316,21 @@ function loadEventBoard(id){
 	});
 }
 
-function keys(obj){
-	var returns=[];
-	obj.forEach(child=>{
-		returns.push(child);
-	});
-	return returns.sort();
+function sortObj(list, key) {
+	function compare(a, b) {
+		a = a.val().date;
+		b = b.val().date;
+		var type = (typeof(a) === 'string' || typeof(b) === 'string') ? 'string' : 'number';
+		var result;
+		if (type === 'string'){
+			result = a.localeCompare(b);
+		}
+		else{ 
+			result = a - b;
+		}
+		return result;
+	}
+	return list.sort(compare);
 }
 
 function autogrow(element) {
