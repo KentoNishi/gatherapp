@@ -283,7 +283,7 @@ function loadGatherUp(id){
 function newBoardPost(id){
 	firebase.database().ref("gatherups/"+id+"/board/").push().update({
 		content:document.querySelectorAll("textarea")[0].value,
-		author:uid
+		author:uid,
 		date:new Date().getTime()
 	});
 }
