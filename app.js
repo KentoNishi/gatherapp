@@ -303,7 +303,13 @@ function loadEventBoard(id){
 			}
 			var i=0;
 			posts.forEach(post=>{
-				contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>");
+				var date="";
+				date="0".repeat(2-(new Date(post.val().date).getMonth()+1).toString().length)+(new Date(post.val().date).getMonth()+1);
+				date+="/"+"0".repeat(2-(new Date(post.val().date).getDate()).toString().length)+(new Date(post.val().date).getDate());
+				date+="/"+new Date(post.val().date).getFullYear();
+				date+=", "+"0".repeat(2-(new Date(post.val().date).getHours()).toString().length)+(new Date(post.val().date).getHours());
+				date+=":"+"0".repeat(2-(new Date(post.val().date).getMinutes()).toString().length)+(new Date(post.val().date).getMinutes());
+				contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div>"+encode(date)+"</div>");
 				if(Object.keys(posts.val()).length-1==i){
 					write("Event Board",[{html:"<div class='board' style='text-align:center;max-height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='margin-top:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
