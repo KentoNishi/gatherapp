@@ -301,7 +301,7 @@ function loadEventBoard(id){
 				contents=[];
 			}
 			var i=0;
-			keys(posts).forEach(post=>{
+			sortObj(posts).forEach(post=>{
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
 					contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div style='text-align:center;'><strong>"+encode(author.val().name)+"</strong></div></div>");
 					if(Object.keys(posts.val()).length-1==i){
