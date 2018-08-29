@@ -301,41 +301,20 @@ function loadEventBoard(id){
 				contents=[];
 			}
 			var i=0;
-			sortObj(posts).forEach(post=>{
+			posts.forEach(post=>{
+				contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>");
+				if(Object.keys(posts.val()).length-1==i){
+					write("Event Board",[{html:"<div class='board' style='text-align:center;max-height:60vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
+				}else{
+					i++;
+				}
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
-					contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div style='text-align:center;'><strong>"+encode(author.val().name)+"</strong></div></div>");
-					if(Object.keys(posts.val()).length-1==i){
-						write("Event Board",[{html:"<div class='board' style='text-align:center;max-height:60vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
-						document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
-					}else{
-						i++;
-					}
+					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+author.val().name+"</strong>";
 				});
 			});
 		}
 	});
-}
-
-function sortObj(list, key) {
-	temp=[];
-	list.forEach(item=>{
-		temp.push(item);
-	});
-	list=temp;
-	function compare(a, b) {
-		a = a.val().date;
-		b = b.val().date;
-		var type = (typeof(a) === 'string' || typeof(b) === 'string') ? 'string' : 'number';
-		var result;
-		if (type === 'string'){
-			result = a.localeCompare(b);
-		}
-		else{ 
-			result = a - b;
-		}
-		return result;
-	}
-	return list.sort(compare);
 }
 
 function autogrow(element) {
