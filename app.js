@@ -317,7 +317,7 @@ function loadEventBoard(id){
 					i++;
 				}
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
-					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode(author.val().name)+"</strong>"+encode(date);;
+					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode(author.val().name)+"</strong><br />"+encode(date);;
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
 				});
 			});
