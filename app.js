@@ -242,6 +242,15 @@ function loadGatherUp(id,newuser){
 					addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
 				}
 				var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+				if(gather.val().location!=null){
+					var body="";
+					body+="<span style='font-size:4vh'>";
+					body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
+					body+=encode("View On Map");
+					body+='</a>';
+					body+='</span>';
+					contents.push({html:body+"<span class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
+				}
 				contents.push({text:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+"h"+(gather.val().duration%60)+"m Long"):"Unknown Duration"});
 				var check="checked";
 				if(value<0){
@@ -262,9 +271,6 @@ function loadGatherUp(id,newuser){
 				}else if(new Date(gather.val().date).getTime()<new Date().getTime()){
 					contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 				}
-				if(gather.val().location!=null){
-					contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></div>"});
-				}
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
@@ -278,6 +284,20 @@ function loadGatherUp(id,newuser){
 			}
 		});
 	});
+}
+
+function showMap(){
+	if(document.querySelectorAll(".maptoggle")[0].classList[1]=="hidden"){
+		document.querySelectorAll(".iframe")[0].style.display="block";
+		document.querySelectorAll(".maptoggle")[0].innerHTML=encode("Hide Map");
+		document.querySelectorAll(".maptoggle")[0].classList.remove("hidden");
+		document.querySelectorAll(".maptoggle")[0].classList.add("shown");
+	}else{
+		document.querySelectorAll(".iframe")[0].style.display="none";
+		document.querySelectorAll(".maptoggle")[0].innerHTML=encode("View On Map");
+		document.querySelectorAll(".maptoggle")[0].classList.remove("shown");
+		document.querySelectorAll(".maptoggle")[0].classList.add("hidden");
+	}
 }
 
 function newBoardPost(id){
