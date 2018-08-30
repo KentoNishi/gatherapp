@@ -293,7 +293,15 @@ function newBoardPost(id){
 function loadEventBoard(id){
 	var onced=false;
 	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{
-		if(!onced||(document.querySelectorAll(".board").length>0&&posts.val()[Object.keys(posts.val())[0]].content!=null&&posts.val()[Object.keys(posts.val())[0]].title!=null)){
+		var allclear=true;
+		var u=0;
+		posts.forEach(post=>{
+			if(allclear==true){
+				allclear=posts.val()[Object.keys(posts.val())[u]].content!=null&&posts.val()[Object.keys(posts.val())[u]].title!=null;
+			}else{
+			}
+		});
+		if(!onced||(document.querySelectorAll(".board").length>0&&allclear)){
 			clear();
 			var contents=["<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>"];
 			if(posts.val()==null){
@@ -327,7 +335,7 @@ function loadEventBoard(id){
 
 function autogrow(element) {
 	element.style.height = "5px";
-	element.style.height = (element.scrollHeight)+"px";
+	element.style.height = (element.scrollHeight+5)+"px";
 }
 
 function viewMembers(id){
