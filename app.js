@@ -209,7 +209,7 @@ function newGatherUp(id){
 	}
 }
 
-function loadGatherUp(id){
+function loadGatherUp(id,newuser){
 	back.push("loadGatherUp('"+id+"');");
 	back=back.slice(back.length-2,back.length);
 	clear();
@@ -271,7 +271,7 @@ function loadGatherUp(id){
 				if(member!=null){
 					write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				}
-				write("Members",[{text:(gather.val().people!=null?gather.val().people:1)+" members"}],null,"viewMembers('"+id+"');");
+				write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 				write(gather.val().title,contents,link);
 			}catch(TypeError){
 				write("Error",[{text:"Error loading event."}]);
@@ -419,7 +419,7 @@ function joinGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
-		loadGatherUp(id);
+		loadGatherUp(id,true);
 	});
 }
 
