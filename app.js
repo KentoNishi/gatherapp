@@ -202,7 +202,7 @@ function loadGatherUp(id,newuser){
 	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
-	firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
+		firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 			try{
 				var member;
 				if(me.val()!==0){
@@ -263,7 +263,8 @@ function loadGatherUp(id,newuser){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
 				if(member!=null){
-					write("Event Board",null,null,"loadEventBoard('"+id+"');");
+					loadEventBoard(id);
+				//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				}
 				write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 				write(gather.val().title,contents,link);
@@ -310,11 +311,15 @@ function loadEventBoard(id){
 			}
 		});
 		if(!onced||(document.querySelectorAll(".board").length>0&&allclear)){
-			clear();
+//			clear();
 			var contents=["<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>"];
 			if(posts.val()==null){
-				write("",[{html:"<div class='board' style='text-align:left;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
-			}else{
+				if(document.querySelectorAll(".board").length>0){
+					document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
+				}else{
+					write("",[{html:"<div class='board' style='text-align:left;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+				}
+				}else{
 				contents=[];
 			}
 			var i=0;
