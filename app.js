@@ -267,7 +267,7 @@ function loadGatherUp(id,newuser,callback){
 						write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 						write(gather.val().title,contents,link);
 						if(callback!=null){
-							document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;
+							callback();
 						}
 					});
 				//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
@@ -275,7 +275,7 @@ function loadGatherUp(id,newuser,callback){
 					write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 					write(gather.val().title,contents,link);
 					if(callback!=null){
-						document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;
+						callback();
 					}
 				}
 			}catch(TypeError){
@@ -286,7 +286,7 @@ function loadGatherUp(id,newuser,callback){
 }
 
 function loadBoard(id){
-	loadGatherUp(id,null,true);
+	loadGatherUp(id,null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].scrollHeight+innerHeight;});
 }
 
 function showMap(){
