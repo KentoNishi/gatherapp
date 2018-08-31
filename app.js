@@ -164,7 +164,8 @@ function newGatherUp(id){
 		var info={
 			title:title,
 			date:date,
-			duration:duration
+			duration:duration,
+			editor:uid
 		}
 		if(autocomplete.getPlace()!=null){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
