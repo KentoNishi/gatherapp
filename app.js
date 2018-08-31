@@ -299,6 +299,8 @@ function newBoardPost(id){
 			content:document.querySelectorAll("textarea")[0].value,
 			author:uid,
 			date:new Date().getTime()
+		}).then(function(){
+			document.querySelectorAll("textarea")[0].value=null;
 		});
 	}
 }
@@ -351,7 +353,7 @@ function loadEventBoard(id,callback){
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
 				});
 			});
-			if(exist<1){
+			if(exist==0){
 				callback();
 			}
 		}
