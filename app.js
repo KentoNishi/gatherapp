@@ -332,7 +332,11 @@ function loadEventBoard(id){
 				date+=":"+"0".repeat(2-(new Date(post.val().date).getMinutes()).toString().length)+(new Date(post.val().date).getMinutes());
 				contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>");
 				if(Object.keys(posts.val()).length-1==i){
-					write(null,[{html:"<div class='board' style='text-align:center;max-height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+					if(document.querySelectorAll(".board").length>0){
+						document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
+					}else{
+						write("",[{html:"<div class='board' style='text-align:left;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+					}
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight*innerHeight;
 				}else{
 					i++;
