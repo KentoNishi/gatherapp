@@ -516,7 +516,7 @@ if(navigator.onLine){
 						loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 					}else{
 						if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
-							loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;});
+							loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=Math.pow(innerHeight,2);});
 						}
 					}
 				}
@@ -538,7 +538,7 @@ $(window).on('hashchange', function() {
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 			}else{
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
-					loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;});
+					loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=Math.pow(innerHeight,2);});
 				}
 			}
 		}
