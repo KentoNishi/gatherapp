@@ -197,7 +197,7 @@ function newGatherUp(id){
 	}
 }
 
-function loadGatherUp(id,newuser){
+function loadGatherUp(id,newuser,callback){
 	back.push("loadGatherUp('"+id+"');");
 	back=back.slice(back.length-2,back.length);
 	clear();
@@ -263,14 +263,21 @@ function loadGatherUp(id,newuser){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
 				if(member!=null){
-					loadEventBoard(id,function(){
+					loadEventBoard(id,function(callback){
 						write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 						write(gather.val().title,contents,link);
+						if(callback!=null){
+								callback();
+						}
 					});
 				//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				}else{
 					write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 					write(gather.val().title,contents,link);
+							console.log(callback);
+					if(callback!=null){
+						callback();
+					}
 				}
 			}catch(TypeError){
 				write("Error",[{text:"Error loading event."}]);
@@ -353,7 +360,7 @@ function loadEventBoard(id,callback){
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
 				});
 			});
-			if(exist==0){
+			if(exist==0&&callback!=null){
 				callback();
 			}
 		}
@@ -509,7 +516,7 @@ if(navigator.onLine){
 						loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 					}else{
 						if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
-							loadEventBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+							loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;});
 						}
 					}
 				}
@@ -531,7 +538,7 @@ $(window).on('hashchange', function() {
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 			}else{
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
-					loadEventBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+					loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;});
 				}
 			}
 		}
