@@ -286,7 +286,7 @@ function loadGatherUp(id,newuser,callback){
 }
 
 function loadBoard(id){
-	loadEventBoard(id,null,true);
+	loadGatherUp(id,null,true);
 }
 
 function showMap(){
