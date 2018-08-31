@@ -263,7 +263,7 @@ function loadGatherUp(id,newuser,callback){
 					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
 				if(member!=null){
-					loadEventBoard(id,function(callback){
+					loadEventBoard(id,function(){
 						write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 						write(gather.val().title,contents,link);
 						if(callback!=null){
