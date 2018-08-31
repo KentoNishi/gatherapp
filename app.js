@@ -267,16 +267,15 @@ function loadGatherUp(id,newuser,callback){
 						write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 						write(gather.val().title,contents,link);
 						if(callback!=null){
-								callback();
+							document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;
 						}
 					});
 				//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				}else{
 					write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
 					write(gather.val().title,contents,link);
-							console.log(callback);
 					if(callback!=null){
-						callback();
+						document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].innerHeight+innerHeight;
 					}
 				}
 			}catch(TypeError){
@@ -284,6 +283,10 @@ function loadGatherUp(id,newuser,callback){
 			}
 		});
 	});
+}
+
+function loadBoard(id){
+	loadEventBoard(id,null,true);
 }
 
 function showMap(){
@@ -516,7 +519,7 @@ if(navigator.onLine){
 						loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 					}else{
 						if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
-							loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=Math.pow(innerHeight,2);});
+							loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 						}
 					}
 				}
@@ -538,7 +541,7 @@ $(window).on('hashchange', function() {
 				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
 			}else{
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
-					loadGatherUp(window.location.hash.substr(1,window.location.hash.length).split("/")[0],null,function(){document.querySelectorAll(".body")[0].scrollTop=Math.pow(innerHeight,2);});
+					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 				}
 			}
 		}
