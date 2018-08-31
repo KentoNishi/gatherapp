@@ -82,18 +82,6 @@ function settings(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
-function feed(){
-	clear();
-	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
-		if(notifications.val()==null){
-			write("Welcome!",[{text:"You have no recent notifications."}]);
-		}
-		notifications.forEach(function(notification){
-			write(notification.val().title,[{text:notification.val().content}],null,"loadGatherUp('"+notification.val().tag+"');");
-		});
-	});
-}
-
 /*
 function clearFeed(id){
 	firebase.database().ref("users/"+uid+"/feed/"+id).remove().then(function(){
