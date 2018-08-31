@@ -486,7 +486,15 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(window.location.hash.substr(1,window.location.hash.length)!=""){
-				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+				if(window.location.hash.substr(1,window.location.hash.length)!=""){
+					if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
+						loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+					}else{
+						if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
+							loadEventBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+						}
+					}
+				}
 			}else{
 				loadGatherUps();
 			}
@@ -501,7 +509,13 @@ if(navigator.onLine){
 $(window).on('hashchange', function() {
 	if(uid!=null){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
-			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
+				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
+			}else{
+				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
+					loadEventBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+				}
+			}
 		}
 	}
 });
