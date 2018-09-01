@@ -271,12 +271,9 @@ function loadGatherUp(id,newuser,callback){
 						}
 						write("Members",conts,links);
 						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
-							viewMembers(id);
+							viewMembers(id,callback||null);
 						}
 						write(gather.val().title,contents,link);
-						if(callback!=null){
-							callback();
-						}
 					});
 				//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				}else{
@@ -288,10 +285,7 @@ function loadGatherUp(id,newuser,callback){
 					write("Members",conts,links);
 					write(gather.val().title,contents,link);
 					if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
-						viewMembers(id);
-					}
-					if(callback!=null){
-						callback();
+						viewMembers(id,callback||null);
 					}
 				}
 			}catch(TypeError){
@@ -392,7 +386,7 @@ function autogrow(element) {
 	element.style.height = (element.scrollHeight+5)+"px";
 }
 
-function viewMembers(id){
+function viewMembers(id,callback){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
 //		clear();
 		document.querySelectorAll(".members")[0].innerHTML+="<br />";
@@ -403,6 +397,7 @@ function viewMembers(id){
 				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
 					document.querySelectorAll(".members")[0].innerHTML+="<br />";
 				}else{
+					callback();
 				}
 			});
 		});
