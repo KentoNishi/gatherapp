@@ -267,7 +267,7 @@ function loadGatherUp(id,newuser,callback){
 						var links=null;
 						var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
 						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
-							conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View Members</a>");
+							conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View All Members</a>");
 						}
 						write("Members",conts,links);
 						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
