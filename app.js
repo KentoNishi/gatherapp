@@ -397,7 +397,9 @@ function viewMembers(id,callback){
 				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
 					document.querySelectorAll(".members")[0].innerHTML+="<br />";
 				}else{
-					callback();
+					if(callback!=null){
+						callback();
+					}
 				}
 			});
 		});
