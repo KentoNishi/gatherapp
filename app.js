@@ -359,7 +359,7 @@ function loadEventBoard(id,callback){
 					i++;
 				}
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
-					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode((author.val()!=null?author.val().name:"Unknown User"))+"</strong><br />"+encode(date);;
+					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode((author.val().name!=null?author.val().name:"Unknown User"))+"</strong><br />"+encode(date);;
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
 				});
 			});
