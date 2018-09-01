@@ -463,7 +463,7 @@ function loadGatherUps(){
 					}
 				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-					var pushes=writes.sort((a,b)=>{return (a.date-b.date)});
+					var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
 					pushes.forEach(push=>{
 						write(push.title,push.contents,push.links,push.href);
 					});
