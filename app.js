@@ -383,7 +383,7 @@ function loadEventBoard(id,callback){
 
 function autogrow(element) {
 	element.style.height = "5px";
-	element.style.height = (element.scrollHeight+5)+"px";
+	element.style.height = (element.scrollHeight)+"px";
 }
 
 function viewMembers(id,callback){
