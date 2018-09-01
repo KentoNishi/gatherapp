@@ -270,7 +270,7 @@ function loadGatherUp(id,newuser,callback){
 							conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View All Members</a>");
 						}
 						write("Members",conts,links);
-						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
+						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<=5){
 							viewMembers(id,callback||null);
 						}
 						write(gather.val().title,contents,link);
@@ -284,7 +284,7 @@ function loadGatherUp(id,newuser,callback){
 					}
 					write("Members",conts,links);
 					write(gather.val().title,contents,link);
-					if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
+					if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<=5){
 						viewMembers(id,callback||null);
 					}
 				}
