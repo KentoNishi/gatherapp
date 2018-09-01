@@ -264,7 +264,15 @@ function loadGatherUp(id,newuser,callback){
 				}
 				if(member!=null){
 					loadEventBoard(id,function(){
-						write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
+						var links=null;
+						var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
+						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
+							conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View Members</a>");
+						}
+						write("Members",conts,links);
+						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
+							viewMembers(id);
+						}
 						write(gather.val().title,contents,link);
 						if(callback!=null){
 							callback();
@@ -272,8 +280,16 @@ function loadGatherUp(id,newuser,callback){
 					});
 				//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
 				}else{
-					write("Members",[{text:(gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)+" members"}],null,"viewMembers('"+id+"');");
+					var links=null;
+					var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
+					if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
+						conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View Members</a>");
+					}
+					write("Members",conts,links);
 					write(gather.val().title,contents,link);
+					if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<5){
+						viewMembers(id);
+					}
 					if(callback!=null){
 						callback();
 					}
@@ -378,11 +394,12 @@ function autogrow(element) {
 
 function viewMembers(id){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
-		clear();
-		write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
+//		clear();
+		document.querySelectorAll(".members")[0].innerHTML+="<br />";
+		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
-				document.querySelectorAll(".members")[0].innerHTML+=user.val().name;
+				document.querySelectorAll(".members")[0].innerHTML+=encode(user.val().name);
 				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
 					document.querySelectorAll(".members")[0].innerHTML+="<br />";
 				}else{
