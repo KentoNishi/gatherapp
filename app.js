@@ -311,6 +311,7 @@ function newBoardPost(id){
 			date:new Date().getTime()
 		}).then(function(){
 			document.querySelectorAll("textarea")[0].value=null;
+			autogrow(document.querySelectorAll("textarea")[0]);
 		});
 	}
 }
