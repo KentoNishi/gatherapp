@@ -345,7 +345,7 @@ function loadEventBoard(id,callback){
 				if(document.querySelectorAll(".board").length>0){
 					document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
 				}else{
-					write("Event Board",[{html:"<div class='board' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}]);
+					write("Event Board",[{html:"<div class='board' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:30vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}]);
 					document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
 				}
 				}else{
@@ -364,7 +364,7 @@ function loadEventBoard(id,callback){
 					if(document.querySelectorAll(".board").length>0){
 						document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
 					}else{
-						write("Event Board",[{html:"<div class='board' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}]);
+						write("Event Board",[{html:"<div class='board' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:30vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>"}]);
 						document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
 					}
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight*innerHeight;
