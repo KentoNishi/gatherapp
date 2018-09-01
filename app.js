@@ -302,7 +302,7 @@ function loadGatherUp(id,newuser,callback){
 }
 
 function loadBoard(id){
-	loadGatherUp(id,null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].scrollHeight+innerHeight;});
+	loadGatherUp(id,null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].scrollHeight+Math.pow(innerHeight,2);});
 }
 
 function showMap(){
