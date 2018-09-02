@@ -199,13 +199,13 @@ function newGatherUp(id){
 
 function loadGatherUp(id,newuser,callback){
 	var onced=false;
-	if(!onced||document.querySelectorAll(".event"+id).length>0){
-		onced=true;
-		back.push("loadGatherUp('"+id+"');");
-		back=back.slice(back.length-2,back.length);
-		clear();
-		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
-			firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
+	back.push("loadGatherUp('"+id+"');");
+	back=back.slice(back.length-2,back.length);
+	firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+		firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
+			if(!onced||document.querySelectorAll(".event"+id).length>0){
+				onced=true;
+				clear();
 				try{
 					var member;
 					if(me.val()!==0){
@@ -297,9 +297,9 @@ function loadGatherUp(id,newuser,callback){
 				}catch(TypeError){
 					write("Error",[{text:"Error loading event."}]);
 				}
-			});
+			}
 		});
-	}
+	});
 }
 
 function loadBoard(id){
