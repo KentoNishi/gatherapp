@@ -454,7 +454,6 @@ function saveReminderTime(id){
 function loadGatherUps(){
 	back.push("loadGatherUps();");
 	back=back.slice(back.length-2,back.length);
-	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		write("No Events",[{text:"You can schedule a new event with the + icon at the top right."}]);
 		var cleared=false;
@@ -465,6 +464,7 @@ function loadGatherUps(){
 		writes.__proto__.push=function(item){
 			this[this.length]=item;
 			if(this.length==Object.keys(gathers.val()).length){
+				clear();
 				var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
 				pushes.forEach(push=>{
 					write(push.title,push.contents,push.links,push.href);
