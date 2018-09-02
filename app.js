@@ -479,7 +479,7 @@ function loadGatherUps(){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 						comps.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 					}else{
-						writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
+						writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()||Infinity});
 					}
 					var edits=[];
 					if(gather.val().info!=null){
