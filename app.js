@@ -341,7 +341,7 @@ function loadEventBoard(id,callback){
 		var u=0;
 		posts.forEach(post=>{
 			if(allclear==true){
-				allclear=posts.val()[Object.keys(posts.val())[u]].content!=null&&posts.val()[Object.keys(posts.val())[u]].title!=null;
+				allclear=posts.val()[Object.keys(posts.val())[u]].content!=null&&posts.val()[Object.keys(posts.val())[u]].author!=null&&posts.val()[Object.keys(posts.val())[u]].date!=null;
 			}else{
 			}
 		});
