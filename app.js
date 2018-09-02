@@ -237,7 +237,7 @@ function loadGatherUp(id,newuser,callback){
 					}
 					var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
 					if(gather.val().location!=null){
-						var body="<span class='event"+id+"'></span>";
+						var body="";
 						body+="<span style='font-size:4vh'>";
 						body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
 						body+=encode("View On Map");
@@ -251,7 +251,7 @@ function loadGatherUp(id,newuser,callback){
 						value=(-value);
 						check="";
 					}
-					var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+					var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
 					var extra="";
 					if(Notification.permission!="granted"&&Notification.permission!="denied"){
 						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
