@@ -472,7 +472,7 @@ function loadGatherUps(){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>Event Edited</span>"});
 					}
 					if(gather.val().board!=null){
-						contents.push({html:"<span style='color:blue;font-size:4vh;'>New Board Post</span>"});
+						contents.push({html:"<span style='color:blue;font-size:4vh;'>New Post</span>"});
 					}
 				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
