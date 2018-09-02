@@ -210,6 +210,9 @@ function loadGatherUp(id,newuser,callback){
 				}else{
 					member=me.val();
 				}
+				firebase.database().ref("users/"+uid+"/gatherups").update({
+					id:1
+				});
 				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveGatherUp('"+id+"');}"}];
 				if(member==null){
 					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
