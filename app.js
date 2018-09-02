@@ -331,10 +331,12 @@ function newBoardPost(id){
 
 function loadEventBoard(id,callback){
 	var onced=false;
-	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{
-		if(document.querySelectorAll(".board").length>0){
-			firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
-		}
+	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{	
+		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").on("value",val=>{
+			if(document.querySelectorAll(".board"+id).length>0){
+				firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
+			}
+		});
 		var allclear=true;
 		var u=0;
 		posts.forEach(post=>{
@@ -343,13 +345,13 @@ function loadEventBoard(id,callback){
 			}else{
 			}
 		});
-		var exist=document.querySelectorAll(".board").length;
-		if(!onced||(document.querySelectorAll(".board").length>0&&allclear)){
+		var exist=document.querySelectorAll(".board"+id).length;
+		if(!onced||(document.querySelectorAll(".board"+id).length>0&&allclear)){
 //			clear();
 			var contents=["<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>"];
 			if(posts.val()==null){
-				if(document.querySelectorAll(".board").length>0){
-					document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
+				if(document.querySelectorAll(".board"+id).length>0){
+					document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
 				}else{
 					write("Event Board",[{html:joincontents(contents,id)}]);
 					document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
@@ -367,19 +369,19 @@ function loadEventBoard(id,callback){
 				date+=":"+"0".repeat(2-(new Date(post.val().date).getMinutes()).toString().length)+(new Date(post.val().date).getMinutes());
 				contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>");
 				if(Object.keys(posts.val()).length-1==i){
-					if(document.querySelectorAll(".board").length>0){
-						document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
+					if(document.querySelectorAll(".board"+id).length>0){
+						document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
 					}else{
 						write("Event Board",[{html:joincontents(contents,id)}]);
 						document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
 					}
-					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight*innerHeight;
+					document.querySelectorAll(".board"+id)[0].scrollTop=document.querySelectorAll(".board"+id)[0].scrollHeight*innerHeight;
 				}else{
 					i++;
 				}
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
 					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode((author.val().name!=null?author.val().name:"Unknown User"))+"</strong><br />"+encode(date);
-					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
+					document.querySelectorAll(".board"+id)[0].scrollTop=document.querySelectorAll(".board"+id)[0].scrollHeight;
 				});
 			});
 			if(exist==0&&callback!=null){
@@ -390,7 +392,7 @@ function loadEventBoard(id,callback){
 }
 
 function joincontents(contents,id){
-	return "<div class='board' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>";
+	return "<div class='board"+id+"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>";
 }
 
 function autogrow(element) {
