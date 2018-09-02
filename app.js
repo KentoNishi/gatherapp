@@ -672,7 +672,9 @@ function write(title,contents,links,href){
 }
 
 function encode(e){
-	return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0)+";"}).replace(/&amp;quot;/g,'"');
+	var txt = document.createElement("textarea");
+	txt.innerText = e;
+	return txt.innerHTML;
 }
 
 function decode(html) {
