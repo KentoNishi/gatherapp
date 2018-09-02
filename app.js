@@ -202,7 +202,7 @@ function newGatherUp(id){
 }
 
 function loadGatherUp(id,newuser,callback){
-		if(!newuser){
+	if(!newuser){
 		var onced=false;
 		back.push("loadGatherUp('"+id+"');");
 		back=back.slice(back.length-2,back.length);
