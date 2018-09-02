@@ -471,7 +471,7 @@ function loadGatherUps(){
 					if(gather.val()==2){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>Event Edited</span>"});
 					}
-					if(gather.val()==2){
+					if(gather.val()==3){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>New Board Post</span>"});
 					}
 				}
