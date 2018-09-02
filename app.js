@@ -130,7 +130,7 @@ function newGatherUp(id){
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
 			if(id==null){
 				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
-					loadGatherUp(key,true);
+					loadGatherUp(key);
 					//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 				});
 			}else{
@@ -162,10 +162,7 @@ function loadGatherUp(id,newuser,callback){
 	back=back.slice(back.length-2,back.length);
 	firebase.database().ref("gatherups/"+id+"/info").off("value");
 	firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
-		if(newuser){
-			document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+id+"'></span>";
-		}
-		if(!newuser&&(document.querySelectorAll(".event"+id).length>0||!onced)){
+		if(document.querySelectorAll(".event"+id).length>0||!onced){
 			clear();
 			onced=true;
 			firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
