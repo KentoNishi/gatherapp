@@ -206,6 +206,7 @@ function loadGatherUp(id,newuser,callback){
 	back.push("loadGatherUp('"+id+"');");
 	back=back.slice(back.length-2,back.length);
 	firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+		firebase.database().ref("gatherups/"+id+"/info").off("value");
 		firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
 			if(!onced||document.querySelectorAll(".event"+id).length>0){
 				onced=true;
@@ -339,7 +340,9 @@ function newBoardPost(id){
 
 function loadEventBoard(id,callback){
 	var onced=false;
-	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{	
+	firebase.database().ref("gatherups/"+id+"/board/").off("value");
+	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{
+		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").off("value");
 		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").on("value",val=>{
 			if(document.querySelectorAll(".board"+id).length>0){
 				firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
