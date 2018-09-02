@@ -129,10 +129,12 @@ function newGatherUp(id){
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
 			if(id==null){
 				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
-					loadGatherUp(key);
+					//loadGatherUp(key);
+					document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+id+"'></span>";
 				});
 			}else{
-				loadGatherUp(key);
+				//loadGatherUp(key);
+				document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+id+"'></span>";
 			}
 		});
 	}else{
