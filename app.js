@@ -34,50 +34,6 @@ function advertise(){
 	write("Return to Menu",null,null,"menu();");
 }
 
-function history(){
-	back.push("history();");
-	back=back.slice(back.length-2,back.length);
-	clear();
-	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
-		write("No Events",[{text:"You have no completed events."}]);
-		var cleared=false;
-		var writes=[];
-		gathers.forEach(gather=>{
-			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)<new Date().getTime()){
-					if(!cleared){
-						clear();
-						cleared=true;
-					}
-					var date="";
-					if(gatherup.val().date!=null){
-						date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
-						date+="/"+"0".repeat(2-(new Date(gatherup.val().date).getDate()).toString().length)+(new Date(gatherup.val().date).getDate());
-						date+="/"+new Date(gatherup.val().date).getFullYear();
-						date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
-						date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
-					}
-					var addr;
-					if(gatherup.val().location!=null){
-						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
-					}
-					var contents=[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
-					writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
-				}
-				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-					var pushes=writes.sort((a,b)=>{return a.date-b.date});
-					pushes.forEach(push=>{
-						write(push.title,push.contents,push.links,push.href);
-					});
-				}
-				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-					write("Return to Menu",null,null,"menu();");
-				}
-			});
-		});
-	});
-}
-
 function settings(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
@@ -445,8 +401,12 @@ function saveReminderTime(id){
 	}
 }
 
-function loadGatherUps(){
-	back.push("loadGatherUps();");
+function loadGatherUps(his){
+	if(his){
+		back.push("loadGatherUps(true);");
+	}else{
+		back.push("loadGatherUps();");
+	}
 	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
@@ -454,9 +414,26 @@ function loadGatherUps(){
 		var cleared=false;
 		var writes=[];
 		var comps=[];
+		eventify([writes,comps],function(){
+			console.log(Object.keys(gathers.val()).length,writes.length);
+			clear();
+			var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
+			console.log(pushes,comps);
+			pushes.forEach(push=>{
+				if(push!=null){
+					write(push.title,push.contents,push.links,push.href);
+				}
+			});
+			var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
+			completes.forEach(push=>{
+				if(push!=null){
+					write(push.title,push.contents,push.links,push.href);
+				}
+			});
+		});
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-				if((gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)>new Date().getTime())||gatherup.val().date==null){
+				if((((gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)>new Date().getTime())||gatherup.val().date==null)&&!his)||(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()+(gatherup.val().duration*60*1000)<new Date().getTime()&&his)){
 					if(!cleared){
 						clear();
 						cleared=true;
@@ -475,7 +452,7 @@ function loadGatherUps(){
 					}
 					var contents=[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
 					contents.push({text:gatherup.val().duration!=null?(Math.floor(gatherup.val().duration/60)+"h"+(gatherup.val().duration%60)+"m Long"):"Unknown Duration"});
-					if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()<new Date().getTime()){
+					if(gatherup.val().date!=null&&new Date(gatherup.val().date).getTime()<new Date().getTime()&&!his){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 						comps.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 					}else{
@@ -492,20 +469,19 @@ function loadGatherUps(){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(edits.join(", "))+"</span>"});
 					}
 				}
-				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-					var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
-					pushes.forEach(push=>{
-						write(push.title,push.contents,push.links,push.href);
-					});
-					var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
-					completes.forEach(push=>{
-						write(push.title,push.contents,push.links,push.href);
-					});
-				}
 			});
 		});
 	});
 }
+
+var eventify = function(arrays, callback) {
+	arrays.forEach(arr=>{
+		arr.push = function(e) {
+			Array.prototype.push.call(arr, e);
+			callback(arr);
+		};
+	});
+};
 
 function joinGatherUp(id){
 	firebase.database().ref("gatherups/"+id+"/members/").update({
