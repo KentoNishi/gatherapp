@@ -24,7 +24,7 @@ function menu(){
 	clear();
 	settings();
 	write("Advertise",null,null,"advertise();");
-	write("Event History",null,null,"history();");
+	write("Event History",null,null,"loadGatherUps(true);");
 //	
 }
 
