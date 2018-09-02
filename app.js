@@ -461,6 +461,9 @@ function loadGatherUps(){
 		var writes=[];
 		writes.__proto__.push=function(item){
 			this[this.length]=item;
+		};
+		writes.__proto__.push=function(item){
+			this[this.length]=item;
 			if(this.length==Object.keys(gathers.val()).length){
 				var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
 				pushes.forEach(push=>{
