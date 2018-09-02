@@ -459,6 +459,19 @@ function loadGatherUps(){
 		write("No Events",[{text:"You can schedule a new event with the + icon at the top right."}]);
 		var cleared=false;
 		var writes=[];
+		writes.__proto__.push=function(item){
+			this[this.length]=item;
+			if(this.length==Object.keys(gathers.val()).length){
+				var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
+				pushes.forEach(push=>{
+					write(push.title,push.contents,push.links,push.href);
+				});
+				var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
+				completes.forEach(push=>{
+					write(push.title,push.contents,push.links,push.href);
+				});
+			}
+		};
 		var comps=[];
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
@@ -497,16 +510,6 @@ function loadGatherUps(){
 					if(edits!=""){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(edits.join(", "))+"</span>"});
 					}
-				}
-				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
-					var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
-					pushes.forEach(push=>{
-						write(push.title,push.contents,push.links,push.href);
-					});
-					var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
-					completes.forEach(push=>{
-						write(push.title,push.contents,push.links,push.href);
-					});
 				}
 			});
 		});
