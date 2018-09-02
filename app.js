@@ -332,6 +332,9 @@ function newBoardPost(id){
 function loadEventBoard(id,callback){
 	var onced=false;
 	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{
+		if(document.querySelectorAll(".board").length>0){
+			firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
+		}
 		var allclear=true;
 		var u=0;
 		posts.forEach(post=>{
