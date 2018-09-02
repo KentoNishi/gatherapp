@@ -347,6 +347,7 @@ function loadEventBoard(id,callback){
 		});
 		var exist=document.querySelectorAll(".board"+id).length;
 		if(!onced||(document.querySelectorAll(".board"+id).length>0&&allclear)){
+			onced=true;
 //			clear();
 			var contents=["<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>"];
 			if(posts.val()==null){
