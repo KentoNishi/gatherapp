@@ -415,10 +415,13 @@ function loadGatherUps(his){
 		var writes=[];
 		var comps=[];
 		eventify([writes,comps],function(){
-			console.log(Object.keys(gathers.val()).length,writes.length);
+		//	console.log(Object.keys(gathers.val()).length,writes.length);
 			clear();
-			var pushes=writes.sort((a,b)=>{return (a.date-b.date)}).reverse();
-			console.log(pushes,comps);
+			var pushes=writes.sort((a,b)=>{return (a.date-b.date)});
+			if(!his){
+				pushes=pushes.reverse();
+			}
+		//	console.log(pushes,comps);
 			pushes.forEach(push=>{
 				if(push!=null){
 					write(push.title,push.contents,push.links,push.href);
