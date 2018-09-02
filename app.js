@@ -413,6 +413,7 @@ function autogrow(element) {
 function viewMembers(id,callback){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
 //		clear();
+		document.querySelectorAll(".members")[0].innerHTML="";
 		document.querySelectorAll(".members")[0].innerHTML+="<br />";
 		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
 		members.forEach(member=>{
