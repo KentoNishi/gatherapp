@@ -215,7 +215,7 @@ function loadGatherUp(id,newuser,callback){
 					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
 				}else{
 					link.unshift({text:"Edit Info",href:"editGatherUp('"+id+"');"});
-					firebase.database().ref("users/"+uid+"/gatherups/"+id).update({
+					firebase.database().ref("users/"+uid+"/gatherups/"+id).set({
 						status:1
 					});
 				}
