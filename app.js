@@ -468,11 +468,15 @@ function loadGatherUps(){
 					}else{
 						writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 					}
+					var edits="";
 					if(gather.val().info!=null){
-						contents.push({html:"<span style='color:blue;font-size:4vh;'>Event Edited</span>"});
+						edits="Edited Info";
 					}
 					if(gather.val().board!=null){
-						contents.push({html:"<span style='color:blue;font-size:4vh;'>New Post</span>"});
+						edits+=", New Board Post";
+					}
+					if(edits!=""){
+						contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(edits)+"</span>"});
 					}
 				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
