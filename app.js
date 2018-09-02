@@ -468,10 +468,10 @@ function loadGatherUps(){
 					}else{
 						writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 					}
-					if(gather.val()==2){
+					if(gather.val().info!=null){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>Event Edited</span>"});
 					}
-					if(gather.val()==3){
+					if(gather.val().board!=null){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>New Board Post</span>"});
 					}
 				}
