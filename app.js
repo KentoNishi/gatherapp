@@ -198,15 +198,15 @@ function newGatherUp(id){
 }
 
 function loadGatherUp(id,newuser,callback){
+	var onced=false;
 	if(!onced||document.querySelectorAll(".event"+id).length>0){
+		onced=true;
 		back.push("loadGatherUp('"+id+"');");
 		back=back.slice(back.length-2,back.length);
 		clear();
-		var onced=false;
 		firebase.database().ref("gatherups/"+id+"/members/"+uid).on("value",function(me){
 			firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
 				try{
-					onced=true;
 					var member;
 					if(me.val()!==0){
 						member=me.val()||null;
