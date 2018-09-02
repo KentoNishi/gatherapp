@@ -468,15 +468,15 @@ function loadGatherUps(){
 					}else{
 						writes.push({title:gatherup.val().title,contents:contents,links:null,href:"loadGatherUp('"+gather.key+"');",date:new Date(gatherup.val().date).getTime()});
 					}
-					var edits="";
+					var edits=[];
 					if(gather.val().info!=null){
-						edits="Edited Info";
+						edits.push("Edited Info");
 					}
 					if(gather.val().board!=null){
-						edits+=", New Board Post";
+						edits.push("New Board Post");
 					}
 					if(edits!=""){
-						contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(edits)+"</span>"});
+						contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(edits.join(", "))+"</span>"});
 					}
 				}
 				if(gather.key==Object.keys(gathers.val())[Object.keys(gathers.val()).length-1]){
