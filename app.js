@@ -473,7 +473,7 @@ function loadGatherUps(){
 						edits.push("Edited Info");
 					}
 					if(gather.val().board!=null){
-						edits.push("New Board Post");
+						edits.push("New Post");
 					}
 					if(edits!=""){
 						contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(edits.join(", "))+"</span>"});
