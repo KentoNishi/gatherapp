@@ -345,7 +345,7 @@ function loadEventBoard(id,callback){
 				if(document.querySelectorAll(".board").length>0){
 					document.querySelectorAll(".board")[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
 				}else{
-					write("Event Board",[{html:joincontents(contents);}]);
+					write("Event Board",[{html:joincontents(contents)}]);
 					document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
 				}
 				}else{
@@ -372,7 +372,7 @@ function loadEventBoard(id,callback){
 					i++;
 				}
 				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
-					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode((author.val().name!=null?author.val().name:"Unknown User"))+"</strong><br />"+encode(date);;
+					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode((author.val().name!=null?author.val().name:"Unknown User"))+"</strong><br />"+encode(date);
 					document.querySelectorAll(".board")[0].scrollTop=document.querySelectorAll(".board")[0].scrollHeight;
 				});
 			});
