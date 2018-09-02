@@ -163,7 +163,6 @@ function loadGatherUp(id,newuser,callback){
 	firebase.database().ref("gatherups/"+id+"/info").off("value");
 	firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
 		if(newuser){
-			onced=true;
 			document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+id+"'></span>";
 		}
 		if(!newuser&&(document.querySelectorAll(".event"+id).length>0||!onced)){
