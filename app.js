@@ -204,8 +204,8 @@ function loadGatherUp(id,newuser,callback){
 		back.push("loadGatherUp('"+id+"');");
 		back=back.slice(back.length-2,back.length);
 		clear();
-		firebase.database().ref("gatherups/"+id+"/members/"+uid).on("value",function(me){
-			firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
+		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+			firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
 				try{
 					var member;
 					if(me.val()!==0){
