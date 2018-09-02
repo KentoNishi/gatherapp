@@ -413,18 +413,19 @@ function autogrow(element) {
 function viewMembers(id,callback){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
 //		clear();
-		document.querySelectorAll(".members")[0].innerHTML="";
-		document.querySelectorAll(".members")[0].innerHTML+="<br />";
+		var html="";
+		html+="<br />";
 		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadGatherUp('"+id+"');"}]);
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
-				document.querySelectorAll(".members")[0].innerHTML+=encode(user.val().name);
+				html+=encode(user.val().name);
 				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
-					document.querySelectorAll(".members")[0].innerHTML+="<br />";
+					html+="<br />";
 				}else{
 					if(callback!=null){
 						callback();
 					}
+					document.querySelectorAll(".members")[0].innerHTML=html;
 				}
 			});
 		});
