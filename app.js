@@ -117,6 +117,7 @@ function newGatherUp(id){
 	}
 	if(title!=null&&title!=""&&(autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
 		var key=id||firebase.database().ref("gatherups/").push().key;
+		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
 			date:date,
@@ -130,11 +131,11 @@ function newGatherUp(id){
 			if(id==null){
 				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
 					//loadGatherUp(key);
-					document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
+					//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 				});
 			}else{
 				//loadGatherUp(key);
-				document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
+				//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 			}
 		});
 	}else{
