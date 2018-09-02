@@ -331,7 +331,9 @@ function newBoardPost(id){
 
 function loadEventBoard(id,callback){
 	var onced=false;
+	firebase.database().ref("gatherups/"+id+"/board/").off("value");
 	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{	
+		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").off("value");
 		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").on("value",val=>{
 			if(document.querySelectorAll(".board"+id).length>0){
 				firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
