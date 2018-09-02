@@ -630,7 +630,7 @@ function reverse(snapshot) {
 	return reversed;
 }
 
-function write(title,contents,links,href,class){
+function write(title,contents,links,href,classlist){
 	try{
 		if(title==null&&contents==null){
 			throw("");
@@ -639,7 +639,7 @@ function write(title,contents,links,href,class){
 		contents=contents||[];
 		links=links||[];
 		if(href!=null){
-			body+='<div class="card'+(class!=null?class:"")+'" onclick="'+href+'">';
+			body+='<div class="card'+(classlist!=null?classlist:"")+'" onclick="'+href+'">';
 		}else{
 			body+='<div class="card">';
 		}
