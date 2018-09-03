@@ -25,7 +25,7 @@ function menu(){
 	settings();
 	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"loadGatherUps(true);");
-	write("Search Events",[{html:"<input class='search' placeholder='Start Typing...'></input>"},{html:"<button onclick='searchEvents();'>Search</button>"}]);
+	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"<button onclick='searchEvents();'>Search</button>"}]);
 }
 
 function searchEvents(){
