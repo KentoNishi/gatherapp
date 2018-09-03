@@ -480,6 +480,19 @@ function loadGatherUps(his){
 	});
 }
 
+function findInArray(ar, val) {
+	val=val.toLowerCase();
+	var returns=[];
+	for (var i = 0,len = ar.length; i < len; i++) {
+		if ( ar[i].title.toLowerCase().indexOf(val)>-1 ) { // strict equality test
+			returns.push(ar[i]);
+		}
+	}
+	return returns.sort((a,b)=>{
+		return a.date-b.date;
+	}).reverse();
+}
+
 var eventify = function(arrays, callback) {
 	arrays.forEach(arr=>{
 		arr.push = function(e) {
