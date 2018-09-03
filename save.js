@@ -164,7 +164,7 @@ function newEvent(id){
 					//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 				});
 			}else{
-				//loadEvent(key);
+				loadEvent(key);
 				//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 			}
 		});
@@ -186,106 +186,93 @@ function newEvent(id){
 	}
 }
 
-;;;
-
 function loadEvent(id){
 	back.push("loadEvent('"+id+"');");
-	firebase.database().ref("events/"+id+"/info").once("value",function(gather){
+	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 			clear();
 			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
 				try{
-					var member;
-					member=me.val()||null;
-					var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveEvent('"+id+"');}"}];
+					var member=me.val()||null;
+					var link=[{text:"Leave Event",
+						   href:"if(confirm('Are you sure you want to leave this event?')){"+
+						   "leaveEvent('"+id+"');}"}];
 					if(member==null){
 						link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
 					}else{
 						link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
-						firebase.database().ref("users/"+uid+"/gatherups/"+id).set({
+						firebase.database().ref("users/"+uid+"/events/"+id).set({
 							status:1
 						});
 					}
 					var value=member;
 					var date="";
-					if(gather.val().date!=null){
-						date="0".repeat(2-(new Date(gather.val().date).getMonth()+1).toString().length)+(new Date(gather.val().date).getMonth()+1);
-						date+="/"+"0".repeat(2-(new Date(gather.val().date).getDate()).toString().length)+(new Date(gather.val().date).getDate());
-						date+="/"+new Date(gather.val().date).getFullYear();
-						date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
-						date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
+					if(event.val().date!=null){
+						date=getFormattedDate(event.val().date);
 					}
 					var addr;
-					if(gather.val().location!=null){
-						addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
+					if(event.val().location!=null){
+						addr=event.val().location.name+","+
+							event.val().location.formatted_address.split(",")
+							.slice(1,event.val().location.formatted_address.split(",").length).join(",");
 					}
-					var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
-					if(gather.val().location!=null){
+					var contents=[{text:date||"Unknown Date"},
+						      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+					if(event.val().location!=null){
 						var body="";
 						body+="<span style='font-size:4vh'>";
 						body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
 						body+=encode("View On Map");
 						body+='</a>';
 						body+='</span>';
-						contents.push({html:body+"<span class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
+						contents.push({html:body+"<span class='iframe' style='display:none;'><br />"+
+							       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+
+							       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
+							       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
 					}
-					contents.push({text:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+"h"+(gather.val().duration%60)+"m Long"):"Unknown Duration"});
+					contents.push({text:event.val().duration!=null?
+						       (Math.floor(event.val().duration/60)+"h"+(event.val().duration%60)+"m Long"):"Unknown Duration"});
 					var check="checked";
 					if(value<0){
 						value=(-value);
 						check="";
 					}
-					var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+					var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
+					    " onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
 					var extra="";
 					if(Notification.permission!="granted"&&Notification.permission!="denied"){
 						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 					}
 					if(member!=null){
-						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
-						contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes early"+extra});
+						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
+						    "' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
+						    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
+						contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
+							       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
+							       ")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+
+							       ")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+
+							       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
+							       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
+							       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
+							       ")[0].id));'></span> minutes early"+extra});
 					}
-					if(new Date(gather.val().date).getTime()+(gather.val().duration*60*1000)<new Date().getTime()){
+					if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
 						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-					}else if(new Date(gather.val().date).getTime()<new Date().getTime()){
+					}else if(new Date(event.val().date).getTime()<new Date().getTime()){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
 					if(navigator.share&&member!=null){
-						link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
+						link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
+							      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
+							      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
+							      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 					}
-					if(member!=null){
-						loadEventBoard(id,function(){
-							var links=null;
-							var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
-							if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
-								conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View All Members</a>");
-							}
-							write("Members",conts,links);
-							if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<=5){
-								viewMembers(id,callback||null);
-							}
-							write(gather.val().title,contents,link);
-						});
-					//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
-					}else{
-						var links=null;
-						var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
-						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
-							conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View Members</a>");
-						}
-						write("Members",conts,links);
-						write(gather.val().title,contents,link);
-						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<=5){
-							viewMembers(id,callback||null);
-						}
-					}
+					write("Members",[{html:"<span class='members'></span>"}]);
+					write(event.val().title,contents,link);
 				}catch(TypeError){
 					write("Error",[{text:"Error loading event."}]);
 				}
 			});
 	});
-}
-
-function loadBoard(id){
-	loadEvent(id,null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].scrollHeight+Math.pow(innerHeight,2);});
 }
 
 function showMap(){
@@ -304,7 +291,7 @@ function showMap(){
 
 function newBoardPost(id){
 	if(document.querySelectorAll("textarea")[0].value!=null&&document.querySelectorAll("textarea")[0].value.replace(/ /g,"").length>0){
-		firebase.database().ref("gatherups/"+id+"/board/").push().update({
+		firebase.database().ref("events/"+id+"/board/").push().update({
 			content:document.querySelectorAll("textarea")[0].value,
 			author:uid,
 			date:new Date().getTime()
@@ -391,10 +378,13 @@ function autogrow(element) {
 }
 
 function viewMembers(id){
-	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
+	firebase.database().ref("events/"+id+"/members").once("value",function(members){
 //		clear();
 //		document.querySelectorAll(".members")[0].innerHTML+="<br />";
 		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadEvent('"+id+"');"}]);
+		Object.keys(members.val()).forEach(person=>{
+			document.querySelectorAll(".members")[0].innerHTML+="<div class='"+person+"'></div>";
+		});
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
 				document.querySelectorAll("."+member.key)[0].innerHTML=encode(user.val().name);
@@ -404,34 +394,48 @@ function viewMembers(id){
 }
 
 function saveReminderTime(id){
-	var value=parseInt(document.querySelectorAll('.reminderTime')[0].value||0);
+	var value=parseInt(document.querySelectorAll('input[type=checkbox]')[0].value||0);
 	if(value>0){
-		if(!document.querySelectorAll('.remindMe')[0].checked){
+		if(!document.querySelectorAll('input[type=checkbox]')[0].checked){
 			value=(-value);
 		}
 		firebase.database().ref("events/"+id+"/members").update({
 			[uid]:value
 		}).then(function(){
-			document.querySelectorAll('.remindMe')[0].id=value;
+			document.querySelectorAll('input[type=checkbox]')[0].id=value;
 		});
 	}else{
-		document.querySelectorAll(".reminderTime")[0].value=Math.abs(parseInt(document.querySelectorAll(".reminderTime")[0].id));
+		document.querySelectorAll("input[type=checkbox]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=checkbox]")[0].id));
 	}
 }
 
 eventify([back],function(){back=back.slice(back.length-2,back.length);});
 
-function loadEvents(history){
-	back.push("loadEvents("+(history?"true":"")+");");
+function loadEvents(inhistory){
+	back.push("loadEvents("+(inhistory?"true":"")+");");
 	clear();
 	var writes=[];
-	firebase.database().ref("users/"+uid+"/"+(history?"history":"events")).once("value",events=>{
+	firebase.database().ref("users/"+uid+"/"+(inhistory?"history":"events")).once("value",events=>{
 		if(events.val()==null){
 			write("No Events");
 		}else{
 			eventify([writes],function(){
 				if(writes.length==Object.keys(events.val()).length){
-					
+					;;;
+					var ongoing=[];
+					var future=[];
+					writes.forEach(item=>{
+						if(new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
+							if(new Date(item.date).getTime()>new Date().getTime()){
+								future.push(item);
+							}else{
+								ongoing.push(item);
+							}
+						}
+					});
+					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
+					future=future.sort((a,b)=>{return a.date-b.date;});
+					console.log(ongoing,future);
 				}
 			});
 			events.forEach(event=>{
@@ -587,7 +591,7 @@ function action(act) {
 }
 
 function clear(e){
-	document.querySelectorAll("."+e||"body")[0].innerHTML="";
+	document.querySelectorAll("."+(e||"body"))[0].innerHTML="";
 } 
 
 function reverse(snapshot) {
