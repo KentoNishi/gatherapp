@@ -25,7 +25,7 @@ function menu(){
 	settings();
 	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"loadGatherUps(true);");
-	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"Search In:<br /><input style='width:2.5vh;width:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<input style='width:2.5vh;width:2.5vh;' type='radio' name='eventtype' />Completed Events"},{html:"<button onclick='searchEvents();'>Search</button>"}]);
+	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"<span style='font-size:4vh;'>Search In:</span><br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />Completed Events"},{html:"<button onclick='searchEvents();'>Search</button>"}]);
 }
 
 function searchEvents(){
