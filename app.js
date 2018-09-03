@@ -445,7 +445,7 @@ function loadGatherUps(his,search){
 				}
 			});
 			if(search!=null){
-				write("No Results","There were no results for your search.");
+				write("No Results",[{text:"There were no results for your search."}]);
 				var results=findInArray(pushes.concat(completes),search);
 				if(results.length>0){
 					clear();
