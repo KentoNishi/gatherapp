@@ -425,8 +425,11 @@ function loadGatherUps(his,search){
 		var comps=[];
 		eventify([writes,comps],function(){
 		//	console.log(Object.keys(gathers.val()).length,writes.length);
-			clear();
 			var pushes=writes.sort((a,b)=>{return (a.date-b.date)});
+			var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
+			if(pushes.length>0||completes.length>0){
+				clear();
+			}
 			if(!his){
 				pushes=pushes.reverse();
 			}
@@ -436,14 +439,18 @@ function loadGatherUps(his,search){
 					write(push.title,push.contents,push.links,push.href);
 				}
 			});
-			var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
 			completes.forEach(push=>{
 				if(push!=null&&search==null){
 					write(push.title,push.contents,push.links,push.href);
 				}
 			});
 			if(search!=null){
-				findInArray(pushes.concat(completes),search).forEach(push=>{
+				write("No Results","There were no results for your search.");
+				var results=findInArray(pushes.concat(completes),search);
+				if(results.length>0){
+					clear();
+				}
+				results.forEach(push=>{
 					if(push!=null){
 						write(push.title,push.contents,push.links,push.href);
 					}
