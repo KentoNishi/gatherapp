@@ -25,7 +25,13 @@ function menu(){
 	settings();
 	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"loadGatherUps(true);");
-//	
+	write("Search Events",[{html:"<input class='search' placeholder='Start Typing...'></input>"},{html:"<button onclick='searchEvents();'>Search</button>"}]);
+}
+
+function searchEvents(){
+	if(document.querySelectorAll(".search")[0].value!=null&&document.querySelectorAll(".search")[0].value.replace(/ /g,"").length>0){
+		loadGatherUps(null,document.querySelectorAll(".search")[0].value);
+	}
 }
 
 function advertise(){
@@ -404,7 +410,7 @@ function saveReminderTime(id){
 	}
 }
 
-function loadGatherUps(his){
+function loadGatherUps(his,search){
 	if(his){
 		back.push("loadGatherUps(true);");
 	}else{
@@ -426,12 +432,17 @@ function loadGatherUps(his){
 			}
 		//	console.log(pushes,comps);
 			pushes.forEach(push=>{
-				if(push!=null){
+				if(push!=null&&search==null){
 					write(push.title,push.contents,push.links,push.href);
 				}
 			});
 			var completes=comps.sort((a,b)=>{return (a.date-b.date)}).reverse();
 			completes.forEach(push=>{
+				if(push!=null&&search==null){
+					write(push.title,push.contents,push.links,push.href);
+				}
+			});
+			findInArray(pushes.concat(completes),search).forEach(push=>{
 				if(push!=null){
 					write(push.title,push.contents,push.links,push.href);
 				}
