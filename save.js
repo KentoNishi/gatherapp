@@ -14,18 +14,23 @@ var pic = "";
 var lat;
 var lng;
 var worker;
-var back=["loadGatherUps();","loadGatherUps();"];
+var back=["loadEvents();","loadEvents();"];
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
 	back.push("menu();");
-	back=back.slice(back.length-2,back.length);
 	clear();
-	write("Settings",null,null,"settings();");
+	settings();
 	write("Advertise",null,null,"advertise();");
-	write("Event History",null,null,"history();");
-//	
+	write("Event History",null,null,"loadEvents(true);");
+	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"<span style='font-size:4vh;'>Search In:</span><br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />Completed Events"},{html:"<button style='margin-top:1vh;' onclick='searchEvents();'>Search</button>"}]);
+}
+
+function searchEvents(){
+	if(document.querySelectorAll(".search")[0].value!=null&&document.querySelectorAll(".search")[0].value.replace(/ /g,"").length>0){
+		loadEvents(document.querySelectorAll("input[type=radio]")[1].checked,document.querySelectorAll(".search")[0].value);
+	}
 }
 
 function advertise(){
@@ -34,28 +39,8 @@ function advertise(){
 	write("Return to Menu",null,null,"menu();");
 }
 
-function history(){
-	clear();
-	write("Coming Soon!");
-	write("Return to Menu",null,null,"menu();");
-}
-
 function settings(){
-	clear();
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
-	write("Return to Menu",null,null,"menu();");
-}
-
-function feed(){
-	clear();
-	firebase.database().ref("users/"+uid+"/feed").once("value",function(notifications){
-		if(notifications.val()==null){
-			write("Welcome!",[{text:"You have no recent notifications."}]);
-		}
-		notifications.forEach(function(notification){
-			write(notification.val().title,[{text:notification.val().content}],null,"loadGatherUp('"+notification.val().tag+"');");
-		});
-	});
 }
 
 /*
@@ -67,13 +52,15 @@ function clearFeed(id){
 */
 
 function start(){
-	back.push("start();");
-	back=back.slice(back.length-2,back.length);
-	requestGatherUp();
+	if(back[back.length-1]!="start();"){
+		back.push("start();");
+		requestEvent();
+	}else{
+	}
 }
 
 var map;
-function requestGatherUp(id,title,loc,date,place){
+function requestEvent(id,title,loc,date,place,duration){
 	clear();
 	var contents=[];
 	var extra="";
@@ -82,9 +69,10 @@ function requestGatherUp(id,title,loc,date,place){
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
+	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+" hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
-	contents.push({html:"<button onclick='"+((id==null)?"newGatherUp();":"saveGatherUp("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
-	write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadGatherUp('"+id+"');")),text:"Cancel"}]);
+	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
+	write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
 	autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
 	google.maps.event.addListener(autocomplete, 'place_changed', function () {
 		if(autocomplete.getPlace().formatted_address.split(",").length>3){
@@ -107,34 +95,37 @@ function requestGatherUp(id,title,loc,date,place){
 }
 
 var autocomplete;
-function editGatherUp(id){
+function editEvent(id){
 	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
 		var addr;
 		if(info.val().location!=null){
 			addr=info.val().location.name+","+info.val().location.formatted_address.split(",").slice(1,info.val().location.formatted_address.split(",").length).join(",");
 		}
-		requestGatherUp(id,info.val().title,addr||null,info.val().date,info.val().place);
+		requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration);
 	});
 }
 
-function saveGatherUp(id){
-	newGatherUp(id);
+function saveEvent(id){
+	newEvent(id);
 }
 
-function newGatherUp(id){
+function newEvent(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
+	var duration="120";
+	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)<60){
+		duration=(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)*60)+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
+	}
 	if(date!=null){
 		date=new Date(new Date(date).getTime()).getTime();
 	}
 	if(title!=null&&title!=""&&(autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
 		var key=id||firebase.database().ref("gatherups/").push().key;
+		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
-			date:date
-		}
-		if(id!=null){
-			info.people=1;
+			date:date,
+			duration:duration
 		}
 		if(autocomplete.getPlace()!=null){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
@@ -142,11 +133,13 @@ function newGatherUp(id){
 		}
 		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
 			if(id==null){
-				firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
-					loadGatherUp(key);
+				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
+					loadEvent(key);
+					//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 				});
 			}else{
-				loadGatherUp(key);
+				//loadEvent(key);
+				//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 			}
 		});
 	}else{
@@ -167,138 +160,309 @@ function newGatherUp(id){
 	}
 }
 
-function loadGatherUp(id){
-	back.push("loadGatherUp('"+id+"');");
-	back=back.slice(back.length-2,back.length);
-	clear();
-	firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
-		firebase.database().ref("gatherups/"+id+"/info").once("value",function(gather){
-			try{
-				var member=me.val()||null;
-				var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveGatherUp('"+id+"');}"}];
-				if(member==null){
-					link=[{text:"Join Event",href:"joinGatherUp('"+id+"');"}];
-				}else{
-					link.unshift({text:"Edit Info",href:"editGatherUp('"+id+"');"});
+function loadEvent(id,newuser,callback){
+	var onced=false;
+	back.push("loadEvent('"+id+"');");
+	firebase.database().ref("gatherups/"+id+"/info").off("value");
+	firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
+		if(document.querySelectorAll(".event"+id).length>0||!onced){
+			clear();
+			onced=true;
+			firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+				try{
+					var member;
+					if(me.val()!==0){
+						member=me.val()||null;
+					}else{
+						member=me.val();
+					}
+					var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveEvent('"+id+"');}"}];
+					if(member==null){
+						link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
+					}else{
+						link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
+						firebase.database().ref("users/"+uid+"/gatherups/"+id).set({
+							status:1
+						});
+					}
+					var value=member;
+					var date="";
+					if(gather.val().date!=null){
+						date="0".repeat(2-(new Date(gather.val().date).getMonth()+1).toString().length)+(new Date(gather.val().date).getMonth()+1);
+						date+="/"+"0".repeat(2-(new Date(gather.val().date).getDate()).toString().length)+(new Date(gather.val().date).getDate());
+						date+="/"+new Date(gather.val().date).getFullYear();
+						date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
+						date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
+					}
+					var addr;
+					if(gather.val().location!=null){
+						addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
+					}
+					var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+					if(gather.val().location!=null){
+						var body="";
+						body+="<span style='font-size:4vh'>";
+						body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
+						body+=encode("View On Map");
+						body+='</a>';
+						body+='</span>';
+						contents.push({html:body+"<span class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
+					}
+					contents.push({text:gather.val().duration!=null?(Math.floor(gather.val().duration/60)+"h"+(gather.val().duration%60)+"m Long"):"Unknown Duration"});
+					var check="checked";
+					if(value<0){
+						value=(-value);
+						check="";
+					}
+					var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+					var extra="";
+					if(Notification.permission!="granted"&&Notification.permission!="denied"){
+						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
+					}
+					if(member!=null){
+						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
+						contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes early"+extra});
+					}
+					if(new Date(gather.val().date).getTime()+(gather.val().duration*60*1000)<new Date().getTime()){
+						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+					}else if(new Date(gather.val().date).getTime()<new Date().getTime()){
+						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+					}
+					if(navigator.share&&member!=null){
+						link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
+					}
+					if(member!=null){
+						loadEventBoard(id,function(){
+							var links=null;
+							var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
+							if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
+								conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View All Members</a>");
+							}
+							write("Members",conts,links);
+							if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<=5){
+								viewMembers(id,callback||null);
+							}
+							write(gather.val().title,contents,link);
+						});
+					//	write("Event Board",null,null,"loadEventBoard('"+id+"');");
+					}else{
+						var links=null;
+						var conts=[{html:"<span style='font-size:4vh;'>"+encode((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1).toString())+" members</span><span class='members'></span>"}];
+						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)>5){
+							conts[0].html+=("<a sty;e='font-size:4vh;' href='#' onclick='viewMembers("+'"'+id+'"'+");this.outerHTML=null;;return false;'><br />View Members</a>");
+						}
+						write("Members",conts,links);
+						write(gather.val().title,contents,link);
+						if((gather.val().people!=null?(newuser!=true?gather.val().people:gather.val().people+1):1)<=5){
+							viewMembers(id,callback||null);
+						}
+					}
+				}catch(TypeError){
+					write("Error",[{text:"Error loading event."}]);
 				}
-				var value=member;
-				var date="";
-				if(gather.val().date!=null){
-					date="0".repeat(2-(new Date(gather.val().date).getMonth()+1).toString().length)+(new Date(gather.val().date).getMonth()+1);
-					date+="/"+"0".repeat(2-(new Date(gather.val().date).getDate()).toString().length)+(new Date(gather.val().date).getDate());
-					date+="/"+new Date(gather.val().date).getFullYear();
-					date+=", "+"0".repeat(2-(new Date(gather.val().date).getHours()).toString().length)+(new Date(gather.val().date).getHours());
-					date+=":"+"0".repeat(2-(new Date(gather.val().date).getMinutes()).toString().length)+(new Date(gather.val().date).getMinutes());
-				}
-				var addr;
-				if(gather.val().location!=null){
-					addr=gather.val().location.name+","+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length).join(",");
-				}
-				var contents=[{text:date||"Unknown Date"},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
-				var check="checked";
-				if(value<0){
-					value=(-value);
-					check="";
-				}
-				var cb="<input type='checkbox' style='width:3vh;height:3vh;' "+check+" onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
-				var extra="";
-				if(Notification.permission!="granted"&&Notification.permission!="denied"){
-					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
-				}
-				if(member!=null){
-					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+"' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
-					contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+")[0].id));'></span> minutes before the event"+extra});
-				}
-				if(gather.val().location!=null){
-					contents.push({html:"<div class='iframe'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+"https://www.google.com/maps/embed/v1/place?q=place_id:"+gather.val().location.place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></div>"});
-				}
-				if(navigator.share&&member!=null){
-					link.unshift({text:"Invite",href:"navigator.share({title: '"+gather.val().title+"'+' - GatherApp', text: 'Join '+'"+gather.val().title+"'+' on GatherApp!', url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
-				}
-				write("Members",[{text:gather.val().people+" members"}]);
-				write(gather.val().title,contents,link);
-			}catch(TypeError){
-				write("Error",[{text:"Error loading event."}],null,"viewMembers('"+id+"');");
+			});
+		}
+	});
+}
+
+function loadBoard(id){
+	loadEvent(id,null,function(){document.querySelectorAll(".body")[0].scrollTop=document.querySelectorAll(".body")[0].scrollHeight+Math.pow(innerHeight,2);});
+}
+
+function showMap(){
+	if(document.querySelectorAll(".maptoggle")[0].classList[1]=="hidden"){
+		document.querySelectorAll(".iframe")[0].style.display="block";
+		document.querySelectorAll(".maptoggle")[0].innerHTML=encode("Hide Map");
+		document.querySelectorAll(".maptoggle")[0].classList.remove("hidden");
+		document.querySelectorAll(".maptoggle")[0].classList.add("shown");
+	}else{
+		document.querySelectorAll(".iframe")[0].style.display="none";
+		document.querySelectorAll(".maptoggle")[0].innerHTML=encode("View On Map");
+		document.querySelectorAll(".maptoggle")[0].classList.remove("shown");
+		document.querySelectorAll(".maptoggle")[0].classList.add("hidden");
+	}
+}
+
+function newBoardPost(id){
+	if(document.querySelectorAll("textarea")[0].value!=null&&document.querySelectorAll("textarea")[0].value.replace(/ /g,"").length>0){
+		firebase.database().ref("gatherups/"+id+"/board/").push().update({
+			content:document.querySelectorAll("textarea")[0].value,
+			author:uid,
+			date:new Date().getTime()
+		}).then(function(){
+			document.querySelectorAll("textarea")[0].value=null;
+			autogrow(document.querySelectorAll("textarea")[0]);
+		});
+	}
+}
+
+function loadEventBoard(id,callback){
+	var onced=false;
+	firebase.database().ref("gatherups/"+id+"/board/").off("value");
+	firebase.database().ref("gatherups/"+id+"/board/").on("value",posts=>{	
+		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").off("value");
+		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").on("value",val=>{
+			if(document.querySelectorAll(".board"+id).length>0){
+				firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
 			}
 		});
+		var allclear=true;
+		var u=0;
+		posts.forEach(post=>{
+			if(allclear==true){
+				allclear=posts.val()[Object.keys(posts.val())[u]].content!=null&&posts.val()[Object.keys(posts.val())[u]].author!=null&&posts.val()[Object.keys(posts.val())[u]].date!=null;
+			}else{
+			}
+		});
+		var exist=document.querySelectorAll(".board"+id).length;
+		if(!onced||(document.querySelectorAll(".board"+id).length>0&&allclear)){
+			onced=true;
+//			clear();
+			var contents=["<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>"];
+			if(posts.val()==null){
+				if(document.querySelectorAll(".board"+id).length>0){
+					document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
+				}else{
+					write("Event Board",[{html:joincontents(contents,id)}]);
+					document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
+				}
+				}else{
+				contents=[];
+			}
+			var i=0;
+			posts.forEach(post=>{
+				var date="";
+				date="0".repeat(2-(new Date(post.val().date).getMonth()+1).toString().length)+(new Date(post.val().date).getMonth()+1);
+				date+="/"+"0".repeat(2-(new Date(post.val().date).getDate()).toString().length)+(new Date(post.val().date).getDate());
+				date+="/"+new Date(post.val().date).getFullYear();
+				date+=", "+"0".repeat(2-(new Date(post.val().date).getHours()).toString().length)+(new Date(post.val().date).getHours());
+				date+=":"+"0".repeat(2-(new Date(post.val().date).getMinutes()).toString().length)+(new Date(post.val().date).getMinutes());
+				contents.push("<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>");
+				if(Object.keys(posts.val()).length-1==i){
+					if(document.querySelectorAll(".board"+id).length>0){
+						document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+contents.join("<br />")+"<br />";
+					}else{
+						write("Event Board",[{html:joincontents(contents,id)}]);
+						document.querySelectorAll(".body")[0].innerHTML+="<div class='post'></div>";
+					}
+					document.querySelectorAll(".board"+id)[0].scrollTop=document.querySelectorAll(".board"+id)[0].scrollHeight*innerHeight;
+				}else{
+					i++;
+				}
+				firebase.database().ref("users/"+post.val().author+"/info").once("value",author=>{
+					document.querySelectorAll("."+post.key)[0].innerHTML="<strong>"+encode((author.val().name!=null?author.val().name:"Unknown User"))+"</strong><br />"+encode(date);
+					document.querySelectorAll(".board"+id)[0].scrollTop=document.querySelectorAll(".board"+id)[0].scrollHeight;
+				});
+			});
+			if(exist==0&&callback!=null){
+				callback();
+			}
+		}
 	});
+}
+
+;;;
+
+function joincontents(contents,id){
+	return "<div class='board"+id+"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>";
+}
+
+function autogrow(element) {
+	element.style.height = "5px";
+	element.style.height = (element.scrollHeight+5)+"px";
+	document.querySelectorAll(".post")[0].scrollIntoView(false);
 }
 
 function viewMembers(id){
 	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
+//		clear();
+//		document.querySelectorAll(".members")[0].innerHTML+="<br />";
+		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadEvent('"+id+"');"}]);
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
-				document.querySelectorAll(".members")[0].innerHTML+=user.val().name;
-				if(Object.keys(members.val())[Object.keys(members.val()).length-1]!=member.key){
-					document.querySelectorAll(".members")[0].innerHTML+="<br />";
-				}
+				document.querySelectorAll("."+member.key)[0].innerHTML=encode(user.val().name);
 			});
 		});
 	});
 }
 
 function saveReminderTime(id){
-	var value=parseInt(document.querySelectorAll('input[type="number"]')[0].value||0);
+	var value=parseInt(document.querySelectorAll('.reminderTime')[0].value||0);
 	if(value>0){
-		if(!document.querySelectorAll('input[type="checkbox"]')[0].checked){
+		if(!document.querySelectorAll('.remindMe')[0].checked){
 			value=(-value);
 		}
-		firebase.database().ref("gatherups/"+id+"/members").update({
+		firebase.database().ref("events/"+id+"/members").update({
 			[uid]:value
 		}).then(function(){
-			document.querySelectorAll('input[type="number"]')[0].id=value;
+			document.querySelectorAll('.remindMe')[0].id=value;
 		});
 	}else{
-		document.querySelectorAll("input[type=number]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=number]")[0].id));
+		document.querySelectorAll(".reminderTime")[0].value=Math.abs(parseInt(document.querySelectorAll(".reminderTime")[0].id));
 	}
 }
 
-function loadGatherUps(){
-	back.push("loadGatherUps();");
-	back=back.slice(back.length-2,back.length);
+eventify([back],function(){back=back.slice(back.length-2,back.length);});
+
+function loadEvents(history){
+	back.push("loadEvents("+(history?"true":"")+");");
 	clear();
-	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
-		if(gathers.val()==null){//||(id!=null&&Object.keys(gathers.val())[0]==id&&Object.keys(gathers.val()).length==1)){
-			write("No Events",[{text:"You have no scheduled events."}]);
+	var writes=[];
+	firebase.database().ref("users/"+uid+"/"+(history?"history":"events")).once("value",events=>{
+		if(events.val()==null){
+			write("No Events");
 		}else{
-			gathers.forEach(gather=>{
-				firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
-					var date="";
-					if(gatherup.val().date!=null){
-						date="0".repeat(2-(new Date(gatherup.val().date).getMonth()+1).toString().length)+(new Date(gatherup.val().date).getMonth()+1);
-						date+="/"+"0".repeat(2-(new Date(gatherup.val().date).getDate()).toString().length)+(new Date(gatherup.val().date).getDate());
-						date+="/"+new Date(gatherup.val().date).getFullYear();
-						date+=", "+"0".repeat(2-(new Date(gatherup.val().date).getHours()).toString().length)+(new Date(gatherup.val().date).getHours());
-						date+=":"+"0".repeat(2-(new Date(gatherup.val().date).getMinutes()).toString().length)+(new Date(gatherup.val().date).getMinutes());
-					}
-					var addr;
-					if(gatherup.val().location!=null){
-						addr=gatherup.val().location.name+","+gatherup.val().location.formatted_address.split(",").slice(1,gatherup.val().location.formatted_address.split(",").length).join(",");
-					}
-					write(gatherup.val().title,[{text:(gatherup.val().date==null?"Unknown Date":date)},{text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}],null,"loadGatherUp('"+gather.key+"');");
+			eventify([writes],function(){
+				if(writes.length==Object.keys(events.val()).length){
+					
+				}
+			});
+			events.forEach(event=>{
+				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
+					writes.push(info.val());
 				});
 			});
 		}
 	});
 }
 
-function joinGatherUp(id){
+function findInArray(ar, val) {
+	val=val.toLowerCase();
+	var returns=[];
+	for (var i = 0,len = ar.length; i < len; i++) {
+		if ( ar[i].title.toLowerCase().indexOf(val)>-1 ) { 
+			returns.push(ar[i]);
+		}
+	}
+	return returns.sort((a,b)=>{
+		return a.date-b.date;
+	}).reverse();
+}
+
+function eventify(arrays, callback) {
+	arrays.forEach(arr=>{
+		arr.push = function(e) {
+			Array.prototype.push.call(arr, e);
+			callback(arr);
+		};
+	});
+};
+
+function joinEvent(id){
 	firebase.database().ref("gatherups/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
-		loadGatherUp(id);
 	});
 }
 
-function leaveGatherUp(id){
-	firebase.database().ref("users/"+uid+"/gatherups/"+id).remove().then(function(){
-		loadGatherUps();
+function leaveEvent(id){
+	firebase.database().ref("users/"+uid+"/events/"+id).remove().then(function(){
+		loadEvents();
 	});
 }
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
-		firebase.messaging().useServiceWorker(reg);
 		worker=reg;
 	});
 }
@@ -336,10 +500,8 @@ if(navigator.onLine){
 				name:name,
 				pic:pic
 			});
-			if(window.location.hash.substr(1,window.location.hash.length)!=""){
-				loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
-			}else{
-				loadGatherUps();
+			if(!hashChanged()){
+				loadEvents();
 			}
 		}
 	});
@@ -348,29 +510,39 @@ if(navigator.onLine){
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
-
-$(window).on('hashchange', function() {
-	if(uid!=null){
-		if(window.location.hash.substr(1,window.location.hash.length)!=""){
-			loadGatherUp(window.location.hash.substr(1,window.location.hash.length));
-		}
-	}
+window.onhashchange= (function() {
+	hashChanged();
 });
 
-function offerNotifications(id){
+function hashChanged(){
+	if(uid!=null){
+		if(window.location.hash.substr(1,window.location.hash.length)!=""){
+			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
+				loadEvent(window.location.hash.substr(1,window.location.hash.length));
+				return true;
+			}else{
+				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
+					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+function offerNotifications(){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
-				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")});
-			}).then(function(sub){
-				sub=JSON.parse(JSON.stringify(sub));
-				var subscr=sub;
-				var key=sub.keys.auth;
-				subscr.keys.auth=null;
-				firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
-					if(id!=null){
-						loadGatherUp(id);
-					}
+				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")}).then(function(sub){
+					sub=JSON.parse(JSON.stringify(sub));
+					var subscr=sub;
+					var key=sub.keys.auth;
+					subscr.keys.auth=null;
+					return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
+						document.querySelectorAll(".offerNotifications")[0].outerHTML=null;
+					});
 				});
 			});
 		 }
@@ -392,13 +564,13 @@ function action(act) {
 		} else if (act == "add") {
 			start();
 		} else if (act == "home") {
-			loadGatherUps();
+			loadEvents();
 		}
 	}
 }
 
 function clear(e){
-	document.querySelectorAll(".body")[0].innerHTML="";
+	document.querySelectorAll("."+e||"body")[0].innerHTML="";
 } 
 
 function reverse(snapshot) {
@@ -409,7 +581,7 @@ function reverse(snapshot) {
 	return reversed;
 }
 
-function write(title,contents,links,href){
+function write(title,contents,links,href,classlist){
 	try{
 		if(title==null&&contents==null){
 			throw("");
@@ -418,7 +590,7 @@ function write(title,contents,links,href){
 		contents=contents||[];
 		links=links||[];
 		if(href!=null){
-			body+='<div class="card" onclick="'+href+'">';
+			body+='<div class="card'+(classlist!=null?classlist:"")+'" onclick="'+href+'">';
 		}else{
 			body+='<div class="card">';
 		}
@@ -426,7 +598,11 @@ function write(title,contents,links,href){
 		}else{
 			body+='<span style="font-size:5.5vh;">';
 			body+='<strong>';
-			body+=encode(title);
+			if(typeof title=="string"){
+				body+=encode(title);
+			}else if(typeof title=="object"){
+				body+=encode(title.text||title.html);
+			}
 			body+='</strong>';
 			body+='</span>';
 			body+='<br />';
@@ -459,7 +635,9 @@ function write(title,contents,links,href){
 }
 
 function encode(e){
-	return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0)+";"}).replace(/&amp;quot;/g,'"');
+	var txt = document.createElement("textarea");
+	txt.innerText = e;
+	return txt.innerHTML;
 }
 
 function decode(html) {
@@ -475,7 +653,9 @@ function getFormattedDate(date) {
 	month = month.length > 1 ? month : '0' + month;
 	var day = date.getDate().toString();
 	day = day.length > 1 ? day : '0' + day;
-	return month + '/' + day + '/' + year;
+	var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
+	var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
+	return month + '/' + day + '/' + year + ", " + hour + ":" + min;
 }
 /*
 window.onerror = function (message, file, line, col, error) {
