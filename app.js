@@ -541,7 +541,7 @@ function leaveGatherUp(id){
 
 if ('serviceWorker' in navigator) {
 	navigator.serviceWorker.register('/gatherapp/worker.js').then(function(reg){
-		firebase.messaging().useServiceWorker(reg);
+//		firebase.messaging().useServiceWorker(reg);
 		worker=reg;
 	});
 }
