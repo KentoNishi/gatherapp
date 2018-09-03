@@ -442,11 +442,13 @@ function loadGatherUps(his,search){
 					write(push.title,push.contents,push.links,push.href);
 				}
 			});
-			findInArray(pushes.concat(completes),search).forEach(push=>{
-				if(push!=null){
-					write(push.title,push.contents,push.links,push.href);
-				}
-			});
+			if(search!=null){
+				findInArray(pushes.concat(completes),search).forEach(push=>{
+					if(push!=null){
+						write(push.title,push.contents,push.links,push.href);
+					}
+				});
+			}
 		});
 		gathers.forEach(gather=>{
 			firebase.database().ref("gatherups/"+gather.key+"/info").once("value",function(gatherup){
