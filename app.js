@@ -599,8 +599,7 @@ if(navigator.onLine){
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
-
-$(window).on('hashchange', function() {
+window.onhashchange= function() {
 	if(uid!=null){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
