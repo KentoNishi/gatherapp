@@ -25,12 +25,12 @@ function menu(){
 	settings();
 	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"loadGatherUps(true);");
-	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"<button onclick='searchEvents();'>Search</button>"}]);
+	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"<button onclick='searchEvents();'>Search</button>"},{html:"<input style='width:2.5vh;width:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<input style='width:2.5vh;width:2.5vh;' type='radio' name='eventtype' />Completed Events"}]);
 }
 
 function searchEvents(){
 	if(document.querySelectorAll(".search")[0].value!=null&&document.querySelectorAll(".search")[0].value.replace(/ /g,"").length>0){
-		loadGatherUps(null,document.querySelectorAll(".search")[0].value);
+		loadGatherUps(document.querySelectorAll("input[type=radio]")[1].checked,document.querySelectorAll(".search")[0].value);
 	}
 }
 
@@ -449,6 +449,9 @@ function loadGatherUps(his,search){
 				var results=findInArray(pushes.concat(completes),search);
 				if(results.length>0){
 					clear();
+				}
+				if(his){
+					results=results.reverse();
 				}
 				results.forEach(push=>{
 					if(push!=null){
