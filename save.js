@@ -13,7 +13,6 @@ var name = "";
 var pic = "";
 var lat;
 var lng;
-var worker;
 var back=["loadEvents();","loadEvents();"];
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
@@ -22,11 +21,18 @@ function menu(){
 	back.push("menu();");
 	clear();
 	settings();
-	write("Advertise",null,null,"advertise();");
+//	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"loadEvents(true);");
-	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},{html:"<span style='font-size:4vh;'>Search In:</span><br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />Completed Events"},{html:"<button style='margin-top:1vh;' onclick='searchEvents();'>Search</button>"}]);
+	/*
+	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},
+			       {html:"<span style='font-size:4vh;'>Search In:</span>"+
+				"<br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<br />"+
+				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />Completed Events"},
+			       {html:"<button style='margin-top:1vh;' onclick='searchEvents();'>Search</button>"}]);
+			       */
 }
 
+/*
 function searchEvents(){
 	if(document.querySelectorAll(".search")[0].value!=null&&document.querySelectorAll(".search")[0].value.replace(/ /g,"").length>0){
 		loadEvents(document.querySelectorAll("input[type=radio]")[1].checked,document.querySelectorAll(".search")[0].value);
@@ -38,6 +44,7 @@ function advertise(){
 	write("Coming Soon!");
 	write("Return to Menu",null,null,"menu();");
 }
+*/
 
 function settings(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
@@ -69,15 +76,26 @@ function requestEvent(id,title,loc,date,place,duration){
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
-	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+" hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
-	contents.push({html:"<div class='iframe' style='display:none;'><br /><iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe></div></div>"});
-	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+(id!=null?"Save":"Schedule")+"</button>"});
-	write(((id==null)?"New":"Edit")+" Event",contents,[{href:((id==null)?(back[back.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
-	autocomplete = new google.maps.places.Autocomplete((document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),{ fields: ["name", "place_id", "formatted_address"] });
+	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
+		       "value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+
+		       " hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' "+
+		       "value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
+	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
+		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe>"+
+		       "</div></div>"});
+	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
+		       (id!=null?"Save":"Schedule")+"</button>"});
+	write(((id==null)?"New":"Edit")+" Event",contents,
+	      [{href:((id==null)?(back[back.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
+	autocomplete = new google.maps.places.Autocomplete(
+		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
+		{ fields: ["name", "place_id", "formatted_address"] });
 	google.maps.event.addListener(autocomplete, 'place_changed', function () {
 		if(autocomplete.getPlace().formatted_address.split(",").length>3){
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
-			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src="https://www.google.com/maps/embed/v1/place?q=place_id:"+autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
+			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src=
+				"https://www.google.com/maps/embed/v1/place?q=place_id:"+
+				autocomplete.getPlace().place_id+"&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM";
 		}else{
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="none";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background="pink";
@@ -90,16 +108,20 @@ function requestEvent(id,title,loc,date,place,duration){
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 	if(date!=null){
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=new Date(new Date(date).getTime()-(new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);;
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=
+			new Date(new Date(date).getTime()-
+				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
 	}
 }
 
 var autocomplete;
 function editEvent(id){
-	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
+	firebase.database().ref("events/"+id+"/info").once("value",function(info){
 		var addr;
 		if(info.val().location!=null){
-			addr=info.val().location.name+","+info.val().location.formatted_address.split(",").slice(1,info.val().location.formatted_address.split(",").length).join(",");
+			addr=info.val().location.name+","+
+				info.val().location.formatted_address.split(",")
+				.slice(1,info.val().location.formatted_address.split(",").length).join(",");
 		}
 		requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration);
 	});
@@ -113,13 +135,17 @@ function newEvent(id){
 	var title=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value||null;
 	var date=document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value||null;
 	var duration="120";
-	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0&&parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)<60){
-		duration=(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)*60)+parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
+	if(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)>=0&&
+	   parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)>=0&&
+	   parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value)<60){
+		duration=(parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[3].value)*60)+
+			parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
 	}
 	if(date!=null){
 		date=new Date(new Date(date).getTime()).getTime();
 	}
-	if(title!=null&&title!=""&&(autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
+	if(title!=null&&title!=""&&
+	   (autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
 		var key=id||firebase.database().ref("gatherups/").push().key;
 		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
@@ -131,9 +157,9 @@ function newEvent(id){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
 			info.location=loc;
 		}
-		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
+		firebase.database().ref("events/"+key+"/info").update(info).then(function(){
 			if(id==null){
-				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
+				return firebase.database().ref("events/"+key+"/members").update({[uid]:15}).then(function(){
 					loadEvent(key);
 					//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 				});
@@ -160,22 +186,16 @@ function newEvent(id){
 	}
 }
 
-function loadEvent(id,newuser,callback){
-	var onced=false;
+;;;
+
+function loadEvent(id){
 	back.push("loadEvent('"+id+"');");
-	firebase.database().ref("gatherups/"+id+"/info").off("value");
-	firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
-		if(document.querySelectorAll(".event"+id).length>0||!onced){
+	firebase.database().ref("events/"+id+"/info").once("value",function(gather){
 			clear();
-			onced=true;
-			firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
 				try{
 					var member;
-					if(me.val()!==0){
-						member=me.val()||null;
-					}else{
-						member=me.val();
-					}
+					member=me.val()||null;
 					var link=[{text:"Leave Event",href:"if(confirm('Are you sure you want to leave this event?')){leaveEvent('"+id+"');}"}];
 					if(member==null){
 						link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
@@ -261,7 +281,6 @@ function loadEvent(id,newuser,callback){
 					write("Error",[{text:"Error loading event."}]);
 				}
 			});
-		}
 	});
 }
 
@@ -360,8 +379,6 @@ function loadEventBoard(id,callback){
 		}
 	});
 }
-
-;;;
 
 function joincontents(contents,id){
 	return "<div class='board"+id+"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>";
