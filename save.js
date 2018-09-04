@@ -415,41 +415,51 @@ function loadEvents(inhistory){
 	back.push("loadEvents("+(inhistory?"true":"")+");");
 	clear();
 	var writes=[];
-	firebase.database().ref("users/"+uid+"/"+(inhistory?"history":"events")).once("value",events=>{
+	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
 		if(events.val()==null){
-			write("No Events");
+			write("No Events",[{text:"You have no upcoming events."}]);
 		}else{
 			eventify([writes],function(){
+				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
 					;;;
 					var ongoing=[];
 					var future=[];
 					writes.forEach(item=>{
-						if(new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
+						if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
 							if(new Date(item.date).getTime()>new Date().getTime()){
+								if(item.date==null){
+									item.date=Infinity;
+								}
 								future.push(item);
 							}else{
+								if(item.date==null){
+									item.date=Infinity;
+								}
 								ongoing.push(item);
 							}
 						}else{
+							if(item.date==null){
+								item.date=Infinity;
+							}
 							future.push(item);
 						}
 					});
-					ongoing=ongoing.sort((a,b)=>{return a.date||Infinity-b.date||Infinity;});
-					future=future.sort((a,b)=>{return a.date-b||Infinity.date||Infinity;});
+					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
+					future=future.sort((a,b)=>{return a.date-b.date;});
 					future.reverse().forEach(item=>{
 						var address="";
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
-						write(item.title,[{text:getFormattedDate(item.date)},{text:address||"Unknown Location"}]);
+						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}]);
 					});
 					ongoing.forEach(item=>{
 						var address="";
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
-						write(item.title,[{text:getFormattedDate(item.date)},{text:address||"Unknown Location"}]);
+						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}]);
 					});
 				}
 			});
