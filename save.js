@@ -470,7 +470,7 @@ function eventify(arrays, callback) {
 };
 
 function joinEvent(id){
-	firebase.database().ref("gatherups/"+id+"/members/").update({
+	firebase.database().ref("events/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
 	});
@@ -552,7 +552,7 @@ function hashChanged(){
 	return false;
 }
 
-function offerNotifications(){
+function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
@@ -562,7 +562,9 @@ function offerNotifications(){
 					var key=sub.keys.auth;
 					subscr.keys.auth=null;
 					return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
-						document.querySelectorAll(".offerNotifications")[0].outerHTML=null;
+						if(id!=null){
+							loadGatherUp(id);
+						}
 					});
 				});
 			});
