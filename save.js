@@ -383,7 +383,10 @@ function viewMembers(id){
 //		document.querySelectorAll(".members")[0].innerHTML+="<br />";
 		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadEvent('"+id+"');"}]);
 		Object.keys(members.val()).forEach(person=>{
-			document.querySelectorAll(".members")[0].innerHTML+="<div class='"+person+"'></div>";
+			document.querySelectorAll(".members")[0].innerHTML+="<span class='"+person+"'></span>";
+			if(person!=Object.keys(members.val())[Object.keys(members.val()).length-1]){
+				document.querySelectorAll(".members")[0].innerHTML+="<br />";
+			}
 		});
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
