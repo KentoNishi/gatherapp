@@ -431,11 +431,26 @@ function loadEvents(inhistory){
 							}else{
 								ongoing.push(item);
 							}
+						}else{
+							future.push(item);
 						}
 					});
-					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
-					future=future.sort((a,b)=>{return a.date-b.date;});
-					console.log(ongoing,future);
+					ongoing=ongoing.sort((a,b)=>{return a.date||Infinity-b.date||Infinity;});
+					future=future.sort((a,b)=>{return a.date-b||Infinity.date||Infinity;});
+					future.reverse().forEach(item=>{
+						var address="";
+						if(item.location!=null){
+							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+						}
+						write(item.title,[{text:getFormattedDate(item.date)},{text:address||"Unknown Location"}]);
+					});
+					ongoing.forEach(item=>{
+						var address="";
+						if(item.location!=null){
+							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+						}
+						write(item.title,[{text:getFormattedDate(item.date)},{text:address||"Unknown Location"}]);
+					});
 				}
 			});
 			events.forEach(event=>{
