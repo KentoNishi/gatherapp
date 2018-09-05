@@ -86,6 +86,14 @@ function requestEvent(id,title,loc,date,place,duration){
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
 	      [{href:((id==null)?(back[back.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
+	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
+	if(date!=null){
+		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=
+			new Date(new Date(date).getTime()-
+				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+	}
+
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
 		{ fields: ["name", "place_id", "formatted_address"] });
@@ -104,13 +112,6 @@ function requestEvent(id,title,loc,date,place,duration){
 			};
 		}
 	});
-	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
-	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
-	if(date!=null){
-		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=
-			new Date(new Date(date).getTime()-
-				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
-	}
 }
 
 var autocomplete;
