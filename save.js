@@ -71,7 +71,7 @@ function requestEvent(id,title,loc,date,place,duration){
 	clear();
 	var contents=[];
 	var extra="";
-	contents.push({html:""+extra+"<div class='inputs'>"});
+	contents.push({html:""+extra+"<span class='inputs'>"});
 	contents.push({html:"<input placeholder='Title' onclick=''></input>"});
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
@@ -82,7 +82,7 @@ function requestEvent(id,title,loc,date,place,duration){
 		       "value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
 		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe>"+
-		       "</div></div>"});
+		       "</div></span>"});
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
@@ -189,98 +189,100 @@ function newEvent(id){
 function loadEvent(id){
 	back.push("loadEvent('"+id+"');");
 	firebase.database().ref("events/"+id+"/info").once("value",function(event){
-			clear();
-			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
-				try{
-					var member=me.val()||null;
-					var link=[{text:"Leave Event",
-						   href:"if(confirm('Are you sure you want to leave this event?')){"+
-						   "leaveEvent('"+id+"');}"}];
-					if(member==null){
-						link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
-					}else{
-						link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
-						firebase.database().ref("users/"+uid+"/events/"+id).set({
-							status:1
-						});
-					}
-					var value=member;
-					var date="";
-					if(event.val().date!=null){
-						date=getFormattedDate(event.val().date);
-					}
-					var addr;
-					if(event.val().location!=null){
-						addr=event.val().location.name+","+
-							event.val().location.formatted_address.split(",")
-							.slice(1,event.val().location.formatted_address.split(",").length).join(",");
-					}
-					var contents=[{text:date||"Unknown Date"},
-						      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
-					if(event.val().location!=null){
-						var body="";
-						body+="<span style='font-size:4vh'>";
-						body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
-						body+=encode("View On Map");
-						body+='</a>';
-						body+='</span>';
-						contents.push({html:body+"<span class='iframe' style='display:none;'><br />"+
-							       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+
-							       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
-							       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
-					}
-					contents.push({text:event.val().duration!=null?
-						       (Math.floor(event.val().duration/60)+"h"+(event.val().duration%60)+"m Long"):"Unknown Duration"});
-					var check="checked";
-					if(value<0){
-						value=(-value);
-						check="";
-					}
-					var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
-					    " onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
-					var extra="";
-					if(Notification.permission!="granted"&&Notification.permission!="denied"){
-						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
-					}
-					if(member!=null){
-						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
-						    "' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
-						    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
-						contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
-							       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-							       ")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+
-							       ")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+
-							       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-							       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
-							       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
-							       ")[0].id));'></span> minutes early"+extra});
-					}
-					if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
-						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-					}else if(new Date(event.val().date).getTime()<new Date().getTime()){
-						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
-					}
-					if(navigator.share&&member!=null){
-						link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
-							      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
-							      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
-							      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
-					}
-					var links=[];
-					if(!(event.val().people<6)){
-						links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
-					}
-					write("Members",[{html:"<span class='members'></span>"}],null,links);
-					if(event.val().people<6){
-						viewMembers(id);
-					}else{
-						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
-					}
-					write(event.val().title,contents,link);
-				}catch(TypeError){
-					write("Error",[{text:"Error loading event."}]);
+		clear();
+		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
+		firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
+		firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
+			try{
+				var member=me.val()||null;
+				var link=[{text:"Leave Event",
+					   href:"if(confirm('Are you sure you want to leave this event?')){"+
+					   "leaveEvent('"+id+"');}"}];
+				if(member==null){
+					link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
+				}else{
+					link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
+					firebase.database().ref("users/"+uid+"/events/"+id).set({
+						status:1
+					});
 				}
-			});
+				var value=member;
+				var date="";
+				if(event.val().date!=null){
+					date=getFormattedDate(event.val().date);
+				}
+				var addr;
+				if(event.val().location!=null){
+					addr=event.val().location.name+","+
+						event.val().location.formatted_address.split(",")
+						.slice(1,event.val().location.formatted_address.split(",").length).join(",");
+				}
+				var contents=[{text:date||"Unknown Date"},
+					      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+				if(event.val().location!=null){
+					var body="";
+					body+="<span style='font-size:4vh'>";
+					body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
+					body+=encode("View On Map");
+					body+='</a>';
+					body+='</span>';
+					contents.push({html:body+"<span class='iframe' style='display:none;'><br />"+
+						       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+
+						       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
+						       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
+				}
+				contents.push({text:event.val().duration!=null?
+					       (Math.floor(event.val().duration/60)+"h"+(event.val().duration%60)+"m Long"):"Unknown Duration"});
+				var check="checked";
+				if(value<0){
+					value=(-value);
+					check="";
+				}
+				var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
+				    " onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+				var extra="";
+				if(Notification.permission!="granted"&&Notification.permission!="denied"){
+					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
+				}
+				if(member!=null){
+					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
+					    "' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
+					    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
+					contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
+						       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
+						       ")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+
+						       ")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+
+						       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
+						       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
+						       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
+						       ")[0].id));'></span> minutes early"+extra});
+				}
+				if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
+					contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+				}else if(new Date(event.val().date).getTime()<new Date().getTime()){
+					contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+				}
+				if(navigator.share&&member!=null){
+					link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
+						      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
+						      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
+						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
+				}
+				var links=[];
+				if(!(event.val().people<6)){
+					links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
+				}
+				write("Members",[{html:"<span class='members'></span>"}],null,links);
+				if(event.val().people<6){
+					viewMembers(id);
+				}else{
+					document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
+				}
+				write(event.val().title,contents,link);
+			}catch(TypeError){
+				write("Error",[{text:"Error loading event."}]);
+			}
+		});
 	});
 }
 
