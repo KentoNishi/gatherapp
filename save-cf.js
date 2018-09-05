@@ -27,7 +27,7 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
     			});
     			return Promise.all(returns).then(function(){
     				var load={[payload.val().tag.split("/").length===2?payload.val().tag.split("/")[1]:"info"]:0};
-    				return fireDB.child(`/users/${uid}/gatherups/`+payload.val().tag.split("/")[0]).update(load);
+    				return fireDB.child(`/users/${uid}/events/`+payload.val().tag.split("/")[0]).update(load);
     			});
 			}else{
 				return Promise.resolve();
@@ -38,21 +38,21 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
 	});
 });
 
-exports.detectLeave = functions.database.ref(`/users/{uid}/gatherups/{id}`).onDelete((change, context) => {
+exports.detectLeave = functions.database.ref(`/users/{uid}/events/{id}`).onDelete((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = admin.database().ref("/");
-    return fireDB.child(`/gatherups/${id}/members/${uid}`).remove();
+    return fireDB.child(`/events/${id}/members/${uid}`).remove();
 });
 
-exports.sendBoardFeed = functions.database.ref(`/gatherups/{id}/board/{push}/`).onWrite((change, context) => {
+exports.sendBoardFeed = functions.database.ref(`/events/{id}/board/{push}/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
     let push=context.params.push;
-    return fireDB.child(`/gatherups/${id}/board/${push}`).once(`value`).then(post => {
-	    return fireDB.child(`/gatherups/${id}/info`).once(`value`).then(info => {
+    return fireDB.child(`/events/${id}/board/${push}`).once(`value`).then(post => {
+	    return fireDB.child(`/events/${id}/info`).once(`value`).then(info => {
 		    if(post.val()!==undefined&&post.val()!==null&&post.val().content!==undefined&&post.val().content!==null&&post.val().author!==undefined&&post.val().author!==null){
-		    	return fireDB.child(`/gatherups/${id}/members`).once(`value`).then(people => {
+		    	return fireDB.child(`/events/${id}/members`).once(`value`).then(people => {
 		    		var returns=[];
 		    		people.forEach(person=>{
 		    			if(person.key!==post.val().author){
@@ -73,11 +73,11 @@ exports.sendBoardFeed = functions.database.ref(`/gatherups/{id}/board/{push}/`).
 });
 
 
-exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((change, context) => {
+exports.sendGroup = functions.database.ref(`/events/{id}/info/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
     if(change.after.val()!==null){
-	    return fireDB.child(`/gatherups/${id}/members/`).once(`value`).then(members => {
+	    return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
 	    	var returns=[];
 	    	members.forEach(member=>{
 	    		var uid=member.key;
@@ -119,11 +119,11 @@ function difference(o1, o2) {
 	return returns;
 }
 
-exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).onWrite((change, context) => {
+exports.toggleGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWrite((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = change.after.ref.root;
-	return fireDB.child(`/gatherups/${id}/info/`).once(`value`).then(value => {
+	return fireDB.child(`/events/${id}/info/`).once(`value`).then(value => {
 		if(value.val()!==null){
     		var date=value.val().date;
     		if(date!==null&&new Date(new Date(date).getTime()-(change.after.val()*1000*60)).getTime()>new Date().getTime()){
@@ -135,9 +135,9 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 				    		[uid]:change.after.val()
 				   		});
 			   		}else{	
-						return fireDB.child(`/gatherups/${id}/members/`).once(`value`).then(members => {
+						return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
 							if(members.val()===null){
-								return fireDB.child(`/gatherups/${id}/`).remove();
+								return fireDB.child(`/events/${id}/`).remove();
 							}else{
 								return Promise.resolve();
 							}
@@ -145,23 +145,23 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 			   		}
 			    });
     		}else{
-				return fireDB.child(`/gatherups/${id}/members/`).once(`value`).then(members => {
+				return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
 					if(members.val()===null){
-						return fireDB.child(`/gatherups/${id}/`).remove();
+						return fireDB.child(`/events/${id}/`).remove();
 					}else{
 						return Promise.resolve();
 					}
 				});
     		}
 		}else{
-			return fireDB.child(`/users/${uid}/gatherups/${id}/`).remove().then(function(){
-				return fireDB.child(`/gatherups/${id}/members/${uid}/`).remove();
+			return fireDB.child(`/users/${uid}/events/${id}/`).remove().then(function(){
+				return fireDB.child(`/events/${id}/members/${uid}/`).remove();
 			});
 		}
 	}).then(function(){
-		return fireDB.child(`/users/${uid}/gatherups/${id}`).once("value",userval=>{
+		return fireDB.child(`/users/${uid}/events/${id}`).once("value",userval=>{
 			if(((userval.val()!==null&&userval.val()!==undefined)?1:null)!==(change.after.val()!==null?(change.after.val()===0?0:1):null)){
-				return fireDB.child(`/users/${uid}/gatherups/`+id).update({
+				return fireDB.child(`/users/${uid}/events/`+id).update({
     				status:(change.after.val()!==null?(change.after.val()===0?0:1):null)
    				});
    			}else{
@@ -171,26 +171,26 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 	});
 });
 
-exports.countMembersCrseate = functions.database.ref(`/gatherups/{id}/members/{uid}`).onCreate((change, context) => {
+exports.countMembersCrseate = functions.database.ref(`/events/{id}/members/{uid}`).onCreate((change, context) => {
 	let fireDB=admin.database().ref("/");
 	let id=context.params.id;
-	return fireDB.child(`/gatherups/${id}/members`).once("value").then(after=>{
+	return fireDB.child(`/events/${id}/members`).once("value").then(after=>{
 		var members=after.val();
 		var number=Object.keys(members).length;
-		return fireDB.child(`/gatherups/${id}/info`).update({
+		return fireDB.child(`/events/${id}/info`).update({
 			people:number
 		});	
 	});
 });
 
-exports.countMembers = functions.database.ref(`/gatherups/{id}/members/{uid}`).onDelete((change, context) => {
+exports.countMembers = functions.database.ref(`/events/{id}/members/{uid}`).onDelete((change, context) => {
 	let fireDB=admin.database().ref("/");
 	let id=context.params.id;
-	return fireDB.child(`/gatherups/${id}/members`).once("value").then(after=>{
+	return fireDB.child(`/events/${id}/members`).once("value").then(after=>{
 		if(after.val()!==null){
 			var members=after.val();
 			var number=Object.keys(members).length;
-			return fireDB.child(`/gatherups/${id}/info`).update({
+			return fireDB.child(`/events/${id}/info`).update({
 				people:number
 			});	
 		}else{
@@ -199,24 +199,24 @@ exports.countMembers = functions.database.ref(`/gatherups/{id}/members/{uid}`).o
 	});
 });
 
-exports.markAsComplete = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
+exports.markAsComplete = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
 	let id=context.params.id;
 	let date=change.after.val();
-	return fireDB.child(`/gatherups/${id}/info/`).once("value").then(info=>{
+	return fireDB.child(`/events/${id}/info/`).once("value").then(info=>{
 		if(date!==undefined&&date!==null&&new Date(date+((info.val().duration*60*1000)||0)).getTime()<=new Date().getTime()){
-			return fireDB.child(`/gatherups/${id}/members`).once("value").then(members=>{
+			return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
 				var returns=[];
 				members.forEach(member=>{
-					returns.push(fireDB.child(`/users/${(member.key)}/gatherups/${id}/`).update({status:2}));
+					returns.push(fireDB.child(`/users/${(member.key)}/events/${id}/`).update({status:2}));
 				});
 				return Promise.all(returns);
 			});
 		}else{
-			return fireDB.child(`/gatherups/${id}/members`).once("value").then(members=>{
+			return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
 				var returns=[];
 				members.forEach(member=>{
-					returns.push(fireDB.child(`/users/${(member.key)}/gatherups/${id}/`).update({status:1}));
+					returns.push(fireDB.child(`/users/${(member.key)}/events/${id}/`).update({status:1}));
 				});
 				return Promise.all(returns);
 			});
@@ -225,7 +225,7 @@ exports.markAsComplete = functions.database.ref(`/gatherups/{id}/info/date/`).on
 });
 
 
-exports.setTask = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
+exports.setTask = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
 	let id=context.params.id;
 	let date=change.after.val();
@@ -249,11 +249,11 @@ exports.setTask = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((
 });
 
 
-exports.changeTime = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
+exports.changeTime = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
     let date=change.after.val();
-    return fireDB.child(`/gatherups/${id}/members/`).once(`value`).then(members => {
+    return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
     	var returns=[];
     	members.forEach(member=>{
     		var time=Math.ceil((new Date(change.before.val()).getTime()-(member.val()*1000*60))/(1000*60));
@@ -284,7 +284,7 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 		var returns=[];
 		alerts.forEach(alert=>{
 			var id=alert.key;
-			returns.push(fireDB.child(`/gatherups/${id}/info`).once(`value`).then(gather => {
+			returns.push(fireDB.child(`/events/${id}/info`).once(`value`).then(gather => {
 				var promises=[];
 				alert.forEach(user=>{
 					var uid=user.key;
@@ -310,10 +310,10 @@ exports.min_tick = functions.pubsub.topic('min-tick').onPublish((event) => {
 	return fireDB.child(`/tasks/${time}`).once(`value`).then( events=> {
 		var returns=[];
 		events.forEach(event=>{
-			returns.push(fireDB.child("gatherups/"+event.key+"/members").once("value").then(members=>{
+			returns.push(fireDB.child("events/"+event.key+"/members").once("value").then(members=>{
 				var promises=[];
 				members.forEach(user=>{
-					promises.push(fireDB.child("users/"+user.key+"/gatherups/"+event.key).update({status:2}));
+					promises.push(fireDB.child("users/"+user.key+"/events/"+event.key).update({status:2}));
 				});
 				return Promise.all(promises);
 			}));
