@@ -266,7 +266,16 @@ function loadEvent(id){
 							      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
 							      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 					}
-					write("Members",[{html:"<span class='members'></span>"}]);
+					var links=[];
+					if(!(event.val().people<6)){
+						links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
+					}
+					write("Members",[{html:"<span class='members'></span>"}],null,links);
+					if(event.val().people<6){
+						viewMembers(id);
+					}else{
+						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
+					}
 					write(event.val().title,contents,link);
 				}catch(TypeError){
 					write("Error",[{text:"Error loading event."}]);
