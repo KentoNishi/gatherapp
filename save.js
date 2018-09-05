@@ -455,20 +455,22 @@ function loadEvents(inhistory){
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
-						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}]);
+						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}],null,"loadEvent('"+item.href+"');");
 					});
 					ongoing.forEach(item=>{
 						var address="";
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
-						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}]);
+						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}],null,"loadEvent('"+item.href+"');");
 					});
 				}
 			});
 			events.forEach(event=>{
 				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
-					writes.push(info.val());
+					var obj=info.val();
+					obj.href=event.key;
+					writes.push(obj);
 				});
 			});
 		}
