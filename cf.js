@@ -1,7 +1,12 @@
 const functions = require(`firebase-functions`);
 const admin = require(`firebase-admin`);
 const webpush = require("web-push");
-const keys = require("./push-keys.js");
+const keys = {
+	GCMAPIKey: "AAAAK51wxvE:APA91bHbG2pKnltu9PF2vwMSrS9Ev3bTPzufjeeSUwuCm5OI2nXK93XSyxCEfPE20kbJnMTsR3ajxCsBEg2c4BBgY7hz_Tj_2pClHHlLXGsFepvZKM27WPdOthGqfAQCyU1x3aPibkhc02uj_1snanDcbw0d6GNRqw",
+	publicKey: 'BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo',
+	privateKey: 'l7firirlNjF1iVi9ZvCisoJG5D8QAO5kCWP8NDuYeOo',
+	subject: "mailto:kento24gs@outlook.com"
+};
 admin.initializeApp();
 exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onWrite((change, context) => {
     let uid = context.params.uid;
@@ -20,7 +25,10 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
 	    				return fireDB.child(`/users/${uid}/subs/`+list.key).remove();
 	    			}));
     			});
-    			return Promise.all(returns);
+    			return Promise.all(returns).then(function(){
+    				var load={[payload.val().tag.split("/").length===2?payload.val().tag.split("/")[1]:"info"]:0};
+    				return fireDB.child(`/users/${uid}/gatherups/`+payload.val().tag.split("/")[0]).update(load);
+    			});
 			}else{
 				return Promise.resolve();
 			}
@@ -37,6 +45,34 @@ exports.detectLeave = functions.database.ref(`/users/{uid}/gatherups/{id}`).onDe
     return fireDB.child(`/gatherups/${id}/members/${uid}`).remove();
 });
 
+exports.sendBoardFeed = functions.database.ref(`/gatherups/{id}/board/{push}/`).onWrite((change, context) => {
+    let id = context.params.id;
+    let fireDB = change.after.ref.root;
+    let push=context.params.push;
+    return fireDB.child(`/gatherups/${id}/board/${push}`).once(`value`).then(post => {
+	    return fireDB.child(`/gatherups/${id}/info`).once(`value`).then(info => {
+		    if(post.val()!==undefined&&post.val()!==null&&post.val().content!==undefined&&post.val().content!==null&&post.val().author!==undefined&&post.val().author!==null){
+		    	return fireDB.child(`/gatherups/${id}/members`).once(`value`).then(people => {
+		    		var returns=[];
+		    		people.forEach(person=>{
+		    			if(person.key!==post.val().author){
+			    			returns.push(fireDB.child(`/users/${(post.val().author)}/info`).once(`value`).then(user => {
+			    				return fireDB.child("users/"+person.key+"/feed").push({title:info.val().title+" - New Post",content:(user.val()!==null&&user.val()!==undefined?user.val().name:"Unknown User")+" said: "+post.val().content,tag:id+"/board"})
+			    			}));
+		    			}else{
+		    				returns.push(Promise.resolve());
+		    			}
+		    		});
+		    		return Promise.all(returns);
+	    		});
+		    }else{
+				return Promise.resolve();
+		    }
+	    });
+	});
+});
+
+
 exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -48,11 +84,15 @@ exports.sendGroup = functions.database.ref(`/gatherups/{id}/info/`).onWrite((cha
 	    		var edits=difference(change.before.val(),change.after.val());
 	    		edits.forEach(edit=>{
 		    		if(edit==="title"||edit==="date"||edit==="location"){
-			    		returns.push(fireDB.child(`/users/${uid}/feed/`).push().update({
-			    			title:change.before.val().title+" - Edited",
-			    			content:"Event "+edit.replace("date","time")+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
-			    			tag:id
-						}));
+		    			if(context.auth!==undefined&&context.auth.uid!==null&&uid!==context.auth.uid){
+				    		returns.push(fireDB.child(`/users/${uid}/feed/`).push().update({
+				    			title:change.before.val().title+" - Edited",
+				    			content:"Event "+edit.replace("date","time")+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
+				    			tag:id
+							}));
+						}else{
+							returns.push(Promise.resolve());
+						}
 					}else{
 						returns.push(Promise.resolve());
 					}
@@ -119,8 +159,14 @@ exports.toggleGroup = functions.database.ref(`/gatherups/{id}/members/{uid}/`).o
 			});
 		}
 	}).then(function(){
-		return fireDB.child(`/users/${uid}/gatherups`).update({
-    		[id]:(change.after.val()!==null?(change.after.val()===0?0:1):null)
+		return fireDB.child(`/users/${uid}/gatherups/${id}`).once("value",userval=>{
+			if(((userval.val()!==null&&userval.val()!==undefined)?1:null)!==(change.after.val()!==null?(change.after.val()===0?0:1):null)){
+				return fireDB.child(`/users/${uid}/gatherups/`+id).update({
+    				status:(change.after.val()!==null?(change.after.val()===0?0:1):null)
+   				});
+   			}else{
+   				return Promise.resolve();
+   			}
    		});
 	});
 });
@@ -152,6 +198,32 @@ exports.countMembers = functions.database.ref(`/gatherups/{id}/members/{uid}`).o
 		}
 	});
 });
+
+exports.markAsComplete = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
+	let fireDB=change.after.ref.root;
+	let id=context.params.id;
+	let date=change.after.val();
+	return fireDB.child(`/gatherups/${id}/info/`).once("value").then(info=>{
+		if(date!==undefined&&date!==null&&new Date(date+((info.val().duration*60*1000)||0)).getTime()<=new Date().getTime()){
+			return fireDB.child(`/gatherups/${id}/members`).once("value").then(members=>{
+				var returns=[];
+				members.forEach(member=>{
+					returns.push(fireDB.child(`/users/${(member.key)}/gatherups/${id}/`).update({status:2}));
+				});
+				return Promise.all(returns);
+			});
+		}else{
+			return fireDB.child(`/gatherups/${id}/members`).once("value").then(members=>{
+				var returns=[];
+				members.forEach(member=>{
+					returns.push(fireDB.child(`/users/${(member.key)}/gatherups/${id}/`).update({status:1}));
+				});
+				return Promise.all(returns);
+			});
+		}
+	});
+});
+
 
 exports.setTask = functions.database.ref(`/gatherups/{id}/info/date/`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
@@ -218,7 +290,7 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 					var uid=user.key;
 					var info={
 						title:gather.val().title+" - Event",
-						content:((gather.val().location!==null&&gather.val().location!==undefined)?(gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"unknown location")+", in "+user.val()+" minutes.",
+						content:((gather.val().location!==null&&gather.val().location!==undefined)?(gather.val().location.name+", "+gather.val().location.formatted_address.split(",").slice(1,gather.val().location.formatted_address.split(",").length-2).join(",")):"Unknown location")+", in "+user.val()+" minutes.",
 						tag:id
 					};
 					promises.push(fireDB.child(`/users/${uid}/feed/`).push().update(info));
@@ -232,22 +304,20 @@ exports.min_job = functions.pubsub.topic('min-tick').onPublish((event) => {
 	});
 });
 
-exports.min_task = functions.pubsub.topic('min-tick').onPublish((e) => {
-	let fireDB=admin.database().ref("/");
-	var time=Math.floor(new Date().getTime()/(60*1000));
-	return fireDB.child(`/tasks/${time}`).once(`value`).then(events => {
-		var promises=[];
+exports.min_tick = functions.pubsub.topic('min-tick').onPublish((event) => {
+    let fireDB = admin.database().ref("/");
+    var time=Math.floor(new Date().getTime()/(60*1000));
+	return fireDB.child(`/tasks/${time}`).once(`value`).then( events=> {
+		var returns=[];
 		events.forEach(event=>{
-			promises.push(fireDB.child(`gatherups/`+event.key+"/members").once("value").then(members=>{
-				var returns=[];
-				members.forEach(member=>{
-					returns.push(fireDB.child(`gatherups/`+event.key+"/members/").update({[member.key]:0}));
+			returns.push(fireDB.child("gatherups/"+event.key+"/members").once("value").then(members=>{
+				var promises=[];
+				members.forEach(user=>{
+					promises.push(fireDB.child("users/"+user.key+"/gatherups/"+event.key).update({status:2}));
 				});
-				return Promise.all(returns);
+				return Promise.all(promises);
 			}));
 		});
-		return Promise.all(promises).then(function(){
-			return fireDB.child(`/tasks/${time}`).remove();
-		});
+		return Promise.all(returns);
 	});
 });
