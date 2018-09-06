@@ -147,7 +147,7 @@ function newEvent(id){
 	}
 	if(title!=null&&title!=""&&
 	   (autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
-		var key=id||firebase.database().ref("gatherups/").push().key;
+		var key=id||firebase.database().ref("events/").push().key;
 		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
@@ -544,7 +544,7 @@ function offerNotifications(id){
 					subscr.keys.auth=null;
 					return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
 						if(id!=null){
-							loadGatherUp(id);
+							loadEvent(id);
 						}
 					});
 				});
