@@ -331,7 +331,7 @@ function loadEventBoard(id){
 				"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
 				"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
 				"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
-				"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"board");
+				"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
 		}else{
 			document.querySelectorAll(".board")[0].innerHTML="";
 		}
@@ -360,10 +360,9 @@ function loadEventBoard(id){
 		}
 		document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+writes.join("<br />")+"<br />";
 		posts.forEach(post=>{
-			firebase.database().ref("users/"+post.author+"/info").once("value",info=>{
-				document.querySelectorAll("."+post.author)[0].querySelectorAll("strong")[0].innerHTML=
-					encode(info.val().name);
-				document.querySelectorAll("."+post.author)[0].innerHTML="<br />"+encode(getFormattedDate(post.val().date));
+			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
+				document.querySelectorAll("."+post.val().author)[0].querySelectorAll("strong")[0].innerHTML=encode(info.val().name);
+				document.querySelectorAll("."+post.val().author)[0].innerHTML+="<br />"+encode(getFormattedDate(post.val().date));
 			});
 		});
 	});
@@ -375,7 +374,7 @@ function loadEventBoard(id){
 function autogrow(element) {
 	element.style.height = "5px";
 	element.style.height = (element.scrollHeight+5)+"px";
-	document.querySelectorAll(".post")[0].scrollIntoView(false);
+	document.querySelectorAll(".boardcontainer")[0].scrollIntoView(false);
 }
 
 function viewMembers(id){
@@ -644,7 +643,7 @@ function write(title,contents,links,href,classlist){
 		if(href!=null){
 			body+='<div class="card'+(classlist!=null?classlist:"")+'" onclick="'+href+'">';
 		}else{
-			body+='<div class="card">';
+			body+='<div class="card'+(classlist!=null?classlist:"")+'">';
 		}
 		if((title==null&&contents!=null)){
 		}else{
