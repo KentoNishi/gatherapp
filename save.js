@@ -16,6 +16,14 @@ var lng;
 var back=["loadEvents();","loadEvents();"];
 var listeners=[];
 
+eventify([back],function(){
+	back=back.slice(back.length-2,back.length);
+	listeners.forEach(listener=>{
+		firebase.database().ref(listener).off("value");
+	});
+	listeners=[];
+});
+
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
@@ -315,13 +323,18 @@ function newBoardPost(id){
 }
 
 function loadEventBoard(id){
-	write("Event Board",[{html:"<div class='board"+id+
-		"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
-		"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
-		"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
-		"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
-		"style='margin-bottom:1.5vh;'>Post To Board</button>"}]);
-	firebase.database().ref("events/"+id+"/board").once("value",posts=>{
+	listeners.push("events/"+id+"/board");
+	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
+		if(document.querySelectorAll(".board").length<1){
+			write("Event Board",[{html:"<div class='board"+id+
+				"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
+				"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
+				"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
+				"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
+				"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"board");
+		}else{
+			document.querySelectorAll(".board")[0].innerHTML="";
+		}
 		var writes=[];
 		function addPost(object){
 			writes.push("<div style='background-color:"+
@@ -350,7 +363,7 @@ function loadEventBoard(id){
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
 				document.querySelectorAll("."+post.val().author)[0].querySelectorAll("strong")[0].innerHTML=
 					encode(info.val().name);
-				document.querySelectorAll("."+post.val().author)[0].innerHTML+"<br />"+=encode(getFormattedDate(post.val().date));
+				document.querySelectorAll("."+post.val().author)[0].innerHTML="<br />"+encode(getFormattedDate(post.val().date));
 			});
 		});
 	});
@@ -399,8 +412,6 @@ function saveReminderTime(id){
 		document.querySelectorAll("input[type=checkbox]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=checkbox]")[0].id));
 	}
 }
-
-eventify([back],function(){back=back.slice(back.length-2,back.length);});
 
 function loadEvents(inhistory){
 	back.push("loadEvents("+(inhistory?"true":"")+");");
