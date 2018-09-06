@@ -14,14 +14,14 @@ var pic = "";
 var lat;
 var lng;
 var back=["loadEvents();","loadEvents();"];
-var listeners=[];
+var ons=[];
 
 eventify([back],function(){
 	back=back.slice(back.length-2,back.length);
-	listeners.forEach(listener=>{
+	ons.forEach(listener=>{
 		firebase.database().ref(listener).off("value");
 	});
-	listeners=[];
+	ons=[];
 });
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
@@ -323,7 +323,7 @@ function newBoardPost(id){
 }
 
 function loadEventBoard(id){
-	listeners.push("events/"+id+"/board");
+	ons.push("events/"+id+"/board");
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
 		if(document.querySelectorAll(".board").length<1){
 			write("Event Board",[{html:"<div class='board"+id+
