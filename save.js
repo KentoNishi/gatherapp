@@ -314,7 +314,46 @@ function newBoardPost(id){
 	}
 }
 
-function loadEventBoard(id,callback){
+function loadEventBoard(id){
+	write("Event Board",[{html:"<div class='board"+id+
+		"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
+		"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
+		"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
+		"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
+		"style='margin-bottom:1.5vh;'>Post To Board</button>"}]);
+	firebase.database().ref("events/"+id+"/board").once("value",posts=>{
+		var writes=[];
+		function addPost(object){
+			writes.push("<div style='background-color:"+
+			(object.admin?"yellowgreen":(object.author==uid?"cornflowerblue":"orange"))+
+			";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+
+			encode(object.text)+
+			"<div "+(object.admin?"":("class='"+object.author+"' "))+"style='text-align:center;'>"+
+			"<strong>"+
+			(object.admin?"GatherApp":"")+	
+			"</strong></div></div>");
+		};
+		if(posts.val()==null){
+			addPost({text:"This event has no board posts.",admin:true});
+		}else{
+			var allposts=[];
+			posts.forEach(post=>{
+				allposts.push(post.val());
+			});
+			allposts=allposts.sort((a,b)=>{return a.date-b.date;});
+			allposts.forEach(post=>{
+				addPost({text:post.content,author:post.author});
+			});
+		}
+		document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+writes.join("<br />")+"<br />";
+		posts.forEach(post=>{
+			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
+				document.querySelectorAll("."+post.val().author)[0].querySelectorAll("strong")[0].innerHTML=
+					encode(info.val().name);
+				document.querySelectorAll("."+post.val().author)[0].innerHTML+"<br />"+=encode(getFormattedDate(post.val().date));
+			});
+		});
+	});
 	//"<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>";
 	//"<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>";
 	//"<div class='board"+id+"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>";
