@@ -72,7 +72,7 @@ function requestEvent(id,title,loc,date,place,duration){
 	clear();
 	var contents=[];
 	var extra="";
-	contents.push({html:""+extra+"<span class='inputs'><input placeholder='Title' onclick=''></input>"});
+	contents.push({html:""+extra+"<div class='inputs'><input placeholder='Title' onclick=''></input>"});
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
