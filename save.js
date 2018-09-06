@@ -18,16 +18,14 @@ var lng;
 var back=["loadEvents();","loadEvents();"];
 var ons=[];
 
-function eventify(arrays, callback) {
-	arrays.forEach(arr=>{
-		arr.push = function(e) {
-			arr[arr.length]=e;
-			callback(arr);
-		};
-	});
+function eventify(arr, callback) {
+	arr.add = function(e) {
+		arr.push(e);
+		callback(arr);
+	};
 };
 
-eventify([back],function(){
+eventify(back,function(){
 	back=back.slice(back.length-2,back.length);
 	ons.forEach(listener=>{
 		firebase.database().ref(listener).off("value");
@@ -38,7 +36,7 @@ eventify([back],function(){
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
-	back.push("menu();");
+	back.add("menu();");
 	clear();
 	settings();
 //	write("Advertise",null,null,"advertise();");
@@ -80,7 +78,7 @@ function clearFeed(id){
 
 function start(){
 	if(back[back.length-1]!="start();"){
-		back.push("start();");
+		back.add("start();");
 		requestEvent();
 	}else{
 	}
@@ -207,7 +205,7 @@ function newEvent(id){
 }
 
 function loadEvent(id){
-	back.push("loadEvent('"+id+"');");
+	back.add("loadEvent('"+id+"');");
 	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 		clear();
 		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
@@ -427,14 +425,14 @@ function saveReminderTime(id){
 }
 
 function loadEvents(inhistory){
-	back.push("loadEvents("+(inhistory?"true":"")+");");
+	back.add("loadEvents("+(inhistory?"true":"")+");");
 	clear();
 	var writes=[];
 	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
 		if(events.val()==null){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
-			eventify([writes],function(){
+			eventify(writes,function(){
 //				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
 					var ongoing=[];
