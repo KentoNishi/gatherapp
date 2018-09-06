@@ -433,9 +433,8 @@ function loadEvents(inhistory){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
 			eventify([writes],function(){
-				console.log(writes);
+//				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
-					;;;
 					var ongoing=[];
 					var future=[];
 					writes.forEach(item=>{
