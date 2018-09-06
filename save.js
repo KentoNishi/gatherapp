@@ -369,7 +369,7 @@ function loadEvents(inhistory){
 	var writes=[];
 	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
 		if(events.val()==null){
-			write("No Events",[{text:"You have no upcoming events."}]);
+			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
 			eventify([writes],function(){
 				console.log(writes);
