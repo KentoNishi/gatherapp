@@ -426,7 +426,7 @@ function loadEvents(inhistory){
 		if(events.val()==null){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
-			writes.add=function(param){
+			writes.add=(function(param){
 				writes.push(param);
 //				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
