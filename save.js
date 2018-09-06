@@ -18,7 +18,7 @@ var lng;
 var back=["loadEvents();","loadEvents();"];
 var ons=[];
 
-back.add=(function(param){
+back.__proto__.add=(function(param){
 	back.push(param);
 	back=back.slice(back.length-2,back.length);
 	ons.forEach(listener=>{
@@ -426,7 +426,7 @@ function loadEvents(inhistory){
 		if(events.val()==null){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
-			writes.add=(function(param){
+			writes.__proto__.add=(function(param){
 				writes.push(param);
 //				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
