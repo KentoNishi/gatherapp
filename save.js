@@ -534,6 +534,8 @@ function hashChanged(){
 function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
+			clear();
+			write("Notifications",[{text:"Processing your notification settings..."}]);
 			navigator.serviceWorker.ready.then(function(reg){
 				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")}).then(function(sub){
 					sub=JSON.parse(JSON.stringify(sub));
