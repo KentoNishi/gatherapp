@@ -641,9 +641,9 @@ function write(title,contents,links,href,classlist){
 		contents=contents||[];
 		links=links||[];
 		if(href!=null){
-			body+='<div class="card'+(classlist!=null?classlist:"")+'" onclick="'+href+'">';
+			body+='<div class="card'+(classlist!=null?(" "+classlist):"")+'" onclick="'+href+'">';
 		}else{
-			body+='<div class="card'+(classlist!=null?classlist:"")+'">';
+			body+='<div class="card'+(classlist!=null?(" "+classlist):"")+'">';
 		}
 		if((title==null&&contents!=null)){
 		}else{
