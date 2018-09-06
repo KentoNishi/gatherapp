@@ -341,7 +341,7 @@ function loadEventBoard(id){
 			(object.admin?"yellowgreen":(object.author==uid?"cornflowerblue":"orange"))+
 			";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+
 			encode(object.text)+
-			"<div "+(object.admin?"":("class='"+object.author+"' "))+"style='text-align:center;'>"+
+			"<div "+(object.admin?"":("class='"+object.id+"' "))+"style='text-align:center;'>"+
 			"<strong>"+
 			(object.admin?"GatherApp":"")+	
 			"</strong></div></div>");
@@ -355,14 +355,14 @@ function loadEventBoard(id){
 			});
 			allposts=allposts.sort((a,b)=>{return a.date-b.date;});
 			allposts.forEach(post=>{
-				addPost({text:post.content,author:post.author});
+				addPost({text:post.content,author:post.author,id:post.key});
 			});
 		}
 		document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+writes.join("<br />")+"<br />";
 		posts.forEach(post=>{
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
-				document.querySelectorAll("."+post.val().author)[0].querySelectorAll("strong")[0].innerHTML=encode(info.val().name);
-				document.querySelectorAll("."+post.val().author)[0].innerHTML+="<br />"+encode(getFormattedDate(post.val().date));
+				document.querySelectorAll("."+post.key)[0].querySelectorAll("strong")[0].innerHTML=encode(info.val().name);
+				document.querySelectorAll("."+post.key)[0].innerHTML+="<br />"+encode(getFormattedDate(post.val().date));
 			});
 		});
 	});
