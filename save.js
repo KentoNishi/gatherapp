@@ -360,10 +360,10 @@ function loadEventBoard(id){
 		}
 		document.querySelectorAll(".board"+id)[0].innerHTML="<br />"+writes.join("<br />")+"<br />";
 		posts.forEach(post=>{
-			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
-				document.querySelectorAll("."+post.val().author)[0].querySelectorAll("strong")[0].innerHTML=
+			firebase.database().ref("users/"+post.author+"/info").once("value",info=>{
+				document.querySelectorAll("."+post.author)[0].querySelectorAll("strong")[0].innerHTML=
 					encode(info.val().name);
-				document.querySelectorAll("."+post.val().author)[0].innerHTML="<br />"+encode(getFormattedDate(post.val().date));
+				document.querySelectorAll("."+post.author)[0].innerHTML="<br />"+encode(getFormattedDate(post.val().date));
 			});
 		});
 	});
