@@ -346,7 +346,7 @@ function viewMembers(id){
 }
 
 function saveReminderTime(id){
-	var value=parseInt(document.querySelectorAll('input[type=checkbox]')[0].value||0);
+	var value=parseInt(document.querySelectorAll('input[type=number]')[0].value||0);
 	if(value>0){
 		if(!document.querySelectorAll('input[type=checkbox]')[0].checked){
 			value=(-value);
