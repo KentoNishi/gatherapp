@@ -19,7 +19,7 @@ var back=["loadGatherUps();","loadGatherUps();"];
 function eventify(arrays, callback) {
 	arrays.forEach(arr=>{
 		arr.push = function(e) {
-			Array.prototype.push.call(arr, e);
+			arr[arr.length]=e;
 			callback(arr);
 		};
 	});
