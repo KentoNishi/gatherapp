@@ -16,11 +16,15 @@ var lng;
 var worker;
 var back=["loadGatherUps();","loadGatherUps();"];
 
+eventify([back],function(){
+	console.log(back);
+	back=back.slice(back.length-2,back.length);
+});
+
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
 	back.push("menu();");
-	back=back.slice(back.length-2,back.length);
 	clear();
 	settings();
 	write("Advertise",null,null,"advertise();");
@@ -55,7 +59,6 @@ function clearFeed(id){
 function start(){
 	if(back[back.length-1]!="start();"){
 		back.push("start();");
-		back=back.slice(back.length-2,back.length);
 		requestGatherUp();
 	}else{
 	}
@@ -165,7 +168,6 @@ function newGatherUp(id){
 function loadGatherUp(id,newuser,callback){
 	var onced=false;
 	back.push("loadGatherUp('"+id+"');");
-	back=back.slice(back.length-2,back.length);
 	firebase.database().ref("gatherups/"+id+"/info").off("value");
 	firebase.database().ref("gatherups/"+id+"/info").on("value",function(gather){
 		if(document.querySelectorAll(".event"+id).length>0||!onced){
@@ -416,7 +418,6 @@ function loadGatherUps(his,search){
 	}else{
 		back.push("loadGatherUps();");
 	}
-	back=back.slice(back.length-2,back.length);
 	clear();
 	firebase.database().ref("users/"+uid+"/gatherups").once("value",function(gathers){
 		write("No Events",[{text:"You can schedule a new event with the + icon at the top right."}]);
