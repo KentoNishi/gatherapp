@@ -18,14 +18,8 @@ var lng;
 var back=["loadEvents();","loadEvents();"];
 var ons=[];
 
-function eventify(arr, callback) {
-	arr.add = function(e) {
-		arr.push(e);
-		callback(arr);
-	};
-};
-
-eventify(back,function(){
+back.add=(function(param){
+	back.push(param);
 	back=back.slice(back.length-2,back.length);
 	ons.forEach(listener=>{
 		firebase.database().ref(listener).off("value");
@@ -432,7 +426,8 @@ function loadEvents(inhistory){
 		if(events.val()==null){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
-			eventify(writes,function(){
+			writes.add=function(param){
+				writes.push(param);
 //				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
 					var ongoing=[];
@@ -479,7 +474,7 @@ function loadEvents(inhistory){
 				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
 					var obj=info.val();
 					obj.href=event.key;
-					writes.push(obj);
+					writes.add(obj);
 				});
 			});
 		}
