@@ -16,6 +16,15 @@ var lng;
 var worker;
 var back=["loadGatherUps();","loadGatherUps();"];
 
+function eventify(arrays, callback) {
+	arrays.forEach(arr=>{
+		arr.push = function(e) {
+			Array.prototype.push.call(arr, e);
+			callback(arr);
+		};
+	});
+};
+
 eventify([back],function(){
 	console.log(back);
 	back=back.slice(back.length-2,back.length);
