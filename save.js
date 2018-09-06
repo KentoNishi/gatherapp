@@ -16,6 +16,15 @@ var lng;
 var back=["loadEvents();","loadEvents();"];
 var ons=[];
 
+function eventify(arrays, callback) {
+	arrays.forEach(arr=>{
+		arr.push = function(e) {
+			Array.prototype.push.call(arr, e);
+			callback(arr);
+		};
+	});
+};
+
 eventify([back],function(){
 	back=back.slice(back.length-2,back.length);
 	ons.forEach(listener=>{
@@ -325,7 +334,7 @@ function newBoardPost(id){
 function loadEventBoard(id){
 	ons.push("events/"+id+"/board");
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
-		if(document.querySelectorAll(".board").length<1){
+		if(document.querySelectorAll(".board"+id).length<1){
 			write("Event Board",[{html:"<div class='board"+id+
 				"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
 				"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
@@ -333,7 +342,7 @@ function loadEventBoard(id){
 				"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
 				"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
 		}else{
-			document.querySelectorAll(".board")[0].innerHTML="";
+			document.querySelectorAll(".board"+id)[0].innerHTML="";
 		}
 		var writes=[];
 		function addPost(object){
@@ -490,15 +499,6 @@ function findInArray(ar, val) {
 		return a.date-b.date;
 	}).reverse();
 }
-
-function eventify(arrays, callback) {
-	arrays.forEach(arr=>{
-		arr.push = function(e) {
-			Array.prototype.push.call(arr, e);
-			callback(arr);
-		};
-	});
-};
 
 function joinEvent(id){
 	firebase.database().ref("events/"+id+"/members/").update({
