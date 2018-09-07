@@ -426,7 +426,7 @@ function loadEvents(inhistory){
 		if(events.val()==null){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
-			writes.__proto__.add=(function(param){
+			function addpost(param){
 				writes.push(param);
 //				console.log(writes);
 				if(writes.length==Object.keys(events.val()).length){
@@ -469,12 +469,12 @@ function loadEvents(inhistory){
 						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}],null,"loadEvent('"+item.href+"');");
 					});
 				}
-			});
+			}
 			events.forEach(event=>{
 				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
 					var obj=info.val();
 					obj.href=event.key;
-					writes.add(obj);
+					addPost(obj);
 				});
 			});
 		}
