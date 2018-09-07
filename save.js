@@ -15,12 +15,12 @@ var name = "";
 var pic = "";
 var lat;
 var lng;
-var back=["loadEvents();","loadEvents();"];
+var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
-back.__proto__.add=(function(param){
-	back.push(param);
-	back=back.slice(back.length-2,back.length);
+back.add=(function(param){
+	back.data.push(param);
+	back.data=back.data.slice(back.data.length-2,back.data.length);
 	ons.forEach(listener=>{
 		firebase.database().ref(listener).off("value");
 	});
@@ -71,7 +71,7 @@ function clearFeed(id){
 */
 
 function start(){
-	if(back[back.length-1]!="start();"){
+	if(back.data[back.data.length-1]!="start();"){
 		back.add("start();");
 		requestEvent();
 	}else{
@@ -97,7 +97,7 @@ function requestEvent(id,title,loc,date,place,duration){
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
-	      [{href:((id==null)?(back[back.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
+	      [{href:((id==null)?(back.data[back.data.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 	if(date!=null){
