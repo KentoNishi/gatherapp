@@ -250,6 +250,7 @@ function loadEvent(id){
 						      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
 						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
+				loadEventBoard(id);
 				var links=[];
 				if(!(event.val().people<6)){
 					links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
