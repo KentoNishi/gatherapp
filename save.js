@@ -18,6 +18,9 @@ var lng;
 var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
+document.addEventListener('backbutton', function(){
+});
+
 back.add=(function(param){
 	back.data.push(param);
 	back.data=back.data.slice(back.data.length-2,back.data.length);
@@ -335,7 +338,7 @@ function loadEventBoard(id){
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
 				document.querySelectorAll("."+post.key)[0].querySelectorAll("strong")[0].innerHTML=encode(info.val().name);
 				document.querySelectorAll("."+post.key)[0].innerHTML+="<br />"+encode(getFormattedDate(post.val().date));
-				document.querySelectorAll(".board"+id)[0].scrollTop=Math.pow(document.querySelectorAll("."+post.key)[0].schollHeight,2);
+				document.querySelectorAll(".board"+id)[0].scrollTop=Math.pow(document.querySelectorAll("."+id)[0].schollHeight,2);
 			});
 		});
 	});
