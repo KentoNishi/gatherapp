@@ -338,7 +338,7 @@ function loadEventBoard(id){
 			firebase.database().ref("users/"+post.val().author+"/info").once("value",info=>{
 				document.querySelectorAll("."+post.key)[0].querySelectorAll("strong")[0].innerHTML=encode(info.val().name);
 				document.querySelectorAll("."+post.key)[0].innerHTML+="<br />"+encode(getFormattedDate(post.val().date));
-				document.querySelectorAll(".board"+id)[0].scrollTop=Math.pow(document.querySelectorAll(".board"+id)[0].schollHeight,2);
+				document.querySelectorAll(".board"+id)[0].scrollTop=Math.pow(document.querySelectorAll(".board"+id)[0].scrollHeight,2);
 			});
 		});
 	});
