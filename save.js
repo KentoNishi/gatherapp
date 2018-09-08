@@ -33,42 +33,12 @@ function menu(){
 	back.add("menu();");
 	clear();
 	settings();
-//	write("Advertise",null,null,"advertise();");
 	write("Event History",null,null,"loadEvents(true);");
-	/*
-	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},
-			       {html:"<span style='font-size:4vh;'>Search In:</span>"+
-				"<br /><input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />Upcoming Events<br />"+
-				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />Completed Events"},
-			       {html:"<button style='margin-top:1vh;' onclick='searchEvents();'>Search</button>"}]);
-			       */
 }
-
-/*
-function searchEvents(){
-	if(document.querySelectorAll(".search")[0].value!=null&&document.querySelectorAll(".search")[0].value.replace(/ /g,"").length>0){
-		loadEvents(document.querySelectorAll("input[type=radio]")[1].checked,document.querySelectorAll(".search")[0].value);
-	}
-}
-
-function advertise(){
-	clear();
-	write("Coming Soon!");
-	write("Return to Menu",null,null,"menu();");
-}
-*/
 
 function settings(){
 	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
-
-/*
-function clearFeed(id){
-	firebase.database().ref("users/"+uid+"/feed/"+id).remove().then(function(){
-		feed();
-	});
-}
-*/
 
 function start(){
 	if(back.data[back.data.length-1]!="start();"){
@@ -85,7 +55,6 @@ function requestEvent(id,title,loc,date,place,duration){
 	var extra="";
 	contents.push({html:""+extra+"<div class='inputs'><input placeholder='Title' onclick=''></input>"});
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
-	//contents.push({html:"<input placeholder='GPS' disabled style='display:none;'></input>"});
 	contents.push({html:"<input type='datetime-local'></input>"});
 	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
 		       "value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+
@@ -173,11 +142,9 @@ function newEvent(id){
 			if(id==null){
 				return firebase.database().ref("events/"+key+"/members").update({[uid]:15}).then(function(){
 					loadEvent(key);
-					//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 				});
 			}else{
 				loadEvent(key);
-				//document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 			}
 		});
 	}else{
@@ -372,9 +339,6 @@ function loadEventBoard(id){
 			});
 		});
 	});
-	//"<div style='background-color:"+("yellowgreen")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode("This event board has no posts.")+"<div style='text-align:center;'><strong>"+encode("GatherApp")+"</strong></div></div>";
-	//"<div style='background-color:"+(post.val().author==uid?"cornflowerblue":"orange")+";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+encode(post.val().content)+"<div class='"+post.key+"' style='text-align:center;'></div></div>";
-	//"<div class='board"+id+"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'><br />"+contents.join("<br />")+"<br /></div><textarea placeholder='Type A Message...' oninput='autogrow(this);' style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' style='margin-bottom:1.5vh;'>Post To Board</button>";
 }
 
 function autogrow(element) {
@@ -385,9 +349,6 @@ function autogrow(element) {
 
 function viewMembers(id){
 	firebase.database().ref("events/"+id+"/members").once("value",function(members){
-//		clear();
-//		document.querySelectorAll(".members")[0].innerHTML+="<br />";
-		//write("Members",[{html:"<span class='members'></span>"}],[{text:"Return To Event",href:"loadEvent('"+id+"');"}]);
 		Object.keys(members.val()).forEach(person=>{
 			document.querySelectorAll(".members")[0].innerHTML+="<span class='"+person+"'></span>";
 			if(person!=Object.keys(members.val())[Object.keys(members.val()).length-1]){
@@ -581,7 +542,11 @@ function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
-				return reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array("BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")}).then(function(sub){
+				return reg.pushManager.subscribe({userVisibleOnly:true,
+								  applicationServerKey:urlBase64ToUint8Array(
+									  "BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsx"+
+									  "yDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")
+								 }).then(function(sub){
 					sub=JSON.parse(JSON.stringify(sub));
 					var subscr=sub;
 					var key=sub.keys.auth;
@@ -705,8 +670,3 @@ function getFormattedDate(date) {
 	var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
 	return month + '/' + day + '/' + year + ", " + hour + ":" + min;
 }
-/*
-window.onerror = function (message, file, line, col, error) {
-	clear();
-	write();
-};*/
