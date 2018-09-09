@@ -431,7 +431,7 @@ function loadEvents(inhistory){
 					});
 					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
 					future=future.sort((a,b)=>{return a.date-b.date;});
-					unknown.reverse().forEach(item=>{
+					unknown.forEach(item=>{
 						var address="";
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
