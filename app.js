@@ -1,4 +1,3 @@
-/*
 var config = {
 	apiKey: "AIzaSyB4meNlwVUltd007qmH9hPQpn6Oz_CF3xM",
 	authDomain: "gatherapp-14b50.firebaseapp.com",
@@ -8,7 +7,6 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
-*/
 
 var uid = "";
 var name = "";
