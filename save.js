@@ -405,28 +405,40 @@ function loadEvents(inhistory){
 				if(writes.length==Object.keys(events.val()).length){
 					var ongoing=[];
 					var future=[];
+					var unknown=[];
 					writes.forEach(item=>{
 						if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
 							if(new Date(item.date).getTime()>new Date().getTime()){
 								if(item.date==null){
-									item.date=Infinity;
+									unknown.push(item);
+								}else{
+									future.push(item);
 								}
-								future.push(item);
 							}else{
 								if(item.date==null){
-									item.date=Infinity;
+									unknown.push(item);
+								}else{
+									ongoing.push(item);
 								}
-								ongoing.push(item);
 							}
 						}else{
 							if(item.date==null){
-								item.date=Infinity;
+								unknown.push(item);
+							}else{
+								future.push(item);
 							}
-							future.push(item);
 						}
 					});
 					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
 					future=future.sort((a,b)=>{return a.date-b.date;});
+					unknown.reverse().forEach(item=>{
+						var address="";
+						if(item.location!=null){
+							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+						}
+						item.duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+						write(item.title,[{text:(item.date!=null?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}],null,"loadEvent('"+item.href+"');");
+					});
 					future.reverse().forEach(item=>{
 						var address="";
 						if(item.location!=null){
