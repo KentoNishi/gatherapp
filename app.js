@@ -7,7 +7,7 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
-
+ 
 var uid = "";
 var name = "";
 var pic = "";
@@ -34,7 +34,8 @@ function menu(){
 	back.add("menu();");
 	clear();
 	settings();
-	write("Event History",null,null,"loadEvents(true);");
+	write("Abandoned Events",null,null,"loadEvents(0);");
+	write("Event History",null,null,"loadEvents(2);");
 }
 
 function settings(){
@@ -392,12 +393,12 @@ function saveReminderTime(id){
 }
 
 function loadEvents(inhistory){
-	back.add("loadEvents("+(inhistory?"true":"")+");");
+	back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
 	clear();
 	var writes=[];
-	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
+	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
 		if(events.val()==null){
-			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
+			write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":"abandoned"):"upcoming")+" events."}]);
 		}else{
 			function addPost(param){
 				writes.push(param);
