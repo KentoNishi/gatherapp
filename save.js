@@ -307,9 +307,9 @@ ons.push("events/"+id+"/board");
 			"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
 	}
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
-		if(posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].content
-		   
-		   !=null&&
+		if(posts.val()!=null&&
+		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]]!=null&&
+		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].content!=null&&
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].author!=null&&
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].date!=null){
 			document.querySelectorAll(".board"+id)[0].innerHTML="";
