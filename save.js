@@ -184,9 +184,8 @@ function loadEvent(id){
 					link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
 				}else{
 					link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
-					firebase.database().ref("users/"+uid+"/events/"+id).set({
-						status:1
-					});
+					firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
+					firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 				}
 				var value=member;
 				var date="";
