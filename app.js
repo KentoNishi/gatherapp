@@ -1,3 +1,4 @@
+/*
 var config = {
 	apiKey: "AIzaSyB4meNlwVUltd007qmH9hPQpn6Oz_CF3xM",
 	authDomain: "gatherapp-14b50.firebaseapp.com",
@@ -7,6 +8,7 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
+*/
 
 var uid = "";
 var name = "";
@@ -98,7 +100,7 @@ function requestEvent(id,title,loc,date,place,duration){
 
 var autocomplete;
 function editEvent(id){
-	firebase.database().ref("gatherups/"+id+"/info").once("value",function(info){
+	firebase.database().ref("events/"+id+"/info").once("value",function(info){
 		var addr;
 		if(info.val().location!=null){
 			addr=info.val().location.name+","+
@@ -128,7 +130,7 @@ function newEvent(id){
 	}
 	if(title!=null&&title!=""&&
 	   (autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
-		var key=id||firebase.database().ref("gatherups/").push().key;
+		var key=id||firebase.database().ref("events/").push().key;
 		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
@@ -139,9 +141,9 @@ function newEvent(id){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
 			info.location=loc;
 		}
-		firebase.database().ref("gatherups/"+key+"/info").update(info).then(function(){
+		firebase.database().ref("events/"+key+"/info").update(info).then(function(){
 			if(id==null){
-				return firebase.database().ref("gatherups/"+key+"/members").update({[uid]:15}).then(function(){
+				return firebase.database().ref("events/"+key+"/members").update({[uid]:15}).then(function(){
 					loadEvent(key);
 				});
 			}else{
@@ -168,11 +170,11 @@ function newEvent(id){
 
 function loadEvent(id){
 	back.add("loadEvent('"+id+"');");
-	firebase.database().ref("gatherups/"+id+"/info").once("value",function(event){
+	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 		clear();
-		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/board").remove();
-		firebase.database().ref("users/"+uid+"/gatherups/"+id+"/info").remove();
-		firebase.database().ref("gatherups/"+id+"/members/"+uid).once("value",function(me){
+		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
+		firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
+		firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
 			try{
 				var member=me.val()||null;
 				var link=[{text:"Leave Event",
@@ -182,9 +184,8 @@ function loadEvent(id){
 					link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
 				}else{
 					link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
-					firebase.database().ref("users/"+uid+"/gatherups/"+id).set({
-						status:1
-					});
+					firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
+					firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 				}
 				var value=member;
 				var date="";
@@ -283,7 +284,7 @@ function showMap(){
 
 function newBoardPost(id){
 	if(document.querySelectorAll("textarea")[0].value!=null&&document.querySelectorAll("textarea")[0].value.replace(/ /g,"").length>0){
-		firebase.database().ref("gatherups/"+id+"/board/").push().update({
+		firebase.database().ref("events/"+id+"/board/").push().update({
 			content:document.querySelectorAll("textarea")[0].value,
 			author:uid,
 			date:new Date().getTime()
@@ -295,7 +296,7 @@ function newBoardPost(id){
 }
 
 function loadEventBoard(id){
-	ons.push("gatherups/"+id+"/board");
+	ons.push("events/"+id+"/board");
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
 			"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
@@ -304,7 +305,7 @@ function loadEventBoard(id){
 			"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
 			"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
 	}
-	firebase.database().ref("gatherups/"+id+"/board").on("value",posts=>{
+	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
 		if(posts.val()==null||
 		   (
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]]!=null&&
@@ -358,7 +359,7 @@ function autogrow(element) {
 }
 
 function viewMembers(id){
-	firebase.database().ref("gatherups/"+id+"/members").once("value",function(members){
+	firebase.database().ref("events/"+id+"/members").once("value",function(members){
 		Object.keys(members.val()).forEach(person=>{
 			document.querySelectorAll(".members")[0].innerHTML+="<span class='"+person+"'></span>";
 			if(person!=Object.keys(members.val())[Object.keys(members.val()).length-1]){
@@ -379,7 +380,7 @@ function saveReminderTime(id){
 		if(!document.querySelectorAll('input[type=checkbox]')[0].checked){
 			value=(-value);
 		}
-		firebase.database().ref("gatherups/"+id+"/members").update({
+		firebase.database().ref("events/"+id+"/members").update({
 			[uid]:value
 		}).then(function(){
 			document.querySelectorAll('input[type=checkbox]')[0].id=value;
@@ -393,7 +394,7 @@ function loadEvents(inhistory){
 	back.add("loadEvents("+(inhistory?"true":"")+");");
 	clear();
 	var writes=[];
-	firebase.database().ref("users/"+uid+"/gatherups").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
+	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
 		if(events.val()==null){
 			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
 		}else{
@@ -456,7 +457,7 @@ function loadEvents(inhistory){
 				}
 			}
 			events.forEach(event=>{
-				firebase.database().ref("gatherups/"+event.key+"/info").once("value",function(info){
+				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
 					var obj=info.val();
 					obj.href=event.key;
 					addPost(obj);
@@ -480,14 +481,14 @@ function findInArray(ar, val) {
 }
 
 function joinEvent(id){
-	firebase.database().ref("gatherups/"+id+"/members/").update({
+	firebase.database().ref("events/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
 	});
 }
 
 function leaveEvent(id){
-	firebase.database().ref("users/"+uid+"/gatherups/"+id).remove().then(function(){
+	firebase.database().ref("users/"+uid+"/events/"+id).remove().then(function(){
 		loadEvents();
 	});
 }
