@@ -189,7 +189,6 @@ function loadEvent(id){
 					firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 					firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 				}
-				var value=member;
 				var date="";
 				if(event.val().date!=null){
 					date=getFormattedDate(event.val().date);
@@ -251,7 +250,7 @@ function loadEvent(id){
 						      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
 						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				loadEventBoard(id);
+				loadEventBoard({id:id,member:member});
 				var links=[];
 				if(!(event.val().people<6)){
 					links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
@@ -297,15 +296,19 @@ function newBoardPost(id){
 	}
 }
 
-function loadEventBoard(id){
+function loadEventBoard(parameters){
+	var id=parameters.id;
+	var member=parameters.member;
 	ons.push("events/"+id+"/board");
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
 			"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
+			member?(
 			"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
 			"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
 			"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
-			"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
+			"style='margin-bottom:1.5vh;'>Post To Board</button>"):
+			""}],null,null,"boardcontainer");
 	}
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
 		if(posts.val()==null||
