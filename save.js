@@ -297,7 +297,7 @@ function newBoardPost(id){
 }
 
 function loadEventBoard(id){
-ons.push("events/"+id+"/board");
+	ons.push("events/"+id+"/board");
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
 			"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
@@ -307,11 +307,14 @@ ons.push("events/"+id+"/board");
 			"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
 	}
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
-		if(posts.val()!=null&&
+		if(posts.val()==null||
+		   (
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]]!=null&&
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].content!=null&&
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].author!=null&&
-		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].date!=null){
+		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].date!=null
+		   )
+		){
 			document.querySelectorAll(".board"+id)[0].innerHTML="";
 			var writes=[];
 			function addPost(object){
