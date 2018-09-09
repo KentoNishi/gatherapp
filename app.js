@@ -135,6 +135,9 @@ function newEvent(id){
 			date:date,
 			duration:duration
 		}
+		if(id==null){
+			info.people=1;
+		}
 		if(autocomplete.getPlace()!=null){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
 			info.location=loc;
