@@ -489,7 +489,7 @@ function joinEvent(id){
 }
 
 function leaveEvent(id){
-	firebase.database().ref("users/"+uid+"/events/"+id).remove().then(function(){
+	firebase.database().ref("users/"+uid+"/events/"+id).update({status:2}).then(function(){
 		loadEvents();
 	});
 }
