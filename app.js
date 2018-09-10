@@ -366,14 +366,14 @@ function autogrow(element) {
 function viewMembers(id){
 	firebase.database().ref("events/"+id+"/members").once("value",function(members){
 		Object.keys(members.val()).forEach(person=>{
-			document.querySelectorAll(".members")[0].innerHTML+="<span class='"+person+"'></span>";
+			document.querySelectorAll(".members")[0].innerHTML+="<span class='user"+person+"'></span>";
 			if(person!=Object.keys(members.val())[Object.keys(members.val()).length-1]){
 				document.querySelectorAll(".members")[0].innerHTML+="<br />";
 			}
 		});
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
-				document.querySelectorAll("."+member.key)[0].innerHTML=encode(user.val().name);
+				document.querySelectorAll(".user"+member.key)[0].innerHTML=encode(user.val().name);
 			});
 		});
 	});
