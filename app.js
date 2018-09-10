@@ -489,6 +489,7 @@ function joinEvent(id){
 	firebase.database().ref("events/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
+		loadEvent(id);
 	});
 }
 
