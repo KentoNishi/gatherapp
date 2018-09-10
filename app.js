@@ -216,8 +216,8 @@ function loadEvent(id){
 				contents.push({text:event.val().duration!=null?
 					       (Math.floor(event.val().duration/60)+"h"+(event.val().duration%60)+"m Long"):"Unknown Duration"});
 				var check="checked";
-				if(value<0){
-					value=(-value);
+				if(member<0){
+					member=(-member);
 					check="";
 				}
 				var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
@@ -227,7 +227,7 @@ function loadEvent(id){
 					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member!=null){
-					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
+					var append="Remind me <input id='"+member+"' type='number' id='+member+' style='width:10vh;text-align:center;' value='"+member+
 					    "' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
 					    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 					contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
