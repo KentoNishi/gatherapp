@@ -304,12 +304,11 @@ function loadEventBoard(parameters){
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
 			"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
-			member?(
-			"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
+			(member?("</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
 			"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
 			"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
-			"style='margin-bottom:1.5vh;'>Post To Board</button>"):
-			""}],null,null,"boardcontainer");
+			"style='margin-bottom:1.5vh;'>Post To Board</button>"):"")
+			}],null,null,"boardcontainer");
 	}
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
 		if(posts.val()==null||
