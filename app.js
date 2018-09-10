@@ -553,7 +553,7 @@ window.onhashchange= (function() {
 });
 
 function hashChanged(){
-	if(uid!=null){
+	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
 				loadEvent(window.location.hash.substr(1,window.location.hash.length));
