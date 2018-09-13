@@ -82,9 +82,9 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
 		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe>"+
 		       "</div></span>"+
-		       (cancel==null?("<a style='color:red;font-size:4vh;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
+		       (id!=null?(cancel==null?("<a style='color:red;font-size:4vh;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
 		       " href='#'>CANCEL EVENT</a><br />"):("<a style='color:green;font-size:4vh;' onclick='reactivateEvent("+'"'+id+'"'+");return false;'"+
-		       " href='#'>REACTIVATE EVENT</a><br />"))
+		       " href='#'>REACTIVATE EVENT</a><br />")):"")
 		      });
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
