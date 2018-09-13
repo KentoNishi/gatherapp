@@ -200,8 +200,8 @@ function loadEvent(id){
 			try{
 				var member=me.val()||null;
 				var value=member;
-				var link=[{text:"Leave Event",
-					   href:"if(confirm('Are you sure you want to leave this event?')){"+
+				var link=[{text:"Skip Event",
+					   href:"if(confirm('Are you sure you want to skip this event?')){"+
 					   "leaveEvent('"+id+"');}"}];
 				if(member==null){
 					link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
@@ -424,7 +424,7 @@ function loadEvents(inhistory){
 	var writes=[];
 	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
 		if(events.val()==null){
-			write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"abandoned":"cancelled")):"upcoming")+" events."}]);
+			write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
 		}else{
 			function addPost(param){
 				writes.push(param);
