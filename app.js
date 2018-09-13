@@ -34,7 +34,8 @@ function menu(){
 	back.add("menu();");
 	clear();
 	settings();
-	write("Abandoned Events",null,null,"loadEvents(0);");
+	write("Skipped Events",null,null,"loadEvents(0);");
+	write("Cancelled",null,null,"loadEvents(3);");
 	write("Event History",null,null,"loadEvents(2);");
 }
 
@@ -401,7 +402,7 @@ function loadEvents(inhistory){
 	var writes=[];
 	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
 		if(events.val()==null){
-			write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":"abandoned"):"upcoming")+" events."}]);
+			write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"abandoned":"cancelled")):"upcoming")+" events."}]);
 		}else{
 			function addPost(param){
 				writes.push(param);
