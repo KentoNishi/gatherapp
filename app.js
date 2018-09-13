@@ -51,8 +51,24 @@ function start(){
 	}
 }
 
+function cancelEvent(id){
+	if(confirm("Are you sure you want to cancel this event?")){
+		firebase.database().ref("events/"+id+"/info").update({cancel:1}).then(function(){	
+			loadEvent(id);
+		});
+	}
+}
+
+function reactivateEvent(id){
+	if(confirm("Are you sure you want to reactivate this event?")){
+		firebase.database().ref("events/"+id+"/info").update({cancel:null}).then(function(){	
+			loadEvent(id);
+		});
+	}
+}
+
 var map;
-function requestEvent(id,title,loc,date,place,duration){
+function requestEvent(id,title,loc,date,place,duration,cancel){
 	clear();
 	var contents=[];
 	var extra="";
@@ -65,7 +81,11 @@ function requestEvent(id,title,loc,date,place,duration){
 		       "value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
 		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe>"+
-		       "</div></span>"});
+		       "</div></span>"+
+		       (cancel==null?("<a style='color:red;font-size:4vh;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
+		       " href='#'>CANCEL EVENT</a><br />"):("<a style='color:green;font-size:4vh;' onclick='reactivateEvent("+'"'+id+'"'+");return false;'"+
+		       " href='#'>REACTIVATE EVENT</a><br />"))
+		      });
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
@@ -77,7 +97,6 @@ function requestEvent(id,title,loc,date,place,duration){
 			new Date(new Date(date).getTime()-
 				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
 	}
-
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
 		{ fields: ["name", "place_id", "formatted_address"] });
@@ -107,7 +126,7 @@ function editEvent(id){
 				info.val().location.formatted_address.split(",")
 				.slice(1,info.val().location.formatted_address.split(",").length).join(",");
 		}
-		requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration);
+		requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration,info.val().cancel);
 	});
 }
 
@@ -245,6 +264,9 @@ function loadEvent(id){
 					contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
 				}else if(new Date(event.val().date).getTime()<new Date().getTime()){
 					contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+				}
+				if(event.val().cancel!=null){
+					contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 				}
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
