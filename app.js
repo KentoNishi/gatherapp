@@ -35,7 +35,7 @@ function menu(){
 	clear();
 	settings();
 	write("Skipped Events",null,null,"loadEvents(0);");
-	write("Cancelled",null,null,"loadEvents(3);");
+	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Event History",null,null,"loadEvents(2);");
 }
 
