@@ -8,8 +8,6 @@ const keys = {
 	subject: "mailto:kento24gs@outlook.com"
 };
 admin.initializeApp();
-
-//OK
 exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onWrite((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
@@ -40,20 +38,17 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
 	});
 });
 
-
-//NG
-exports.detectLeave = functions.database.ref(`/users/{uid}/events/{id}/status`).onWrite((change, context) => {
+exports.detectLeave = functions.database.ref(`/users/{uid}/events/{id}`).onWrite((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = admin.database().ref("/");
-    if(change.after.val()!==null&&change.after.val()!==undefined&&change.after.val()===0){
+    if(change.after.val()!==null&&change.after.val()!==undefined&&change.after.val().status===0){
 	    return fireDB.child(`/events/${id}/members/${uid}`).remove();
     }else{
     	return Promise.resolve();	
     }
 });
 
-//OK
 exports.sendBoardFeed = functions.database.ref(`/events/{id}/board/{push}/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -81,7 +76,6 @@ exports.sendBoardFeed = functions.database.ref(`/events/{id}/board/{push}/`).onW
 	});
 });
 
-//OK
 exports.cancelEvent = functions.database.ref(`/events/{id}/info/cancel`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -112,7 +106,6 @@ exports.cancelEvent = functions.database.ref(`/events/{id}/info/cancel`).onWrite
 	}
 });
 
-//OK
 exports.sendGroup = functions.database.ref(`/events/{id}/info/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -159,8 +152,6 @@ function difference(o1, o2) {
 	return returns;
 }
 
-
-//NG
 exports.abandonGroup = functions.database.ref(`/events/{id}/left/{uid}/`).onDelete((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
@@ -178,7 +169,6 @@ exports.toggleGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWr
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = change.after.ref.root;
-    return fireDB.child("events/"+id+"/left/"+uid).remove().then(function(){
 		return fireDB.child(`/events/${id}/info/`).once(`value`).then(value => {
 			if(value.val()!==null){
 	    		var date=value.val().date;
@@ -212,8 +202,13 @@ exports.toggleGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWr
 			}else{
 				return Promise.resolve();
 			}
+		}).then(function(){
+	    	if(change.after.val()!==undefined&&change.after.val()!==null){
+		    	return fireDB.child("events/"+id+"/left/"+uid).remove();
+	    	}else{
+	    		return Promise.resolve();	
+	    	}
 		});
-	});
 });
 
 exports.detectAbandonedGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWrite((change, context) => {
@@ -222,7 +217,11 @@ exports.detectAbandonedGroup = functions.database.ref(`/events/{id}/members/{uid
     let fireDB=admin.database().ref("/");
 		return fireDB.child(`/events/${id}/members`).once(`value`).then(members => {
 			return fireDB.child(`/users/${uid}/events/${id}/status`).once("value",userval=>{
-				var status=(members.val()!==undefined&&members.val()!==null)?((userval.val()!==null&&userval.val()!==undefined)?userval.val():1):null;
+				var datestatus=0;
+				if(change.after.val()!==undefined&&change.after.val()!==null){
+					datestatus=1;
+				}
+				var status=(members.val()===undefined||members.val()===null)?null:(datestatus);
 				if(userval.val()===3){
 					status=3;
 				}
