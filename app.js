@@ -242,14 +242,14 @@ function loadEvent(id){
 					check="";
 				}
 				var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
-				    " onclick='saveReminderTime(this.classList[0].substr(5,this.classList[0].length));' class='checkbox"+id+"' />";
+				    " onclick='saveReminderTime(this.classList[0].substr(5,this.classList[0].length));' class='class"+id+"' />";
 				var extra="";
 				if(Notification.permission!="granted"&&Notification.permission!="denied"){
 					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member!=null){
 					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
-					    "' step='5' min='1' class='ok"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
+					    "' step='5' min='1' class='class"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
 					    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 					contents.push({html:cb+append+" <span class='okbutton' class='class"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
 						       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
