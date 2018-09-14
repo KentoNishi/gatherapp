@@ -263,10 +263,12 @@ function loadEvent(id){
 				if(event.val().cancel!=null){
 					contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 				}
-				if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
-					contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-				}else if(new Date(event.val().date).getTime()<new Date().getTime()){
-					contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+				else if(event.val().date!=null){
+					if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
+						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+					}else if(new Date(event.val().date).getTime()<new Date().getTime()){
+						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+					}
 				}
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
@@ -465,13 +467,15 @@ function loadEvents(inhistory){
 						}
 						item.duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
 						var contents=[{text:(item.date!=null?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}];
-						if(item.cancel!=null){
+						if(item.cancel!=null&&item.date!=undefined){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 						}
-						if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-							contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-						}else if(new Date(item.date).getTime()<new Date().getTime()){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+						else if(item.date!=null){
+							if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+							}else if(new Date(item.date).getTime()<new Date().getTime()){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+							}
 						}
 						write(item.title,contents,null,"loadEvent('"+item.href+"');");
 					});
@@ -485,10 +489,12 @@ function loadEvents(inhistory){
 						if(item.cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 						}
-						if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-							contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-						}else if(new Date(item.date).getTime()<new Date().getTime()){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+						else if(item.date!=null&&item.date!=undefined){
+							if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+							}else if(new Date(item.date).getTime()<new Date().getTime()){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+							}
 						}
 						write(item.title,contents,null,"loadEvent('"+item.href+"');");
 					});
@@ -499,13 +505,15 @@ function loadEvents(inhistory){
 						}
 						item.duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
 						var contents=[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}];
-						if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-							contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-						}else if(new Date(item.date).getTime()<new Date().getTime()){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
-						}
 						if(item.cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+						}
+						else if(item.date!=null&&item.date!=undefined){
+							if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+							}else if(new Date(item.date).getTime()<new Date().getTime()){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+							}
 						}
 						write(item.title,contents,null,"loadEvent('"+item.href+"');");
 					});
