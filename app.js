@@ -473,7 +473,7 @@ function loadEvents(inhistory){
 						}else if(new Date(item.date).getTime()<new Date().getTime()){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 						}
-						write(item.title,,null,"loadEvent('"+item.href+"');");
+						write(item.title,contents,null,"loadEvent('"+item.href+"');");
 					});
 					future.reverse().forEach(item=>{
 						var address="";
