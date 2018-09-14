@@ -262,7 +262,8 @@ function loadEvent(id){
 				}
 				if(event.val().cancel!=null){
 					contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-				}else if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
+				}
+				if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
 					contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
 				}else if(new Date(event.val().date).getTime()<new Date().getTime()){
 					contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
@@ -474,7 +475,8 @@ function loadEvents(inhistory){
 						var contents=[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}];
 						if(item.cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-						}else if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+						}
+						if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
 							contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
 						}else if(new Date(item.date).getTime()<new Date().getTime()){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
