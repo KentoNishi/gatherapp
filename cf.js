@@ -216,23 +216,32 @@ exports.detectAbandonedGroup = functions.database.ref(`/events/{id}/members/{uid
     let id = context.params.id;
     let fireDB=admin.database().ref("/");
 		return fireDB.child(`/events/${id}/members`).once(`value`).then(members => {
-			return fireDB.child(`/users/${uid}/events/${id}/status`).once("value",userval=>{
-				var datestatus=0;
-				if(change.after.val()!==undefined&&change.after.val()!==null){
-					datestatus=1;
-				}
-				var status=(members.val()===undefined||members.val()===null)?null:(datestatus);
-				if(userval.val()===3){
-					status=3;
-				}
-				return fireDB.child(`/users/${uid}/events/`+id).update({
-	    			status:status
-	   			}).then(function(){
-	   				if(status===0){
-	   					return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
-	   				}else{
-	   					return Promise.resolve();
-	   				}
+			return fireDB.child(`events/${id}/info/`).once("value",info=>{
+					return fireDB.child(`/users/${uid}/events/${id}/status`).once("value",userval=>{
+					var datestatus=0;
+						console.log(datestatus+"!!!!");
+					if(change.after.val()!==undefined&&change.after.val()!==null){
+						datestatus=2;
+						if(info.val().date===null||info.val().date===undefined||new Date(info.val().date+info.val().duration*60*1000).getTime()>new Date().getTime()){
+							datestatus=1;
+						}
+						if(info.val().cancel!==null&&info.val().cancel!==undefined){
+							datestatus=3;
+						}
+					}
+					var status=(members.val()===undefined||members.val()===null)?null:(datestatus);
+				/*	if(userval.val()===3){
+						status=3;
+					}*/
+					return fireDB.child(`/users/${uid}/events/`+id).update({
+		    			status:status
+		   			}).then(function(){
+		   				if(status===0){
+		   					return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
+		   				}else{
+		   					return Promise.resolve();
+		   				}
+		   			});
 	   			});
 	   		});
    		});
