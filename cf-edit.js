@@ -8,6 +8,8 @@ const keys = {
 	subject: "mailto:kento24gs@outlook.com"
 };
 admin.initializeApp();
+
+//OK
 exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onWrite((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
@@ -38,17 +40,20 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
 	});
 });
 
-exports.detectLeave = functions.database.ref(`/users/{uid}/events/{id}`).onWrite((change, context) => {
+
+//NG
+exports.detectLeave = functions.database.ref(`/users/{uid}/events/{id}/status`).onWrite((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = admin.database().ref("/");
-    if(change.after.val()!==null&&change.after.val()!==undefined&&change.after.val().status===0){
+    if(change.after.val()!==null&&change.after.val()!==undefined&&change.after.val()===0){
 	    return fireDB.child(`/events/${id}/members/${uid}`).remove();
     }else{
     	return Promise.resolve();	
     }
 });
 
+//OK
 exports.sendBoardFeed = functions.database.ref(`/events/{id}/board/{push}/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -76,6 +81,7 @@ exports.sendBoardFeed = functions.database.ref(`/events/{id}/board/{push}/`).onW
 	});
 });
 
+//OK
 exports.cancelEvent = functions.database.ref(`/events/{id}/info/cancel`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -106,6 +112,7 @@ exports.cancelEvent = functions.database.ref(`/events/{id}/info/cancel`).onWrite
 	}
 });
 
+//OK
 exports.sendGroup = functions.database.ref(`/events/{id}/info/`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
@@ -152,6 +159,8 @@ function difference(o1, o2) {
 	return returns;
 }
 
+
+//NG
 exports.abandonGroup = functions.database.ref(`/events/{id}/left/{uid}/`).onDelete((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
