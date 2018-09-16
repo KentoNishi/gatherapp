@@ -552,7 +552,7 @@ function joinEvent(id){
 }
 
 function leaveEvent(id){
-	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
+	firebase.database().ref("events/"+id+"/members/"+uid).remove().then(function(){
 		loadEvents();
 	});
 }
