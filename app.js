@@ -639,7 +639,8 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(!hashChanged(1)){
-				loadEvents();
+				window.location.hash=("#");
+				action("home");
 			}
 		}
 	});
