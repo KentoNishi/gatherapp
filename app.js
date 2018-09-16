@@ -192,6 +192,10 @@ function newEvent(id){
 }
 
 function loadEvent(id){
+	window.location.hash=id;
+}
+
+function loadEventPage(id){
 	back.add("loadEvent('"+id+"');");
 	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 		clear();
@@ -621,8 +625,9 @@ window.onhashchange= (function() {
 function hashChanged(){
 	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
+			console.log(window.location.hash.substr(1,window.location.hash.length).split("/"));
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
-				loadEvent(window.location.hash.substr(1,window.location.hash.length));
+				loadEventPage(window.location.hash.substr(1,window.location.hash.length));
 				return true;
 			}else{
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
