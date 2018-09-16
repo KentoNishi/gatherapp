@@ -622,6 +622,9 @@ function signOut() {
 	});
 }
 
+window.onhashchange= (function() {
+	hashChanged();
+});
 
 if(navigator.onLine){
 	firebase.auth().onAuthStateChanged(function(me) {
@@ -647,10 +650,6 @@ if(navigator.onLine){
 	clear();
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
-
-window.onhashchange= (function() {
-	hashChanged();
-});
 
 function hashChanged(load){
 	if(uid!=null&&uid!=""){
