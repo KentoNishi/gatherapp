@@ -192,7 +192,6 @@ function newEvent(id){
 }
 
 function loadEvent(id){
-	window.location.hash="";
 	window.location.hash=id;
 }
 
