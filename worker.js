@@ -67,7 +67,7 @@ self.onmessage=function(e){
 }
 */
 
-var CACHE_NAME = "CACHE";
+var CACHE_NAME = "CACHE"+new Date().getTime();
 
 var CACHED_URLS = [
     '/gatherapp/app.js',
