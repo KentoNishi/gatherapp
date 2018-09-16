@@ -638,7 +638,7 @@ if(navigator.onLine){
 				name:name,
 				pic:pic
 			});
-			if(!hashChanged()){
+			if(!hashChanged(1)){
 				action("home");
 			}
 		}
@@ -652,7 +652,7 @@ window.onhashchange= (function() {
 	hashChanged();
 });
 
-function hashChanged(){
+function hashChanged(load){
 	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
@@ -663,6 +663,8 @@ function hashChanged(){
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
 					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					return true;
+				}else if(load==1){
+					return false;
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
 					editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
