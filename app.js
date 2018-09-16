@@ -639,7 +639,6 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(!hashChanged(1)){
-				history.pushState([],"","#");
 				action("home");
 			}
 		}
@@ -664,8 +663,6 @@ function hashChanged(load){
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
 					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					return true;
-				}else if(load==1){
-					return false;
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
 					editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
