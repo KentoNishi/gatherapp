@@ -192,6 +192,7 @@ function newEvent(id){
 }
 
 function loadEvent(id){
+	window.location.hash="";
 	window.location.hash=id;
 }
 
@@ -625,6 +626,7 @@ window.onhashchange= (function() {
 function hashChanged(){
 	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
+			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			console.log(window.location.hash.substr(1,window.location.hash.length).split("/"));
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
 				loadEventPage(window.location.hash.substr(1,window.location.hash.length));
@@ -686,14 +688,12 @@ function action(act,valid) {
 		if (act == "menu") {
 			if(valid==1){
 				menu();
-				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			}else{
 				window.location.hash="/menu";
 			}	
 		} else if (act == "add") {
 			if(valid==1){
 				start();
-				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			}else{
 				window.location.hash="/new";
 			}	
