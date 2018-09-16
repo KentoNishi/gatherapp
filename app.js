@@ -17,7 +17,7 @@ var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
 document.addEventListener('backbutton', function(){
-	write("You pressed the back button.",[{"Ignore this message and stop complaining *dad*"}]);
+	write("You pressed the back button.",[{text:"Ignore this message and stop complaining *dad*"}]);
 });
 
 back.add=(function(param){
