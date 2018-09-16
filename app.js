@@ -459,7 +459,14 @@ function loadEvents(inhistory){
 						}
 					});
 					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
+					if(inhistory!=null){
+						future=future.concat(ongoing);
+						ongoing=[];
+					}
 					future=future.sort((a,b)=>{return a.date-b.date;});
+					if(inhistory==null){
+						future=future.reverse();
+					}
 					unknown.forEach(item=>{
 						var address="";
 						if(item.location!=null){
@@ -479,7 +486,7 @@ function loadEvents(inhistory){
 						}
 						write(item.title,contents,null,"loadEvent('"+item.href+"');");
 					});
-					future.reverse().forEach(item=>{
+					future.forEach(item=>{
 						var address="";
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
@@ -498,7 +505,7 @@ function loadEvents(inhistory){
 						}
 						write(item.title,contents,null,"loadEvent('"+item.href+"');");
 					});
-					ongoing.forEach(item=>{
+					ongoing.reverse().forEach(item=>{
 						var address="";
 						if(item.location!=null){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
@@ -552,7 +559,7 @@ function joinEvent(id){
 }
 
 function leaveEvent(id){
-	firebase.database().ref("events/"+id+"/members/"+uid).remove().then(function(){
+	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
 		loadEvents();
 	});
 }
