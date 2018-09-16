@@ -639,7 +639,7 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(!hashChanged(1)){
-				window.location.hash=("#");
+				history.pushState([],"","#");
 				action("home");
 			}
 		}
