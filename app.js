@@ -120,15 +120,23 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 
 var autocomplete;
 function editEvent(id){
-	firebase.database().ref("events/"+id+"/info").once("value",function(info){
-		var addr;
-		if(info.val().location!=null){
-			addr=info.val().location.name+","+
-				info.val().location.formatted_address.split(",")
-				.slice(1,info.val().location.formatted_address.split(",").length).join(",");
-		}
-		requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration,info.val().cancel);
-	});
+	var cont=true;
+	if(window.location.hash!="#"+id+"/edit"){
+		window.location.hash=("#");
+		history.replaceState([],"","#"+id+"/edit");
+		cont=false;
+	}
+	if(cont){
+		firebase.database().ref("events/"+id+"/info").once("value",function(info){
+			var addr;
+			if(info.val().location!=null){
+				addr=info.val().location.name+","+
+					info.val().location.formatted_address.split(",")
+					.slice(1,info.val().location.formatted_address.split(",").length).join(",");
+			}
+			requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration,info.val().cancel);
+		});
+	}
 }
 
 function saveEvent(id){
@@ -192,7 +200,6 @@ function newEvent(id){
 }
 
 function loadEvent(id){
-	console.log(id);
 	if(window.location.hash=="#"+id){
 		loadEventPage(id);
 	}else{
@@ -448,7 +455,7 @@ function loadEvents(inhistory){
 			cont=false;
 		}
 	}
-		if(cont){
+	if(cont){
 		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
 		clear();
 		var writes=[];
@@ -458,7 +465,6 @@ function loadEvents(inhistory){
 			}else{
 				function addPost(param){
 					writes.push(param);
-	//				console.log(writes);
 					if(writes.length==Object.keys(events.val()).length){
 						var ongoing=[];
 						var future=[];
@@ -650,13 +656,15 @@ function hashChanged(){
 	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
-			console.log(window.location.hash.substr(1,window.location.hash.length).split("/"));
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
 				loadEvent(window.location.hash.substr(1,window.location.hash.length));
 				return true;
 			}else{
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
 					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+					return true;
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
+					editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					return true;
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
 					action("menu",1);
