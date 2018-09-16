@@ -679,21 +679,21 @@ function urlBase64ToUint8Array(base64String) {
 function action(act,valid) {
 	if(uid!=""){
 		if (act == "menu") {
-			if(valid!=null){
+			if(valid==1){
 				menu();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			}else{
 				window.location.hash="/menu";
 			}	
 		} else if (act == "add") {
-			if(valid!=null){
+			if(valid==1){
 				start();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			}else{
 				window.location.hash="/new";
 			}	
 		} else if (act == "home") {
-			if(valid!=null){
+			if(valid==1){
 				loadEvents();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 			}else{
