@@ -628,6 +628,12 @@ function hashChanged(){
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
 					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					return true;
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
+					action("menu",1);
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
+					action("home",1);
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
+					action("add",1);
 				}
 			}
 		}
@@ -670,18 +676,29 @@ function urlBase64ToUint8Array(base64String) {
 	return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
-function action(act) {
-	window.location.hash="";
+function action(act,valid) {
 	if(uid!=""){
 		if (act == "menu") {
-			menu();
-			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
+			if(valid!=null){
+				menu();
+				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
+			}else{
+				window.location.hash="/menu";
+			}	
 		} else if (act == "add") {
-			start();
-			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
+			if(valid!=null){
+				start();
+				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
+			}else{
+				window.location.hash="/new";
+			}	
 		} else if (act == "home") {
-			loadEvents();
-			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
+			if(valid!=null){
+				loadEvents();
+				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
+			}else{
+				window.location.hash="/home";
+			}	
 		}
 	}
 }
