@@ -635,6 +635,10 @@ function hashChanged(){
 	return false;
 }
 
+function loadBoard(id){
+	loadEvent(id);
+}
+
 function offerNotifications(id){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
