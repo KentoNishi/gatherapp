@@ -96,8 +96,6 @@ self.addEventListener("fetch", function(event) {
       return caches.match(event.request).then(function(response) {
         if (response) {
           return response;
-        } else if (event.request.headers.get("accept").includes("text/html")) {
-          return caches.match("/index-offline.html");
         }
       });
     })
@@ -109,7 +107,7 @@ self.addEventListener("activate", function(event) {
     caches.keys().then(function(cacheNames) {
       return Promise.all(
         cacheNames.map(function(cacheName) {
-          if (CACHE_NAME !== cacheName &&  cacheName.startsWith("gih-cache")) {
+          if (CACHE_NAME !== cacheName &&  cacheName.startsWith("CACHE")) {
             return caches.delete(cacheName);
           }
         })
