@@ -40,7 +40,7 @@ function menu(){
 }
 
 function settings(){
-	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
 function start(){
@@ -670,10 +670,13 @@ function action(act) {
 	if(uid!=""){
 		if (act == "menu") {
 			menu();
+			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 		} else if (act == "add") {
 			start();
+			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 		} else if (act == "home") {
 			loadEvents();
+			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 		}
 	}
 }
