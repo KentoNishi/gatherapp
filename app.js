@@ -605,7 +605,7 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(!hashChanged()){
-				loadEvents();
+				action("home");
 			}
 		}
 	});
