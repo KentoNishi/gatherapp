@@ -642,6 +642,7 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(!hashChanged(1)){
+				history.pushState([],"","#/");
 				action("home");
 			}
 		}
