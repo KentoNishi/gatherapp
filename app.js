@@ -665,7 +665,6 @@ function hashChanged(){
 					return true;
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
 					editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
-					return true;
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
 					action("menu",1);
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
