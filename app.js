@@ -432,120 +432,138 @@ function saveReminderTime(id){
 }
 
 function loadEvents(inhistory){
-	back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
-	clear();
-	var writes=[];
-	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
-		if(events.val()==null){
-			write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
-		}else{
-			function addPost(param){
-				writes.push(param);
-//				console.log(writes);
-				if(writes.length==Object.keys(events.val()).length){
-					var ongoing=[];
-					var future=[];
-					var unknown=[];
-					writes.forEach(item=>{
-						if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
-							if(new Date(item.date).getTime()>new Date().getTime()){
+	var cont=true;
+	if(inhistory!=null){
+		var item;
+		if(inhistory==0){
+			item="left";
+		}else if(inhistory==2){
+			item="history";
+		}else if(inhistory==3){
+			item="cancelled";
+		}
+		if(window.location.hash!="#/"+item){
+			window.location.hash=("#");
+			history.replaceState([],"","#/"+item);
+			cont=false;
+		}
+	}
+		if(cont){
+		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
+		clear();
+		var writes=[];
+		firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
+			if(events.val()==null){
+				write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
+			}else{
+				function addPost(param){
+					writes.push(param);
+	//				console.log(writes);
+					if(writes.length==Object.keys(events.val()).length){
+						var ongoing=[];
+						var future=[];
+						var unknown=[];
+						writes.forEach(item=>{
+							if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
+								if(new Date(item.date).getTime()>new Date().getTime()){
+									if(item.date==null){
+										unknown.push(item);
+									}else{
+										future.push(item);
+									}
+								}else{
+									if(item.date==null){
+										unknown.push(item);
+									}else{
+										ongoing.push(item);
+									}
+								}
+							}else{
 								if(item.date==null){
 									unknown.push(item);
 								}else{
 									future.push(item);
 								}
-							}else{
-								if(item.date==null){
-									unknown.push(item);
-								}else{
-									ongoing.push(item);
+							}
+						});
+						ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
+						if(inhistory!=null){
+							future=future.concat(ongoing);
+							ongoing=[];
+						}
+						future=future.sort((a,b)=>{return a.date-b.date;});
+						if(inhistory==null){
+							future=future.reverse();
+						}
+						unknown.forEach(item=>{
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+							}
+							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=null?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+							if(item.cancel!=null){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							}
+							else if(item.date!=null&&item.date!=undefined){
+								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								}else if(new Date(item.date).getTime()<new Date().getTime()){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 								}
 							}
-						}else{
-							if(item.date==null){
-								unknown.push(item);
-							}else{
-								future.push(item);
+							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+						});
+						future.forEach(item=>{
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 							}
-						}
-					});
-					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
-					if(inhistory!=null){
-						future=future.concat(ongoing);
-						ongoing=[];
+							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+							if(item.cancel!=null){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							}
+							else if(item.date!=null&&item.date!=undefined){
+								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								}else if(new Date(item.date).getTime()<new Date().getTime()){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								}
+							}
+							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+						});
+						ongoing.reverse().forEach(item=>{
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+							}
+							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+							if(item.cancel!=null){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							}
+							else if(item.date!=null&&item.date!=undefined){
+								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								}else if(new Date(item.date).getTime()<new Date().getTime()){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								}
+							}
+							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+						});
 					}
-					future=future.sort((a,b)=>{return a.date-b.date;});
-					if(inhistory==null){
-						future=future.reverse();
-					}
-					unknown.forEach(item=>{
-						var address="";
-						if(item.location!=null){
-							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-						}
-						var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=null?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-						if(item.cancel!=null){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-						}
-						else if(item.date!=null&&item.date!=undefined){
-							if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-							}else if(new Date(item.date).getTime()<new Date().getTime()){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
-							}
-						}
-						write(item.title,contents,null,"loadEvent('"+item.href+"');");
-					});
-					future.forEach(item=>{
-						var address="";
-						if(item.location!=null){
-							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-						}
-						var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-						if(item.cancel!=null){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-						}
-						else if(item.date!=null&&item.date!=undefined){
-							if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-							}else if(new Date(item.date).getTime()<new Date().getTime()){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
-							}
-						}
-						write(item.title,contents,null,"loadEvent('"+item.href+"');");
-					});
-					ongoing.reverse().forEach(item=>{
-						var address="";
-						if(item.location!=null){
-							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-						}
-						var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-						if(item.cancel!=null){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-						}
-						else if(item.date!=null&&item.date!=undefined){
-							if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-							}else if(new Date(item.date).getTime()<new Date().getTime()){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
-							}
-						}
-						write(item.title,contents,null,"loadEvent('"+item.href+"');");
-					});
 				}
-			}
-			events.forEach(event=>{
-				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
-					var obj=info.val();
-					obj.href=event.key;
-					addPost(obj);
+				events.forEach(event=>{
+					firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
+						var obj=info.val();
+						obj.href=event.key;
+						addPost(obj);
+					});
 				});
-			});
-		}
-	});
+			}
+		});
+	}
 }
 
 function findInArray(ar, val) {
@@ -646,6 +664,12 @@ function hashChanged(){
 					action("home",1);
 				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
 					action("add",1);
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="cancelled"){
+					loadEvents(3);
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="history"){
+					loadEvents(2);
+				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="left"){
+					loadEvents(0);
 				}
 			}
 		}
