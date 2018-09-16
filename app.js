@@ -639,7 +639,7 @@ if(navigator.onLine){
 				pic:pic
 			});
 			if(!hashChanged(1)){
-				action("home");
+				loadEvents();
 			}
 		}
 	});
@@ -663,20 +663,23 @@ function hashChanged(load){
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
 					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					return true;
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
-					editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
-					action("menu",1);
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
-					action("home",1);
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
-					action("add",1);
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="cancelled"){
-					loadEvents(3);
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="history"){
-					loadEvents(2);
-				}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="left"){
-					loadEvents(0);
+				}
+				if(load!=1){
+					if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
+						editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
+						action("menu",1);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
+						action("home",1);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
+						action("add",1);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="cancelled"){
+						loadEvents(3);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="history"){
+						loadEvents(2);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="left"){
+						loadEvents(0);
+					}
 				}
 			}
 		}
