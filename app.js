@@ -192,7 +192,13 @@ function newEvent(id){
 }
 
 function loadEvent(id){
-	window.location.hash=id;
+	console.log(id);
+	if(window.location.hash=="#"+id){
+		loadEventPage(id);
+	}else{
+		window.location.hash=("#");
+		history.replaceState([],"","#"+id);
+	}
 }
 
 function loadEventPage(id){
@@ -628,7 +634,7 @@ function hashChanged(){
 			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			console.log(window.location.hash.substr(1,window.location.hash.length).split("/"));
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
-				loadEventPage(window.location.hash.substr(1,window.location.hash.length));
+				loadEvent(window.location.hash.substr(1,window.location.hash.length));
 				return true;
 			}else{
 				if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="board"){
@@ -688,20 +694,23 @@ function action(act,valid) {
 			if(valid==1){
 				menu();
 			}else{
-				window.location.hash="/menu";
+				window.location.hash="";
+				history.replaceState([],"","#/menu");
 			}	
 		} else if (act == "add") {
 			if(valid==1){
 				start();
 			}else{
-				window.location.hash="/new";
+				window.location.hash="";
+				history.replaceState([],"","#/new");
 			}	
 		} else if (act == "home") {
 			if(valid==1){
 				loadEvents();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 			}else{
-				window.location.hash="/home";
+				window.location.hash="";
+				history.replaceState([],"","#/home");
 			}	
 		}
 	}
