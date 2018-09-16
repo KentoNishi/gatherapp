@@ -473,7 +473,7 @@ function loadEvents(inhistory){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
 						var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						var contents=[{text:(item.date!=null?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:duration}];
+						var contents=[{text:(item.date!=null?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}];//,{text:duration}];
 						if(item.cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 						}
@@ -492,7 +492,7 @@ function loadEvents(inhistory){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
 						var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						var contents=[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:duration}];
+						var contents=[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}];//,{text:duration}];
 						if(item.cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 						}
@@ -511,7 +511,7 @@ function loadEvents(inhistory){
 							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 						}
 						var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						var contents=[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:duration}];
+						var contents=[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"}];//,{text:duration}];
 						if(item.cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 						}
