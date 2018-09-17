@@ -1,4 +1,3 @@
-/*
 var config = {
 	apiKey: "AIzaSyB4meNlwVUltd007qmH9hPQpn6Oz_CF3xM",
 	authDomain: "gatherapp-14b50.firebaseapp.com",
@@ -8,8 +7,7 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
-*/
-
+ 
 var uid = "";
 var name = "";
 var pic = "";
@@ -19,6 +17,7 @@ var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
 document.addEventListener('backbutton', function(){
+	write("You pressed the back button.",[{text:"Ignore this message and stop complaining *dad*"}]);
 });
 
 back.add=(function(param){
@@ -36,11 +35,13 @@ function menu(){
 	back.add("menu();");
 	clear();
 	settings();
-	write("Event History",null,null,"loadEvents(true);");
+	write("Skipped Events",null,null,"loadEvents(0);");
+	write("Cancelled Events",null,null,"loadEvents(3);");
+	write("Event History",null,null,"loadEvents(2);");
 }
 
 function settings(){
-	write(name,[{html:"<img src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
 function start(){
@@ -51,8 +52,24 @@ function start(){
 	}
 }
 
+function cancelEvent(id){
+	if(confirm("Are you sure you want to cancel this event?")){
+		firebase.database().ref("events/"+id+"/info").update({cancel:1}).then(function(){	
+			loadEvent(id);
+		});
+	}
+}
+
+function reactivateEvent(id){
+	if(confirm("Are you sure you want to reactivate this event?")){
+		firebase.database().ref("events/"+id+"/info").update({cancel:null}).then(function(){	
+			loadEvent(id);
+		});
+	}
+}
+
 var map;
-function requestEvent(id,title,loc,date,place,duration){
+function requestEvent(id,title,loc,date,place,duration,cancel){
 	clear();
 	var contents=[];
 	var extra="";
@@ -65,7 +82,11 @@ function requestEvent(id,title,loc,date,place,duration){
 		       "value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
 		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen></iframe>"+
-		       "</div></span>"});
+		       "</div></span>"+
+		       (id!=null?(cancel==null?("<a style='color:red;font-size:4vh;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
+		       " href='#'>CANCEL EVENT</a><br />"):("<a style='color:green;font-size:4vh;' onclick='reactivateEvent("+'"'+id+'"'+");return false;'"+
+		       " href='#'>REACTIVATE EVENT</a><br />")):"")
+		      });
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
@@ -77,7 +98,6 @@ function requestEvent(id,title,loc,date,place,duration){
 			new Date(new Date(date).getTime()-
 				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
 	}
-
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
 		{ fields: ["name", "place_id", "formatted_address"] });
@@ -100,15 +120,23 @@ function requestEvent(id,title,loc,date,place,duration){
 
 var autocomplete;
 function editEvent(id){
-	firebase.database().ref("events/"+id+"/info").once("value",function(info){
-		var addr;
-		if(info.val().location!=null){
-			addr=info.val().location.name+","+
-				info.val().location.formatted_address.split(",")
-				.slice(1,info.val().location.formatted_address.split(",").length).join(",");
-		}
-		requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration);
-	});
+	var cont=true;
+	if(window.location.hash!="#"+id+"/edit"){
+		window.location.hash=("#");
+		history.replaceState([],"","#"+id+"/edit");
+		cont=false;
+	}
+	if(cont){
+		firebase.database().ref("events/"+id+"/info").once("value",function(info){
+			var addr;
+			if(info.val().location!=null){
+				addr=info.val().location.name+","+
+					info.val().location.formatted_address.split(",")
+					.slice(1,info.val().location.formatted_address.split(",").length).join(",");
+			}
+			requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration,info.val().cancel);
+		});
+	}
 }
 
 function saveEvent(id){
@@ -136,6 +164,9 @@ function newEvent(id){
 			title:title,
 			date:date,
 			duration:duration
+		}
+		if(id==null){
+			info.people=1;
 		}
 		if(autocomplete.getPlace()!=null){
 			var loc=JSON.parse(JSON.stringify(autocomplete.getPlace()));	
@@ -169,6 +200,15 @@ function newEvent(id){
 }
 
 function loadEvent(id){
+	if(window.location.hash=="#"+id){
+		loadEventPage(id);
+	}else{
+		window.location.hash=("#");
+		history.replaceState([],"","#"+id);
+	}
+}
+
+function loadEventPage(id){
 	back.add("loadEvent('"+id+"');");
 	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 		clear();
@@ -177,8 +217,9 @@ function loadEvent(id){
 		firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
 			try{
 				var member=me.val()||null;
-				var link=[{text:"Leave Event",
-					   href:"if(confirm('Are you sure you want to leave this event?')){"+
+				var value=member;
+				var link=[{text:"Skip Event",
+					   href:"if(confirm('Are you sure you want to skip this event?')){"+
 					   "leaveEvent('"+id+"');}"}];
 				if(member==null){
 					link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
@@ -187,7 +228,6 @@ function loadEvent(id){
 					firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 					firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 				}
-				var value=member;
 				var date="";
 				if(event.val().date!=null){
 					date=getFormattedDate(event.val().date);
@@ -198,7 +238,7 @@ function loadEvent(id){
 						event.val().location.formatted_address.split(",")
 						.slice(1,event.val().location.formatted_address.split(",").length).join(",");
 				}
-				var contents=[{text:date||"Unknown Date"},
+				var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(date||"Unknown Date")+"</span></strong>"},
 					      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
 				if(event.val().location!=null){
 					var body="";
@@ -220,28 +260,33 @@ function loadEvent(id){
 					check="";
 				}
 				var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
-				    " onclick='saveReminderTime(this.classList[0]);' class='"+id+"' />";
+				    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 				var extra="";
 				if(Notification.permission!="granted"&&Notification.permission!="denied"){
 					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 				}
 				if(member!=null){
 					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
-					    "' step='5' min='1' class='"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
+					    "' step='5' min='1' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
 					    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
-					contents.push({html:cb+append+" <span class='okbutton' class='"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
+					contents.push({html:cb+append+" <span class='okbutton' class='ok"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
 						       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-						       ")[0].innerHTML=null;saveReminderTime(document.querySelectorAll("+'".'+id+'"'+
-						       ")[0].classList[0]);'></span> <span class='nobutton' class='"+id+"' onclick='document.querySelectorAll("+
+						       ")[0].innerHTML=null;saveReminderTime("+'"'+id+'"'+
+						       ");'></span> <span class='nobutton' class='no"+id+"' onclick='document.querySelectorAll("+
 						       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
 						       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
 						       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
 						       ")[0].id));'></span> minutes early"+extra});
 				}
-				if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
-					contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-				}else if(new Date(event.val().date).getTime()<new Date().getTime()){
-					contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+				if(event.val().cancel!=null){
+					contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+				}
+				else if(event.val().date!=null){
+					if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
+						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+					}else if(new Date(event.val().date).getTime()<new Date().getTime()){
+						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+					}
 				}
 				if(navigator.share&&member!=null){
 					link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
@@ -249,7 +294,7 @@ function loadEvent(id){
 						      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
 						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
 				}
-				loadEventBoard(id);
+				loadEventBoard({id:id,member:member});
 				var links=[];
 				if(!(event.val().people<6)){
 					links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
@@ -295,15 +340,18 @@ function newBoardPost(id){
 	}
 }
 
-function loadEventBoard(id){
+function loadEventBoard(parameters){
+	var id=parameters.id;
+	var member=parameters.member;
 	ons.push("events/"+id+"/board");
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
 			"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>"+
-			"</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
+			(member?("</div><textarea placeholder='Type A Message...' oninput='autogrow(this);' "+
 			"style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;height:5vh;max-width:75vw;"+
 			"min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost("+'"'+id+'"'+");' "+
-			"style='margin-bottom:1.5vh;'>Post To Board</button>"}],null,null,"boardcontainer");
+			"style='margin-bottom:1.5vh;'>Post To Board</button>"):"")
+			}],null,null,"boardcontainer");
 	}
 	firebase.database().ref("events/"+id+"/board").on("value",posts=>{
 		if(posts.val()==null||
@@ -361,14 +409,14 @@ function autogrow(element) {
 function viewMembers(id){
 	firebase.database().ref("events/"+id+"/members").once("value",function(members){
 		Object.keys(members.val()).forEach(person=>{
-			document.querySelectorAll(".members")[0].innerHTML+="<span class='"+person+"'></span>";
+			document.querySelectorAll(".members")[0].innerHTML+="<span class='user"+person+"'></span>";
 			if(person!=Object.keys(members.val())[Object.keys(members.val()).length-1]){
 				document.querySelectorAll(".members")[0].innerHTML+="<br />";
 			}
 		});
 		members.forEach(member=>{
 			firebase.database().ref("users/"+member.key+"/info").once("value",function(user){
-				document.querySelectorAll("."+member.key)[0].innerHTML=encode(user.val().name);
+				document.querySelectorAll(".user"+member.key)[0].innerHTML=encode(user.val().name);
 			});
 		});
 	});
@@ -391,80 +439,137 @@ function saveReminderTime(id){
 }
 
 function loadEvents(inhistory){
-	back.add("loadEvents("+(inhistory?"true":"")+");");
-	clear();
-	var writes=[];
-	firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory?2:1).once("value",events=>{
-		if(events.val()==null){
-			write("No Events",[{text:"You have no "+(inhistory?"completed":"upcoming")+" events."}]);
-		}else{
-			function addPost(param){
-				writes.push(param);
-//				console.log(writes);
-				if(writes.length==Object.keys(events.val()).length){
-					var ongoing=[];
-					var future=[];
-					var unknown=[];
-					writes.forEach(item=>{
-						if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
-							if(new Date(item.date).getTime()>new Date().getTime()){
+	var cont=true;
+	if(inhistory!=null){
+		var item;
+		if(inhistory==0){
+			item="left";
+		}else if(inhistory==2){
+			item="history";
+		}else if(inhistory==3){
+			item="cancelled";
+		}
+		if(window.location.hash!="#/"+item){
+			window.location.hash=("#");
+			history.replaceState([],"","#/"+item);
+			cont=false;
+		}
+	}
+	if(cont){
+		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
+		clear();
+		var writes=[];
+		firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
+			if(events.val()==null){
+				write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
+			}else{
+				function addPost(param){
+					writes.push(param);
+					if(writes.length==Object.keys(events.val()).length){
+						var ongoing=[];
+						var future=[];
+						var unknown=[];
+						writes.forEach(item=>{
+							if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
+								if(new Date(item.date).getTime()>new Date().getTime()){
+									if(item.date==null){
+										unknown.push(item);
+									}else{
+										future.push(item);
+									}
+								}else{
+									if(item.date==null){
+										unknown.push(item);
+									}else{
+										ongoing.push(item);
+									}
+								}
+							}else{
 								if(item.date==null){
 									unknown.push(item);
 								}else{
 									future.push(item);
 								}
-							}else{
-								if(item.date==null){
-									unknown.push(item);
-								}else{
-									ongoing.push(item);
+							}
+						});
+						ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
+						if(inhistory!=null){
+							future=future.concat(ongoing);
+							ongoing=[];
+						}
+						future=future.sort((a,b)=>{return a.date-b.date;});
+						if(inhistory==null){
+							future=future.reverse();
+						}
+						unknown.forEach(item=>{
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+							}
+							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=null?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+							if(item.cancel!=null){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							}
+							else if(item.date!=null&&item.date!=undefined){
+								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								}else if(new Date(item.date).getTime()<new Date().getTime()){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 								}
 							}
-						}else{
-							if(item.date==null){
-								unknown.push(item);
-							}else{
-								future.push(item);
+							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+						});
+						future.forEach(item=>{
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 							}
-						}
-					});
-					ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
-					future=future.sort((a,b)=>{return a.date-b.date;});
-					unknown.forEach(item=>{
-						var address="";
-						if(item.location!=null){
-							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-						}
-						item.duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						write(item.title,[{text:(item.date!=null?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}],null,"loadEvent('"+item.href+"');");
-					});
-					future.reverse().forEach(item=>{
-						var address="";
-						if(item.location!=null){
-							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-						}
-						item.duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}],null,"loadEvent('"+item.href+"');");
-					});
-					ongoing.forEach(item=>{
-						var address="";
-						if(item.location!=null){
-							address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-						}
-						item.duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-						write(item.title,[{text:(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")},{text:address||"Unknown Location"},{text:item.duration}],null,"loadEvent('"+item.href+"');");
-					});
+							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+							if(item.cancel!=null){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							}
+							else if(item.date!=null&&item.date!=undefined){
+								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								}else if(new Date(item.date).getTime()<new Date().getTime()){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								}
+							}
+							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+						});
+						ongoing.reverse().forEach(item=>{
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+							}
+							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
+							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+							if(item.cancel!=null){
+								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							}
+							else if(item.date!=null&&item.date!=undefined){
+								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
+									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								}else if(new Date(item.date).getTime()<new Date().getTime()){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								}
+							}
+							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+						});
+					}
 				}
-			}
-			events.forEach(event=>{
-				firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
-					var obj=info.val();
-					obj.href=event.key;
-					addPost(obj);
+				events.forEach(event=>{
+					firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
+						var obj=info.val();
+						obj.href=event.key;
+						addPost(obj);
+					});
 				});
-			});
-		}
-	});
+			}
+		});
+	}
 }
 
 function findInArray(ar, val) {
@@ -484,11 +589,12 @@ function joinEvent(id){
 	firebase.database().ref("events/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
+		loadEvent(id);
 	});
 }
 
 function leaveEvent(id){
-	firebase.database().ref("users/"+uid+"/events/"+id).remove().then(function(){
+	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
 		loadEvents();
 	});
 }
@@ -516,6 +622,9 @@ function signOut() {
 	});
 }
 
+window.onhashchange= (function() {
+	hashChanged();
+});
 
 if(navigator.onLine){
 	firebase.auth().onAuthStateChanged(function(me) {
@@ -532,8 +641,9 @@ if(navigator.onLine){
 				name:name,
 				pic:pic
 			});
-			if(!hashChanged()){
-				loadEvents();
+			if(!hashChanged(1)){
+				history.pushState([],"","#/");
+				action("home");
 			}
 		}
 	});
@@ -542,13 +652,10 @@ if(navigator.onLine){
 	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
-window.onhashchange= (function() {
-	hashChanged();
-});
-
-function hashChanged(){
-	if(uid!=null){
+function hashChanged(load){
+	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
+			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
 			if(window.location.hash.substr(1,window.location.hash.length).split("/").length==1){
 				loadEvent(window.location.hash.substr(1,window.location.hash.length));
 				return true;
@@ -557,10 +664,31 @@ function hashChanged(){
 					loadBoard(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					return true;
 				}
+				if(load!=1){
+					if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="edit"){
+						editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
+						action("menu",1);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
+						action("home",1);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
+						action("add",1);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="cancelled"){
+						loadEvents(3);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="history"){
+						loadEvents(2);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="left"){
+						loadEvents(0);
+					}
+				}
 			}
 		}
 	}
 	return false;
+}
+
+function loadBoard(id){
+	loadEvent(id);
 }
 
 function offerNotifications(id){
@@ -594,15 +722,30 @@ function urlBase64ToUint8Array(base64String) {
 	return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
-function action(act) {
-	window.location.hash="";
+function action(act,valid) {
 	if(uid!=""){
 		if (act == "menu") {
-			menu();
+			if(valid==1){
+				menu();
+			}else{
+				window.location.hash="";
+				history.replaceState([],"","#/menu");
+			}	
 		} else if (act == "add") {
-			start();
+			if(valid==1){
+				start();
+			}else{
+				window.location.hash="";
+				history.replaceState([],"","#/new");
+			}	
 		} else if (act == "home") {
-			loadEvents();
+			if(valid==1){
+				loadEvents();
+				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
+			}else{
+				window.location.hash="";
+				history.replaceState([],"","#/home");
+			}	
 		}
 	}
 }
