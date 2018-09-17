@@ -90,18 +90,22 @@ exports.cancelEvent = functions.database.ref(`/events/{id}/info/cancel`).onWrite
 		});
 	}else{
 		return fireDB.child(`/events/${id}/info/`).once("value").then(info=>{
-			var status=2;
-			if(info.val().date===null||info.val().date===undefined||new Date(info.val().date+info.val().duration*60*1000).getTime()>new Date().getTime()){
-				status=1;
+			if(info.val()!==null&&info.val()!==undefined){
+				var status=2;
+				if(info.val().date.time===null||info.val().date.time===undefined||new Date(info.val().date.time+info.val().date.duration*60*1000).getTime()>new Date().getTime()){
+					status=1;
+				}
+		    	return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
+				    	var returns=[];
+				    	members.forEach(member=>{
+				    		var uid=member.key;
+				    		returns.push(fireDB.child(`/users/${uid}/events/${id}`).update({status:status}));
+			   			});
+			   			return Promise.all(returns);
+				});
+			}else{
+				return Promise.resolve();
 			}
-	    	return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
-			    	var returns=[];
-			    	members.forEach(member=>{
-			    		var uid=member.key;
-			    		returns.push(fireDB.child(`/users/${uid}/events/${id}`).update({status:status}));
-		   			});
-		   			return Promise.all(returns);
-			});
 		});
 	}
 });
@@ -143,7 +147,7 @@ function difference(o1, o2) {
 	if(o1!==null&&o2!==null){
 		if(o1.title!==o2.title){
 			returns.push("title");
-		}if(o1.date!==o2.date){
+		}if(o1.date.time!==o2.date.time){
 			returns.push("date");
 		}if(JSON.stringify(o1.location)!==JSON.stringify(o2.location)){
 			returns.push("location");
@@ -171,7 +175,7 @@ exports.toggleGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWr
     let fireDB = change.after.ref.root;
 		return fireDB.child(`/events/${id}/info/`).once(`value`).then(value => {
 			if(value.val()!==null){
-	    		var date=value.val().date;
+	    		var date=value.val().date.time;
 	    		if(date!==null&&new Date(new Date(date).getTime()-(change.after.val()*1000*60)).getTime()>new Date().getTime()){
 	    			var time=Math.ceil((new Date(date).getTime()-change.before.val()*1000*60)/(60*1000)).toString();
 				    return fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
@@ -216,23 +220,31 @@ exports.detectAbandonedGroup = functions.database.ref(`/events/{id}/members/{uid
     let id = context.params.id;
     let fireDB=admin.database().ref("/");
 		return fireDB.child(`/events/${id}/members`).once(`value`).then(members => {
-			return fireDB.child(`/users/${uid}/events/${id}/status`).once("value",userval=>{
-				var datestatus=0;
-				if(change.after.val()!==undefined&&change.after.val()!==null){
-					datestatus=1;
-				}
-				var status=(members.val()===undefined||members.val()===null)?null:(datestatus);
-				if(userval.val()===3){
-					status=3;
-				}
-				return fireDB.child(`/users/${uid}/events/`+id).update({
-	    			status:status
-	   			}).then(function(){
-	   				if(status===0){
-	   					return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
-	   				}else{
-	   					return Promise.resolve();
-	   				}
+			return fireDB.child(`events/${id}/info/`).once("value",info=>{
+					return fireDB.child(`/users/${uid}/events/${id}/status`).once("value",userval=>{
+					var datestatus=0;
+					if(change.after.val()!==undefined&&change.after.val()!==null){
+						datestatus=2;
+						if(info.val().date.time===null||info.val().date.time===undefined||new Date(info.val().date.time+info.val().date.duration*60*1000).getTime()>new Date().getTime()){
+							datestatus=1;
+						}
+						if(info.val().cancel!==null&&info.val().cancel!==undefined){
+							datestatus=3;
+						}
+					}
+					var status=(members.val()===undefined||members.val()===null)?null:(datestatus);
+				/*	if(userval.val()===3){
+						status=3;
+					}*/
+					return fireDB.child(`/users/${uid}/events/`+id).update({
+		    			status:status
+		   			}).then(function(){
+		   				if(status===0){
+		   					return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
+		   				}else{
+		   					return Promise.resolve();
+		   				}
+		   			});
 	   			});
 	   		});
    		});
@@ -266,17 +278,21 @@ exports.countMembers = functions.database.ref(`/events/{id}/members/{uid}`).onDe
 	});
 });
 
-exports.markAsComplete = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
+exports.markAsComplete = functions.database.ref(`/events/{id}/info/date`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
 	let id=context.params.id;
-	let date=change.after.val();
-	return fireDB.child(`/events/${id}/info/`).once("value").then(info=>{
-		if(date!==undefined&&date!==null&&new Date(date+((info.val().duration*60*1000)||0)).getTime()<=new Date().getTime()){
-			return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
-				return fireDB.child(`events/${id}/info/cancel`).once("value").then(cancel=>{
+	return fireDB.child(`/events/${id}/info`).once("value").then(info=>{
+		if(change.after.val()!==undefined&&change.after.val()!==null&&
+		change.after.val().time!==undefined&&change.after.val().time!==null&&
+		change.after.val().duration!==undefined&&change.after.val().duration!==null&&
+		((change.before.val()===null||change.before.val()===undefined)||(change.after.val().time!==change.before.val().time||change.after.val().duration!==change.before.val().duration))){
+			if(change.after.val()!==undefined&&change.after.val()!==null&&change.after.val().time!==null&&change.after.val().time!==undefined&&
+			change.after.val().duration!==null&&change.after.val().duration!==undefined&&new Date(change.after.val().time+((change.after.val().duration*60*1000)||0)).getTime()<=new Date().getTime()){
+				let date=change.after.val().time;
+				return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
 					var returns=[];
 					members.forEach(member=>{
-						if(cancel.val()===null||cancel.val()===undefined){
+						if(info.val().cancel===null||info.val().cancel===undefined){
 							returns.push(fireDB.child(`/users/${(member.key)}/events/${id}/`).update({status:2}));
 						}else{
 							returns.push(Promise.resolve());
@@ -284,13 +300,11 @@ exports.markAsComplete = functions.database.ref(`/events/{id}/info/date/`).onWri
 					});
 					return Promise.all(returns);
 				});
-			});
-		}else{
-			return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
-				return fireDB.child(`events/${id}/info/cancel`).once("value").then(cancel=>{
+			}else{
+				return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
 					var returns=[];
 					members.forEach(member=>{
-						if(cancel.val()===null||cancel.val()===undefined){
+						if(info.val().cancel===null||info.val().cancel===undefined){
 							returns.push(fireDB.child(`/users/${(member.key)}/events/${id}/`).update({status:1}));
 						}else{
 							returns.push(Promise.resolve());
@@ -298,36 +312,54 @@ exports.markAsComplete = functions.database.ref(`/events/{id}/info/date/`).onWri
 					});
 					return Promise.all(returns);
 				});
-			});
+			}
+		}else{
+			return Promise.resolve();	
 		}
 	});
 });
 
-exports.setTask = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
+//!!!
+exports.setTask = functions.database.ref(`/events/{id}/info/date`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
 	let id=context.params.id;
-	let date=change.after.val();
-	return fireDB.child(`events/${id}/info/cancel`).once("value").then(cancel=>{
-		return fireDB.child(`/events/${id}/info/duration`).once(`value`).then(duration => {
-			if(date!==null&&(new Date(date).getTime()+(duration.val()*1000*60))>Date.now()){
-				return fireDB.child("tasks/"+Math.ceil((new Date(date).getTime()+(duration.val()*1000*60))/(60*1000))).update({
+	if(change.after.val()!==null&&change.after.val()!==undefined){
+		let date=change.after.val().time;
+		let duration=change.after.val().duration;
+		if(change.after.val()!==null&&change.after.val()!==undefined&&
+		(
+		change.after.val().time!==null&&change.after.val().time!==undefined&&
+		change.after.val().duration!==null&&change.after.val().duration!==undefined&&
+		((change.before.val()===null||change.before.val()===undefined)||(change.before.val().duration!==duration||change.before.val().time!==date))
+		)
+		){
+			if(date!==null&&(new Date(date).getTime()+(duration*1000*60))>Date.now()){
+				return fireDB.child("tasks/"+Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))).update({
 					[id]:0
 				}).then(function(){
-					if(change.before.val()!==null&&new Date(change.before.val()).getTime()!==null){
-						return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val())).getTime()+(duration.val()*1000*60)))/(60*1000))+"/"+id).remove();
+					if(change.before.val()!==null&&change.before.val()!==undefined&&change.before.val().time!==null&&change.before.val().time!==undefined&&
+					change.before.val().duration!==null&&change.before.val().duration!==undefined&&new Date(change.before.val().time).getTime()!==null&&
+						Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))!==Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))){
+						return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))+"/"+id).remove();
 					}else{
 						return Promise.resolve();
 					}
 				});
 			}else{
-				if(change.before.val()!==null&&(new Date((new Date(change.before.val())).getTime()+(duration.val()*1000*60)))!==null){
-					return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val())).getTime()+(duration.val()*1000*60)))/(60*1000))+"/"+id).remove();
+				if(change.before.val()!==null&&change.before.val()!==undefined&&change.before.val().time!==null&&change.before.val().time!==undefined&&
+				change.before.val().duration!==null&&change.before.val().duration!==undefined&&new Date(change.before.val().time).getTime()!==null&&
+					Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))!==Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))){
+					return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))+"/"+id).remove();
 				}else{
 					return Promise.resolve();
 				}
 			}
-		});
-	});
+		}else{
+			return Promise.resolve();	
+		}
+	}else{
+			return Promise.resolve();	
+	}
 });
 
 
