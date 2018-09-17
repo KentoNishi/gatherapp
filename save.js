@@ -134,7 +134,7 @@ function editEvent(id){
 					info.val().location.formatted_address.split(",")
 					.slice(1,info.val().location.formatted_address.split(",").length).join(",");
 			}
-			requestEvent(id,info.val().title,addr||null,info.val().date,info.val().place,info.val().duration,info.val().cancel);
+			requestEvent(id,info.val().title,addr||null,info.val().date.time,info.val().place,info.val().date.duration,info.val().cancel);
 		});
 	}
 }
@@ -162,8 +162,10 @@ function newEvent(id){
 		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
-			date:date,
-			duration:duration
+			date:{
+				time:date,
+				duration:duration
+			}
 		}
 		if(id==null){
 			info.people=1;
@@ -229,8 +231,8 @@ function loadEventPage(id){
 					firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 				}
 				var date="";
-				if(event.val().date!=null){
-					date=getFormattedDate(event.val().date);
+				if(event.val().date.time!=null){
+					date=getFormattedDate(event.val().date.time);
 				}
 				var addr;
 				if(event.val().location!=null){
@@ -252,8 +254,8 @@ function loadEventPage(id){
 						       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
 						       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
 				}
-				contents.push({text:event.val().duration!=null?
-					       (Math.floor(event.val().duration/60)+"h"+(event.val().duration%60)+"m Long"):"Unknown Duration"});
+				contents.push({text:event.val().date.duration!=null?
+					       (Math.floor(event.val().date.duration/60)+"h"+(event.val().date.duration%60)+"m Long"):"Unknown Duration"});
 				var check="checked";
 				if(value<0){
 					value=(-value);
@@ -281,10 +283,10 @@ function loadEventPage(id){
 				if(event.val().cancel!=null){
 					contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 				}
-				else if(event.val().date!=null){
-					if(new Date(event.val().date).getTime()+(event.val().duration*60*1000)<new Date().getTime()){
+				else if(event.val().date.time!=null){
+					if(new Date(event.val().date.time).getTime()+(event.val().date.duration*60*1000)<new Date().getTime()){
 						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-					}else if(new Date(event.val().date).getTime()<new Date().getTime()){
+					}else if(new Date(event.val().date.time).getTime()<new Date().getTime()){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
 				}
@@ -470,93 +472,59 @@ function loadEvents(inhistory){
 						var future=[];
 						var unknown=[];
 						writes.forEach(item=>{
-							if(item.date!=null&&new Date(item.date).getTime()+item.duration*60*1000>new Date().getTime()){
-								if(new Date(item.date).getTime()>new Date().getTime()){
-									if(item.date==null){
+							if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
+								if(new Date(item.date.time).getTime()>new Date().getTime()){
+									if(item.date.time==null){
 										unknown.push(item);
 									}else{
 										future.push(item);
 									}
 								}else{
-									if(item.date==null){
+									if(item.date.time==null){
 										unknown.push(item);
 									}else{
 										ongoing.push(item);
 									}
 								}
 							}else{
-								if(item.date==null){
+								if(item.date.time==null){
 									unknown.push(item);
 								}else{
 									future.push(item);
 								}
 							}
 						});
-						ongoing=ongoing.sort((a,b)=>{return a.date-b.date;});
+						ongoing=ongoing.sort((a,b)=>{return a.date.time-b.date.time;});
 						if(inhistory!=null){
 							future=future.concat(ongoing);
 							ongoing=[];
 						}
-						future=future.sort((a,b)=>{return a.date-b.date;});
+						future=future.sort((a,b)=>{return a.date.time-b.date.time;});
 						if(inhistory==null){
 							future=future.reverse();
 						}
-						unknown.forEach(item=>{
-							var address="";
-							if(item.location!=null){
-								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-							}
-							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=null?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-							if(item.cancel!=null){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-							}
-							else if(item.date!=null&&item.date!=undefined){
-								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-								}else if(new Date(item.date).getTime()<new Date().getTime()){
-									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+						ongoing=ongoing.reverse();
+						var list=[unknown,future,ongoing];
+						list.forEach(listItem=>{
+							listItem.forEach(item=>{
+								var address="";
+								if(item.location!=null){
+									address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 								}
-							}
-							write(item.title,contents,null,"loadEvent('"+item.href+"');");
-						});
-						future.forEach(item=>{
-							var address="";
-							if(item.location!=null){
-								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-							}
-							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-							if(item.cancel!=null){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-							}
-							else if(item.date!=null&&item.date!=undefined){
-								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-								}else if(new Date(item.date).getTime()<new Date().getTime()){
-									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
+								var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+								if(item.cancel!=null){
+									contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 								}
-							}
-							write(item.title,contents,null,"loadEvent('"+item.href+"');");
-						});
-						ongoing.reverse().forEach(item=>{
-							var address="";
-							if(item.location!=null){
-								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-							}
-							var duration=item.duration!=null?(Math.floor(item.duration/60)+"h"+(item.duration%60)+"m Long"):"Unknown Duration";
-							var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date!=Infinity?getFormattedDate(item.date):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-							if(item.cancel!=null){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-							}
-							else if(item.date!=null&&item.date!=undefined){
-								if(new Date(item.date).getTime()+(item.duration*60*1000)<new Date().getTime()){
-									contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-								}else if(new Date(item.date).getTime()<new Date().getTime()){
-									contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								else if(item.date.time!=null&&item.date.time!=undefined){
+									if(new Date(item.date.time).getTime()+(item.date.duration*60*1000)<new Date().getTime()){
+										contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+									}else if(new Date(item.date.time).getTime()<new Date().getTime()){
+										contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+									}
 								}
-							}
-							write(item.title,contents,null,"loadEvent('"+item.href+"');");
+								write(item.title,contents,null,"loadEvent('"+item.href+"');");
+							});
 						});
 					}
 				}
@@ -581,7 +549,7 @@ function findInArray(ar, val) {
 		}
 	}
 	return returns.sort((a,b)=>{
-		return a.date-b.date;
+		return a.date.time-b.date.time;
 	}).reverse();
 }
 
