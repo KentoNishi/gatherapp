@@ -92,7 +92,7 @@ exports.cancelEvent = functions.database.ref(`/events/{id}/info/cancel`).onWrite
 		return fireDB.child(`/events/${id}/info/`).once("value").then(info=>{
 			if(info.val()!==null&&info.val()!==undefined){
 				var status=2;
-				if(info.val().date===null||info.val().date===undefined||new Date(info.val().date+info.val().duration*60*1000).getTime()>new Date().getTime()){
+				if(info.val().date.time===null||info.val().date.time===undefined||new Date(info.val().date.time+info.val().date.duration*60*1000).getTime()>new Date().getTime()){
 					status=1;
 				}
 		    	return fireDB.child(`/events/${id}/members/`).once(`value`).then(members => {
@@ -147,7 +147,7 @@ function difference(o1, o2) {
 	if(o1!==null&&o2!==null){
 		if(o1.title!==o2.title){
 			returns.push("title");
-		}if(o1.date!==o2.date){
+		}if(o1.date.time!==o2.date.time){
 			returns.push("date");
 		}if(JSON.stringify(o1.location)!==JSON.stringify(o2.location)){
 			returns.push("location");
@@ -175,7 +175,7 @@ exports.toggleGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWr
     let fireDB = change.after.ref.root;
 		return fireDB.child(`/events/${id}/info/`).once(`value`).then(value => {
 			if(value.val()!==null){
-	    		var date=value.val().date;
+	    		var date=value.val().date.time;
 	    		if(date!==null&&new Date(new Date(date).getTime()-(change.after.val()*1000*60)).getTime()>new Date().getTime()){
 	    			var time=Math.ceil((new Date(date).getTime()-change.before.val()*1000*60)/(60*1000)).toString();
 				    return fireDB.child(`/notifications/${time}/${id}/${uid}`).remove().then(function(){
@@ -225,7 +225,7 @@ exports.detectAbandonedGroup = functions.database.ref(`/events/{id}/members/{uid
 					var datestatus=0;
 					if(change.after.val()!==undefined&&change.after.val()!==null){
 						datestatus=2;
-						if(info.val().date===null||info.val().date===undefined||new Date(info.val().date+info.val().duration*60*1000).getTime()>new Date().getTime()){
+						if(info.val().date.time===null||info.val().date.time===undefined||new Date(info.val().date.time+info.val().date.duration*60*1000).getTime()>new Date().getTime()){
 							datestatus=1;
 						}
 						if(info.val().cancel!==null&&info.val().cancel!==undefined){
@@ -278,17 +278,17 @@ exports.countMembers = functions.database.ref(`/events/{id}/members/{uid}`).onDe
 	});
 });
 
-exports.markAsComplete = functions.database.ref(`/events/{id}/info/`).onWrite((change, context) => {
+exports.markAsComplete = functions.database.ref(`/events/{id}/info/date`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
 	let id=context.params.id;
 	var info=change.after;
 	if(change.after.val()!==undefined&&change.after.val()!==null&&
-	change.after.val().date!==undefined&&change.after.val().date!==null&&
+	change.after.val().time!==undefined&&change.after.val().time!==null&&
 	change.after.val().duration!==undefined&&change.after.val().duration!==null&&
-	((change.before.val()===null||change.before.val()===undefined)||(change.after.val().date!==change.before.val().date||change.after.val().duration!==change.before.val().duration))){
-		if(change.after.val()!==undefined&&change.after.val()!==null&&change.after.val().date!==null&&change.after.val().date!==undefined&&
-		info.val().duration!==null&&info.val().duration!==undefined&&new Date(change.after.val().date+((info.val().duration*60*1000)||0)).getTime()<=new Date().getTime()){
-			let date=change.after.val().date;
+	((change.before.val()===null||change.before.val()===undefined)||(change.after.val().time!==change.before.val().time||change.after.val().duration!==change.before.val().duration))){
+		if(change.after.val()!==undefined&&change.after.val()!==null&&change.after.val().time!==null&&change.after.val().time!==undefined&&
+		info.val().duration!==null&&info.val().duration!==undefined&&new Date(change.after.val().time+((info.val().duration*60*1000)||0)).getTime()<=new Date().getTime()){
+			let date=change.after.val().time;
 			return fireDB.child(`/events/${id}/members`).once("value").then(members=>{
 				var returns=[];
 				members.forEach(member=>{
@@ -318,36 +318,36 @@ exports.markAsComplete = functions.database.ref(`/events/{id}/info/`).onWrite((c
 	}
 });
 
-exports.setTask = functions.database.ref(`/events/{id}/info/`).onWrite((change, context) => {
+exports.setTask = functions.database.ref(`/events/{id}/info/date`).onWrite((change, context) => {
 	let fireDB=change.after.ref.root;
 	let id=context.params.id;
 	if(change.after.val()!==null&&change.after.val()!==undefined){
-		let date=change.after.val().date;
+		let date=change.after.val().time;
 		let duration=change.after.val().duration;
 		if(change.after.val()!==null&&change.after.val()!==undefined&&
 		(
-		change.after.val().date!==null&&change.after.val().date!==undefined&&
+		change.after.val().time!==null&&change.after.val().time!==undefined&&
 		change.after.val().duration!==null&&change.after.val().duration!==undefined&&
-		((change.before.val()===null||change.before.val()===undefined)||(change.before.val().duration!==duration||change.before.val().date!==date))
+		((change.before.val()===null||change.before.val()===undefined)||(change.before.val().duration!==duration||change.before.val().time!==date))
 		)
 		){
 			if(date!==null&&(new Date(date).getTime()+(duration*1000*60))>Date.now()){
 				return fireDB.child("tasks/"+Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))).update({
 					[id]:0
 				}).then(function(){
-					if(change.before.val()!==null&&change.before.val()!==undefined&&change.before.val().date!==null&&change.before.val().date!==undefined&&
-					change.before.val().duration!==null&&change.before.val().duration!==undefined&&new Date(change.before.val().date).getTime()!==null&&
-						Math.ceil((new Date((new Date(change.before.val().date)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))!==Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))){
-						return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val().date)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))+"/"+id).remove();
+					if(change.before.val()!==null&&change.before.val()!==undefined&&change.before.val().time!==null&&change.before.val().time!==undefined&&
+					change.before.val().duration!==null&&change.before.val().duration!==undefined&&new Date(change.before.val().time).getTime()!==null&&
+						Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))!==Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))){
+						return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))+"/"+id).remove();
 					}else{
 						return Promise.resolve();
 					}
 				});
 			}else{
-				if(change.before.val()!==null&&change.before.val()!==undefined&&change.before.val().date!==null&&change.before.val().date!==undefined&&
-				change.before.val().duration!==null&&change.before.val().duration!==undefined&&new Date(change.before.val().date).getTime()!==null&&
-					Math.ceil((new Date((new Date(change.before.val().date)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))!==Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))){
-					return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val().date)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))+"/"+id).remove();
+				if(change.before.val()!==null&&change.before.val()!==undefined&&change.before.val().time!==null&&change.before.val().time!==undefined&&
+				change.before.val().duration!==null&&change.before.val().duration!==undefined&&new Date(change.before.val().time).getTime()!==null&&
+					Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))!==Math.ceil((new Date(date).getTime()+(duration*1000*60))/(60*1000))){
+					return fireDB.child("tasks/"+Math.ceil((new Date((new Date(change.before.val().time)).getTime()+(change.before.val().duration*1000*60)))/(60*1000))+"/"+id).remove();
 				}else{
 					return Promise.resolve();
 				}
@@ -361,7 +361,7 @@ exports.setTask = functions.database.ref(`/events/{id}/info/`).onWrite((change, 
 });
 
 
-exports.changeTime = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
+exports.changeTime = functions.database.ref(`/events/{id}/info/date/time`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
     let date=change.after.val();
