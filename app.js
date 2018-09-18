@@ -47,7 +47,7 @@ function settings(){
 }
 
 function start(){
-	if(document.querySelectorAll("eventInfo").length<1){
+	if(document.querySelectorAll(".eventInfo").length<1){
 //		back.add("start();");
 		requestEvent();
 	}else{
