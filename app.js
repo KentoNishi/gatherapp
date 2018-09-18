@@ -724,9 +724,11 @@ function action(act,valid) {
 				loadEvents();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 			}else{
-				if(true){//window.location.hash!="#/home"){
+				if(window.location.hash!="#/home"){
 					window.location.hash="";
 					history.replaceState([],"","#/home");
+				}else{
+					loadEvents();
 				}
 			}	
 		}
