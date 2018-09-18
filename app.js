@@ -724,7 +724,7 @@ function action(act,valid) {
 				loadEvents();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 			}else{
-				if(window.location.hash!="#/home"){
+				if(true){//window.location.hash!="#/home"){
 					window.location.hash="";
 					history.replaceState([],"","#/home");
 				}
