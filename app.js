@@ -705,23 +705,29 @@ function action(act,valid) {
 			if(valid==1){
 				menu();
 			}else{
-				window.location.hash="";
-				history.replaceState([],"","#/menu");
+				if(window.location.hash!="#/menu"){
+					window.location.hash="";
+					history.replaceState([],"","#/menu");
+				}
 			}	
 		} else if (act == "add") {
 			if(valid==1){
 				start();
 			}else{
-				window.location.hash="";
-				history.replaceState([],"","#/new");
+				if(window.location.hash!="#/new"){
+					window.location.hash="";
+					history.replaceState([],"","#/new");
+				}
 			}	
 		} else if (act == "home") {
 			if(valid==1){
 				loadEvents();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 			}else{
-				window.location.hash="";
-				history.replaceState([],"","#/home");
+				if(window.location.hash!="#/home"){
+					window.location.hash="";
+					history.replaceState([],"","#/home");
+				}
 			}	
 		}
 	}
