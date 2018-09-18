@@ -512,7 +512,7 @@ function loadEvents(inhistory){
 									address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 								}
 								var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
-								var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+								var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
 								if(item.cancel!=null){
 									contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 								}
@@ -807,5 +807,5 @@ function getFormattedDate(date) {
 		var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
 		return month + '/' + day + '/' + year + ", " + hour + ":" + min;
 	}
-	return undefined;
+	return "";
 }
