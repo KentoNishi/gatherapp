@@ -13,13 +13,14 @@ var name = "";
 var pic = "";
 var lat;
 var lng;
-var back={data:["loadEvents();","loadEvents();"]};
+//var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
 document.addEventListener('backbutton', function(){
 	write("You pressed the back button.",[{text:"Ignore this message and stop complaining *dad*"}]);
 });
 
+/*
 back.add=(function(param){
 	back.data.push(param);
 	back.data=back.data.slice(back.data.length-2,back.data.length);
@@ -28,11 +29,12 @@ back.add=(function(param){
 	});
 	ons=[];
 });
+*/
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
-	back.add("menu();");
+//	back.add("menu();");
 	clear();
 	settings();
 	write("Skipped Events",null,null,"loadEvents(0);");
@@ -45,8 +47,8 @@ function settings(){
 }
 
 function start(){
-	if(back.data[back.data.length-1]!="start();"){
-		back.add("start();");
+	if(document.querySelectorAll(".eventInfo").length<1){
+//		back.add("start();");
 		requestEvent();
 	}else{
 	}
@@ -90,7 +92,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
-	      [{href:((id==null)?(back.data[back.data.length-2]+";"):("loadEvent('"+id+"');")),text:"Cancel"}]);
+	      [{href:((id==null)?("history.go(-1);"):("loadEvent('"+id+"');")),text:"Cancel"}],null,"eventInfo");
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 	if(date!=null){
@@ -211,7 +213,7 @@ function loadEvent(id){
 }
 
 function loadEventPage(id){
-	back.add("loadEvent('"+id+"');");
+//	back.add("loadEvent('"+id+"');");
 	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 		clear();
 		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
@@ -436,6 +438,9 @@ function saveReminderTime(id){
 			document.querySelectorAll('input[type=checkbox]')[0].id=value;
 		});
 	}else{
+		document.querySelectorAll(".okbutton")[0].innerHTML=null;
+		document.querySelectorAll(".nobutton")[0].innerHTML=null;
+		document.querySelectorAll("input[type=number]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=number]")[0].id));
 		document.querySelectorAll("input[type=checkbox]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=checkbox]")[0].id));
 	}
 }
@@ -458,7 +463,7 @@ function loadEvents(inhistory){
 		}
 	}
 	if(cont){
-		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
+//		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
 		clear();
 		var writes=[];
 		firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
@@ -512,7 +517,7 @@ function loadEvents(inhistory){
 									address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 								}
 								var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
-								var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+								var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
 								if(item.cancel!=null){
 									contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
 								}
@@ -592,6 +597,10 @@ function signOut() {
 
 window.onhashchange= (function() {
 	hashChanged();
+	ons.forEach(listener=>{
+		firebase.database().ref(listener).off("value");
+	});
+	ons=[];
 });
 
 if(navigator.onLine){
@@ -696,23 +705,31 @@ function action(act,valid) {
 			if(valid==1){
 				menu();
 			}else{
-				window.location.hash="";
-				history.replaceState([],"","#/menu");
+				if(window.location.hash!="#/menu"){
+					window.location.hash="";
+					history.replaceState([],"","#/menu");
+				}
 			}	
 		} else if (act == "add") {
 			if(valid==1){
 				start();
 			}else{
-				window.location.hash="";
-				history.replaceState([],"","#/new");
+				if(window.location.hash!="#/new"){
+					window.location.hash="";
+					history.replaceState([],"","#/new");
+				}
 			}	
 		} else if (act == "home") {
 			if(valid==1){
 				loadEvents();
 				document.getElementById("home").querySelectorAll("strong")[0].innerHTML="GATHERAPP";
 			}else{
-				window.location.hash="";
-				history.replaceState([],"","#/home");
+				if(window.location.hash!="#/home"){
+					window.location.hash="";
+					history.replaceState([],"","#/home");
+				}else{
+					loadEvents();
+				}
 			}	
 		}
 	}
@@ -796,13 +813,16 @@ function decode(html) {
 }
 
 function getFormattedDate(date) {
-	date=new Date(date);
-	var year = date.getFullYear();
-	var month = (1 + date.getMonth()).toString();
-	month = month.length > 1 ? month : '0' + month;
-	var day = date.getDate().toString();
-	day = day.length > 1 ? day : '0' + day;
-	var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
-	var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
-	return month + '/' + day + '/' + year + ", " + hour + ":" + min;
+	if(date!=null){
+		date=new Date(date);
+		var year = date.getFullYear();
+		var month = (1 + date.getMonth()).toString();
+		month = month.length > 1 ? month : '0' + month;
+		var day = date.getDate().toString();
+		day = day.length > 1 ? day : '0' + day;
+		var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
+		var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
+		return month + '/' + day + '/' + year + ", " + hour + ":" + min;
+	}
+	return "";
 }
