@@ -436,6 +436,9 @@ function saveReminderTime(id){
 			document.querySelectorAll('input[type=checkbox]')[0].id=value;
 		});
 	}else{
+		document.querySelectorAll(".okbutton")[0].innerHTML=null;
+		document.querySelectorAll(".nobutton")[0].innerHTML=null;
+		document.querySelectorAll("input[type=number]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=number]")[0].id));
 		document.querySelectorAll("input[type=checkbox]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=checkbox]")[0].id));
 	}
 }
