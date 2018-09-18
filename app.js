@@ -796,13 +796,16 @@ function decode(html) {
 }
 
 function getFormattedDate(date) {
-	date=new Date(date);
-	var year = date.getFullYear();
-	var month = (1 + date.getMonth()).toString();
-	month = month.length > 1 ? month : '0' + month;
-	var day = date.getDate().toString();
-	day = day.length > 1 ? day : '0' + day;
-	var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
-	var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
-	return month + '/' + day + '/' + year + ", " + hour + ":" + min;
+	if(date!=null){
+		date=new Date(date);
+		var year = date.getFullYear();
+		var month = (1 + date.getMonth()).toString();
+		month = month.length > 1 ? month : '0' + month;
+		var day = date.getDate().toString();
+		day = day.length > 1 ? day : '0' + day;
+		var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
+		var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
+		return month + '/' + day + '/' + year + ", " + hour + ":" + min;
+	}
+	return undefined;
 }
