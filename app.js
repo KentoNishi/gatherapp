@@ -213,6 +213,7 @@ function loadEvent(id){
 }
 
 function loadEventPage(id){
+	changeOns();
 //	back.add("loadEvent('"+id+"');");
 	firebase.database().ref("events/"+id+"/info").once("value",function(event){
 		clear();
@@ -597,11 +598,15 @@ function signOut() {
 
 window.onhashchange= (function() {
 	hashChanged();
+	changeOns();
+});
+
+function changeOns(){
 	ons.forEach(listener=>{
 		firebase.database().ref(listener).off("value");
 	});
 	ons=[];
-});
+}
 
 if(navigator.onLine){
 	firebase.auth().onAuthStateChanged(function(me) {
