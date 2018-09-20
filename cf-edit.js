@@ -363,7 +363,7 @@ exports.setTask = functions.database.ref(`/events/{id}/info/date`).onWrite((chan
 });
 
 
-exports.changeTime = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
+exports.changeTime = functions.database.ref(`/events/{id}/info/date/time`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
     let date=change.after.val();
