@@ -529,6 +529,12 @@ function loadEvents(inhistory){
 										contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 									}
 								}
+								if(item.status!=null&&item.status.info!=null){
+									contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
+								}
+								if(item.status!=null&&item.status.info!=null){
+									contents.push({html:"<span style='color:blue;font-size:4vh;'>New Board Post</span>"});
+								}
 								write(item.title,contents,null,"loadEvent('"+item.href+"');");
 							});
 						});
@@ -537,6 +543,7 @@ function loadEvents(inhistory){
 				events.forEach(event=>{
 					firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
 						var obj=info.val();
+						obj.status=event.val();
 						obj.href=event.key;
 						addPost(obj);
 					});
