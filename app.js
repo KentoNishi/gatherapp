@@ -312,11 +312,11 @@ function loadEventPage(id){
 					}
 					if(firstload){
 						write("Members",[{html:"<span class='members'></span>"}],null,links);
-					}
-					if(event.val().people<6){
-						viewMembers(id);
-					}else{
-						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
+						if(event.val().people<6){
+							viewMembers(id);
+						}else{
+							document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
+						}
 					}
 					if(document.querySelectorAll(".infocard"+id).length>0){
 						write(event.val().title,contents,link,null,"infocard"+id,"infocard"+id);
@@ -326,8 +326,8 @@ function loadEventPage(id){
 				}catch(TypeError){
 					write("Error",[{text:"Error loading event."}]);
 				}
+				firstload=false;
 			});
-			firstload=false;
 		}
 	});
 }
