@@ -427,7 +427,7 @@ function loadEventBoard(parameters){
 function autogrow(element) {
 	element.style.height = "5px";
 	element.style.height = (element.scrollHeight+5)+"px";
-	document.querySelectorAll(".boardcontainer")[0].scrollIntoView(false);
+	document.querySelectorAll(".body")[0].scrollIntoView(false);
 }
 
 function viewMembers(id){
