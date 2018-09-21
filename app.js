@@ -374,7 +374,7 @@ function loadEventBoard(parameters){
 				(object.admin?"yellowgreen":(object.author==uid?"cornflowerblue":"orange"))+
 				";border-radius:2vh;padding:1vh;margin:0 auto;width:fit-content;'>"+
 				encode(object.text)+
-				"<div "+(object.admin?"":("class='"+object.key+"' "))+"style='text-align:center;'>"+
+				"<div "+(object.admin?"":("class='"+object.key+"' "))+"style='font-size:2.5vh;text-align:center;'>"+
 				"<strong>"+
 				(object.admin?"GatherApp":"")+	
 				"</strong></div></div>");
