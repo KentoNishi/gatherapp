@@ -214,8 +214,10 @@ function loadEventPage(id){
 	var firstload=true;
 	firebase.database().ref("events/"+id+"/info").on("value",function(event){
 		if(firstload||document.querySelectorAll(".infocard"+id).length>0){
+			if(firstload){
+				clear();
+			}
 			firstload=false;
-			clear();
 			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
@@ -302,12 +304,16 @@ function loadEventPage(id){
 						}
 						link.unshift({text:"Invite",href:href});
 					}
-					loadEventBoard({id:id,member:member});
+					if(firstload){
+						loadEventBoard({id:id,member:member});
+					}
 					var links=[];
 					if(!(event.val().people<6)){
 						links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
 					}
-					write("Members",[{html:"<span class='members'></span>"}],null,links);
+					if(firstload){
+						write("Members",[{html:"<span class='members'></span>"}],null,links);
+					}
 					if(event.val().people<6){
 						viewMembers(id);
 					}else{
