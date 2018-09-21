@@ -289,11 +289,15 @@ function loadEventPage(id){
 						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 					}
 				}
-				if(navigator.share&&member!=null){
-					link.unshift({text:"Invite",href:"navigator.share({title: decodeURIComponent('"+
+				if(member!=null){
+					var href="copyToClipboard('https://kentonishi.github.io/gatherapp#"+id+"');";
+					if(navigator.share){
+						href="navigator.share({title: decodeURIComponent('"+
 						      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
 						      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
-						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})"});
+						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})";
+					}
+					link.unshift({text:"Invite",href:href});
 				}
 				loadEventBoard({id:id,member:member});
 				var links=[];
@@ -312,6 +316,26 @@ function loadEventPage(id){
 			}
 		});
 	});
+}
+
+function copyToClipboard(text) {
+	if (window.clipboardData && window.clipboardData.setData) {
+		return clipboardData.setData("Text", text); 
+	} else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+		var textarea = document.createElement("textarea");
+		textarea.textContent = text;
+		textarea.style.position = "fixed";
+		document.body.appendChild(textarea);
+		textarea.select();
+		try {
+			return document.execCommand("copy");
+			alert("Invite link copied to clipboard!");
+		} catch (ex) {
+			return false;
+		} finally {
+			document.body.removeChild(textarea);
+		}
+	}
 }
 
 function showMap(){
