@@ -15,12 +15,12 @@ self.addEventListener('notificationclick', function(event) {
             var client = clientList[i];
             if ('focus' in client){
                 return client.focus().then(function(){
-                    client.navigate('https://kentonishi.github.io/gatherapp/#'+(event.notification.tag.split(":").length>0?event.notification.tag.split(":")[1]:event.notification.tag));
+                    client.navigate('https://kentonishi.github.io/gatherapp/#'+(event.notification.tag.split(":").length>1?event.notification.tag.split(":")[1]:event.notification.tag));
                 });
             }
         }
         if (clients.openWindow){
-            return clients.openWindow('https://kentonishi.github.io/gatherapp/#'+(event.notification.tag.split(":").length>0?event.notification.tag.split(":")[1]:event.notification.tag));
+            return clients.openWindow('https://kentonishi.github.io/gatherapp/#'+(event.notification.tag.split(":").length>1?event.notification.tag.split(":")[1]:event.notification.tag));
         }
     }));
 });
