@@ -212,6 +212,7 @@ function loadEventPage(id){
 	changeOns();
 //	back.add("loadEvent('"+id+"');");
 	var firstload=true;
+	ons.push("events/"+id+"/info");
 	firebase.database().ref("events/"+id+"/info").on("value",function(event){
 		if(firstload||document.querySelectorAll(".infocard"+id).length>0){
 			if(firstload){
