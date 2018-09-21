@@ -3,7 +3,7 @@ self.addEventListener('push', function(event) {
     var tag=((data.tag.split("/").length>0&&data.tag.split("/")[1]=="board"?"":Date.now())+data.tag);
     var obj={
         body: data.content,
-        icon: '/gatherapp/512x512.png'
+        icon: '/gatherapp/512x512.png',
         tag:tag
     }
     var notification = self.registration.showNotification(data.title, obj);
