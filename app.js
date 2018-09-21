@@ -532,7 +532,7 @@ function loadEvents(inhistory){
 								if(item.status!=null&&item.status.info!=null){
 									contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
 								}
-								if(item.status!=null&&item.status.info!=null){
+								if(item.status!=null&&item.status.board!=null){
 									contents.push({html:"<span style='color:blue;font-size:4vh;'>New Board Post</span>"});
 								}
 								write(item.title,contents,null,"loadEvent('"+item.href+"');");
