@@ -217,7 +217,6 @@ function loadEventPage(id){
 			if(firstload){
 				clear();
 			}
-			firstload=false;
 			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
@@ -328,6 +327,7 @@ function loadEventPage(id){
 					write("Error",[{text:"Error loading event."}]);
 				}
 			});
+			firstload=false;
 		}
 	});
 }
