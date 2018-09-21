@@ -310,7 +310,7 @@ function loadEventPage(id){
 				}else{
 					document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
 				}
-				write(event.val().title,contents,link);
+				write(event.val().title,contents,link,"infocard");
 			}catch(TypeError){
 				write("Error",[{text:"Error loading event."}]);
 			}
