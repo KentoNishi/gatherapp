@@ -320,7 +320,7 @@ function loadEventPage(id){
 						}
 					}
 					if(document.querySelectorAll(".infocard"+id).length>0){
-						write(event.val().title,contents,link,null,"infocard"+id,"infocard"+id);
+						write(event.val().title,contents,link,null,"infocard"+id,".infocard"+id);
 					}else{
 						write(event.val().title,contents,link,null,"infocard"+id);
 					}
@@ -794,7 +794,7 @@ function reverse(snapshot) {
 }
 
 function write(title,contents,links,href,classlist,overwrite){
-//	try{
+	try{
 		if(title==null&&contents==null){
 			throw("");
 		}
@@ -845,9 +845,9 @@ function write(title,contents,links,href,classlist,overwrite){
 		}else{
 			document.querySelectorAll('.body')[0].innerHTML=body+document.querySelectorAll('.body')[0].innerHTML;
 		}
-//	}catch(TypeError){
-//		write('Error',[{text:'GatherApp encountered an error.'}]);
-//	}
+	}catch(TypeError){
+		write('Error',[{text:'GatherApp encountered an error.'}]);
+	}
 }
 
 function encode(e){
