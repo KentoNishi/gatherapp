@@ -211,110 +211,118 @@ function loadEvent(id){
 function loadEventPage(id){
 	changeOns();
 //	back.add("loadEvent('"+id+"');");
-	firebase.database().ref("events/"+id+"/info").once("value",function(event){
-		clear();
-		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
-		firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
-		firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
-			try{
-				var member=me.val()||null;
-				var value=member;
-				var link=[{text:"Skip Event",
-					   href:"if(confirm('Are you sure you want to skip this event?')){"+
-					   "leaveEvent('"+id+"');}"}];
-				if(member==null){
-					link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
-				}else{
-					link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
-					firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
-					firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
-				}
-				var date="";
-				if(event.val().date.time!=null){
-					date=getFormattedDate(event.val().date.time);
-				}
-				var addr;
-				if(event.val().location!=null){
-					addr=event.val().location.name+","+
-						event.val().location.formatted_address.split(",")
-						.slice(1,event.val().location.formatted_address.split(",").length).join(",");
-				}
-				var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(date||"Unknown Date")+"</span></strong>"},
-					      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
-				if(event.val().location!=null){
-					var body="";
-					body+="<span style='font-size:4vh'>";
-					body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
-					body+=encode("View On Map");
-					body+='</a>';
-					body+='</span>';
-					contents.push({html:body+"<span class='iframe' style='display:none;'><br />"+
-						       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+
-						       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
-						       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
-				}
-				contents.push({text:event.val().date.duration!=null?
-					       (Math.floor(event.val().date.duration/60)+"h"+(event.val().date.duration%60)+"m Long"):"Unknown Duration"});
-				var check="checked";
-				if(value<0){
-					value=(-value);
-					check="";
-				}
-				var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
-				    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
-				var extra="";
-				if(Notification.permission!="granted"&&Notification.permission!="denied"){
-					extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
-				}
-				if(member!=null){
-					var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
-					    "' step='5' min='1' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
-					    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
-					contents.push({html:cb+append+" <span class='okbutton' class='ok"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
-						       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-						       ")[0].innerHTML=null;saveReminderTime("+'"'+id+'"'+
-						       ");'></span> <span class='nobutton' class='no"+id+"' onclick='document.querySelectorAll("+
-						       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-						       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
-						       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
-						       ")[0].id));'></span> minutes early"+extra});
-				}
-				if(event.val().cancel!=null){
-					contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-				}
-				else if(event.val().date.time!=null){
-					if(new Date(event.val().date.time).getTime()+(event.val().date.duration*60*1000)<new Date().getTime()){
-						contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-					}else if(new Date(event.val().date.time).getTime()<new Date().getTime()){
-						contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+	var firstload=true;
+	firebase.database().ref("events/"+id+"/info").on("value",function(event){
+		if(firstload||document.querySelectorAll(".infocard"+id).length>0){
+			firstload=false;
+			clear();
+			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
+			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
+			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
+				try{
+					var member=me.val()||null;
+					var value=member;
+					var link=[{text:"Skip Event",
+						   href:"if(confirm('Are you sure you want to skip this event?')){"+
+						   "leaveEvent('"+id+"');}"}];
+					if(member==null){
+						link=[{text:"Join Event",href:"joinEvent('"+id+"');"}];
+					}else{
+						link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
+						firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
+						firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 					}
-				}
-				if(member!=null){
-					var href="if(copyToClipboard('https://kentonishi.github.io/gatherapp#"+id+"')){alert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
-					if(navigator.share){
-						href="navigator.share({title: decodeURIComponent('"+
-						      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
-						      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
-						      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})";
+					var date="";
+					if(event.val().date.time!=null){
+						date=getFormattedDate(event.val().date.time);
 					}
-					link.unshift({text:"Invite",href:href});
+					var addr;
+					if(event.val().location!=null){
+						addr=event.val().location.name+","+
+							event.val().location.formatted_address.split(",")
+							.slice(1,event.val().location.formatted_address.split(",").length).join(",");
+					}
+					var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(date||"Unknown Date")+"</span></strong>"},
+						      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+					if(event.val().location!=null){
+						var body="";
+						body+="<span style='font-size:4vh'>";
+						body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
+						body+=encode("View On Map");
+						body+='</a>';
+						body+='</span>';
+						contents.push({html:body+"<span class='iframe' style='display:none;'><br />"+
+							       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+
+							       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
+							       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
+					}
+					contents.push({text:event.val().date.duration!=null?
+						       (Math.floor(event.val().date.duration/60)+"h"+(event.val().date.duration%60)+"m Long"):"Unknown Duration"});
+					var check="checked";
+					if(value<0){
+						value=(-value);
+						check="";
+					}
+					var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
+					    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
+					var extra="";
+					if(Notification.permission!="granted"&&Notification.permission!="denied"){
+						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
+					}
+					if(member!=null){
+						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
+						    "' step='5' min='1' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
+						    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
+						contents.push({html:cb+append+" <span class='okbutton' class='ok"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
+							       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
+							       ")[0].innerHTML=null;saveReminderTime("+'"'+id+'"'+
+							       ");'></span> <span class='nobutton' class='no"+id+"' onclick='document.querySelectorAll("+
+							       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
+							       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
+							       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
+							       ")[0].id));'></span> minutes early"+extra});
+					}
+					if(event.val().cancel!=null){
+						contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+					}
+					else if(event.val().date.time!=null){
+						if(new Date(event.val().date.time).getTime()+(event.val().date.duration*60*1000)<new Date().getTime()){
+							contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+						}else if(new Date(event.val().date.time).getTime()<new Date().getTime()){
+							contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+						}
+					}
+					if(member!=null){
+						var href="if(copyToClipboard('https://kentonishi.github.io/gatherapp#"+id+"')){alert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
+						if(navigator.share){
+							href="navigator.share({title: decodeURIComponent('"+
+							      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
+							      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
+							      " url: 'https://kentonishi.github.io/gatherapp#"+id+"'})";
+						}
+						link.unshift({text:"Invite",href:href});
+					}
+					loadEventBoard({id:id,member:member});
+					var links=[];
+					if(!(event.val().people<6)){
+						links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
+					}
+					write("Members",[{html:"<span class='members'></span>"}],null,links);
+					if(event.val().people<6){
+						viewMembers(id);
+					}else{
+						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
+					}
+					if(document.querySelectorAll(".infocard"+id).length>0){
+						write(event.val().title,contents,link,null,"infocard"+id,"infocard"+id);
+					}else{
+						write(event.val().title,contents,link,null,"infocard"+id);
+					}
+				}catch(TypeError){
+					write("Error",[{text:"Error loading event."}]);
 				}
-				loadEventBoard({id:id,member:member});
-				var links=[];
-				if(!(event.val().people<6)){
-					links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
-				}
-				write("Members",[{html:"<span class='members'></span>"}],null,links);
-				if(event.val().people<6){
-					viewMembers(id);
-				}else{
-					document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
-				}
-				write(event.val().title,contents,link,"infocard");
-			}catch(TypeError){
-				write("Error",[{text:"Error loading event."}]);
-			}
-		});
+			});
+		}
 	});
 }
 
@@ -778,7 +786,7 @@ function reverse(snapshot) {
 	return reversed;
 }
 
-function write(title,contents,links,href,classlist){
+function write(title,contents,links,href,classlist,overwrite){
 	try{
 		if(title==null&&contents==null){
 			throw("");
@@ -825,7 +833,11 @@ function write(title,contents,links,href,classlist){
 			body+='<br />';
 		}
 		body+='</div>';
-		document.querySelectorAll('.body')[0].innerHTML=body+document.querySelectorAll('.body')[0].innerHTML;
+		if(overwrite!=null){
+			document.querySelectorAll(overwrite)[0].outerHTML=body;
+		}else{
+			document.querySelectorAll('.body')[0].innerHTML=body+document.querySelectorAll('.body')[0].innerHTML;
+		}
 	}catch(TypeError){
 		write('Error',[{text:'GatherApp encountered an error.'}]);
 	}
