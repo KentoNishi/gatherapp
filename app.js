@@ -221,7 +221,7 @@ function loadEventPage(id){
 			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
-//				try{
+				try{
 					var member=me.val()||null;
 					var value=member;
 					var link=[{text:"Skip Event",
