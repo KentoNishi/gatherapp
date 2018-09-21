@@ -1,10 +1,16 @@
 self.addEventListener('push', function(event) {
     var data = event.data.json();
-    var notification = self.registration.showNotification(data.title, {
+    var tag=data.tag;
+    var obj={
         body: data.content,
-        tag:Date.now()+":"+data.tag,
         icon: '/gatherapp/512x512.png'
-    });
+    }
+    if(tag.split("/")[1]=="board"){
+        obj.tag=tag;
+    }else{
+        obj.tag=Date.now()+":"+tag;
+    }
+    var notification = self.registration.showNotification(data.title, obj);
 });
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
