@@ -36,6 +36,17 @@ function menu(){
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Event History",null,null,"loadEvents(2);");
+//	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},
+	/*
+			       {html:
+				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />"+
+				"<span>Upcoming</span>"+
+				"<br />"+
+				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />"+
+				"<span>Completed</span>"+
+			       },*/
+//			       {html:"<button style='margin-top:1vh;' "+
+//				"onclick='searchEvents();'>Search</button>"}]);
 }
 
 function settings(){
