@@ -203,7 +203,7 @@ function loadEvent(id){
 	if(window.location.hash=="#"+id){
 		loadEventPage(id);
 	}else{
-		window.location.hash=("#");
+		window.location.hash=("");
 		history.replaceState([],"","#"+id);
 	}
 }
@@ -212,7 +212,9 @@ function loadEventPage(id){
 	changeOns();
 //	back.add("loadEvent('"+id+"');");
 	var firstload=true;
+	console.log(id);
 	ons.push("events/"+id+"/info");
+	console.log(firstload,document.querySelectorAll(".infocard"+id).length>0);
 	firebase.database().ref("events/"+id+"/info").on("value",function(event){
 		if(firstload||document.querySelectorAll(".infocard"+id).length>0){
 			if(firstload){
@@ -221,7 +223,7 @@ function loadEventPage(id){
 			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
-//				try{
+				try{
 					var member=me.val()||null;
 					var value=member;
 					var link=[{text:"Skip Event",
@@ -324,9 +326,9 @@ function loadEventPage(id){
 					}else{
 						write(event.val().title,contents,link,null,"infocard"+id);
 					}
-//				}catch(TypeError){
-//					write("Error",[{text:"Error loading event."}]);
-//				}
+				}catch(TypeError){
+					write("Error",[{text:"Error loading event."}]);
+				}
 				firstload=false;
 			});
 		}
@@ -638,15 +640,18 @@ function signOut() {
 }
 
 window.onhashchange= (function() {
-	hashChanged();
-	changeOns();
+	changeOns().then(function(){
+		hashChanged();
+	});
 });
 
 function changeOns(){
+	var returns=[];
 	ons.forEach(listener=>{
-		firebase.database().ref(listener).off("value");
+		returns.push(firebase.database().ref(listener).off("value"));
 	});
 	ons=[];
+	return Promise.all(returns);
 }
 
 if(navigator.onLine){
