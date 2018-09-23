@@ -742,7 +742,7 @@ function hashChanged(load){
 						action("add",1);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="cancelled"){
 						loadEvents(3);
-					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="history"){
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="completed"){
 						loadEvents(2);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="skipped"){
 						loadEvents(0);
