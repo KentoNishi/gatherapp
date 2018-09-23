@@ -35,7 +35,7 @@ function menu(){
 	settings();
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
-	write("Event History",null,null,"loadEvents(2);");
+	write("Completed Events",null,null,"loadEvents(2);");
 	write("Search Events",[{html:"<input class='search' placeholder='Title/Location'></input>"},
 			       {html:"Search In: <select style='font-size:2.5vh;'>"+
 				"<option value='upcoming'>Upcoming</option>"+
