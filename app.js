@@ -948,8 +948,8 @@ function getFormattedDate(date) {
 		var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
 		return month + '/' + day + '/' + year + " ("+
 			(["Sun","Mon","Tue","Wed","Thu","Fri","Sat"])[date.getDay()]+
-			+")"+
-			+", " + hour + ":" + min;
+			")"+
+			", " + hour + ":" + min;
 	}
 	return "";
 }
