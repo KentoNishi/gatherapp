@@ -126,7 +126,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
 		       (id!=null?"Save":"Schedule")+"</button>"});
 	write(((id==null)?"New":"Edit")+" Event",contents,
-	      [{href:((id==null)?("history.go(-1);"):("loadEvent('"+id+"');")),text:"Cancel"}],null,"eventInfo");
+	      [{href:((id==null)?("history.go(-1);"):("loadEvent('"+id+"');")),text:"Cancel"}],null,"eventInfo"+(id!=null?id:""));
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 	if(date!=null){
