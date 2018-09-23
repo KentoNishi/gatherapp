@@ -262,11 +262,15 @@ function loadEventPage(id){
 				try{
 					var member=me.val()||null;
 					var value=member;
-					var link=[{text:"Skip Event",
-						   href:"if(confirm('Are you sure you want to skip this event?')){"+
-						   "leaveEvent('"+id+"');}"}];
+					var link=[{html:"<span style='color:red;font-size:4vh;'><a href='#' "+
+						   "onclick='if(confirm("+'"'+"Are you sure you want to skip this event?"+'"'+")){"+
+						   "leaveEvent("+'"'+id+'"'+");}'"+
+						   ">Skip Event</a></span>"}];
 					if(member==null){
-						link.unshift({text:"Join Event",href:"joinEvent('"+id+"');"});
+						link.unshift({html:"<button "+
+						   "onclick='"+
+						   "joinEvent("+'"'+id+'"'+");'"+
+						   ">Join Event</button>"});
 					}else{
 						link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
 					}
@@ -905,12 +909,16 @@ function write(title,contents,links,href,classlist,overwrite){
 			body+='<br />';
 		}
 		for(var i=0;i<links.length;i++){
-			if(links[i].href!=null&&links[i].text!=null){
-				body+='<span style="font-size:4vh">';
-				body+='<a href="#" onclick="'+links[i].href+';return false;">';
-				body+=encode(links[i].text);
-				body+='</a>';
-				body+='</span>';
+			if((links[i].href!=null&&links[i].text!=null)||links[i].html!=null){
+				if((links[i].href!=null&&links[i].text!=null)){
+					body+='<span style="font-size:4vh">';
+					body+='<a href="#" onclick="'+links[i].href+';return false;">';
+					body+=encode(links[i].text);
+					body+='</a>';
+					body+='</span>';
+				}else{
+					body+=links[i].html;
+				}
 			}
 			body+='<br />';
 		}
