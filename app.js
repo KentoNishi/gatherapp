@@ -347,13 +347,15 @@ function loadEventPage(id){
 					if(!(event.val().people<6)){
 						links=[{text:"View Members",href:"viewMembers('"+id+"');"}];
 					}
-					if(firstload){
-						write("Members",[{html:"<span class='members'></span>"}],null,links);
-						if(event.val().people<6){
-							viewMembers(id);
-						}else{
-							document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
-						}
+					if(!firstload){
+						write("Members",[{html:"<span class='members'></span>"}],links,null,"members"+id,".members"+id);
+					}else{
+						write("Members",[{html:"<span class='members'></span>"}],links);
+					}
+					if(event.val().people<6){
+						viewMembers(id);
+					}else{
+						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
 					}
 					if(document.querySelectorAll(".infocard"+id).length>0){
 						write(event.val().title,contents,link,null,"infocard"+id,".infocard"+id);
