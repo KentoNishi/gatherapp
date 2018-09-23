@@ -672,7 +672,7 @@ function joinEvent(id){
 
 function leaveEvent(id){
 	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
-		loadEvents();
+		action("home");
 	});
 }
 
