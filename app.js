@@ -947,7 +947,7 @@ function getFormattedDate(date) {
 		var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
 		var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
 		return month + '/' + day + '/' + year + " ("+
-			(["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"])[date.getDay()] 
+			(["Sun","Mon","Tue","Wed","Thu","Fri","Sat"])[date.getDay()]+
 			+")"+
 			+", " + hour + ":" + min;
 	}
