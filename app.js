@@ -110,7 +110,8 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	var extra="";
 	contents.push({html:""+extra+"<div class='inputs'><input placeholder='Title' onclick=''></input>"});
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
-	contents.push({html:"<input type='datetime-local' onchange='showDate();'></input><span style='font-size:4vh;color:#2e73f7;' class='showdate'></span>"});
+	contents.push({html:"<input type='datetime-local' onchange='showDate();'></input>"+
+		       "<strong><span style='font-size:4vh;color:#2e73f7;' class='showdate'></span></strong>"});
 	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
 		       "value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+
 		       " hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' "+
