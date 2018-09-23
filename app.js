@@ -552,7 +552,11 @@ function loadEvents(inhistory,search){
 						var unknown=[];
 						var found=false;
 						writes.forEach(item=>{
-							if(search==null||(search!=null&&item.title.toLowerCase().indexOf(search)>0)){
+							var address="";
+							if(item.location!=null){
+								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+							}
+							if(search==null||(search!=null&&(item.title.toLowerCase().indexOf(search)>0||address.toLowerCase().indexOf(search)>0))){
 								found=true;
 								if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
 									if(new Date(item.date.time).getTime()>new Date().getTime()){
