@@ -39,7 +39,7 @@ function menu(){
 	write("Search Events",[{html:"<input class='search' placeholder='Title/Location'></input>"},
 			       {html:"Search In: <select style='font-size:2.5vh;'>"+
 				"<option value='upcoming'>Upcoming</option>"+
-				"<option value='completed'>Completed</option>"+
+				"<option value='completed'>History</option>"+
 				"<option value='cancelled'>Cancelled</option>"+
 				"<option value='skipped'>Skipped</option>"+
 				"</select>"
