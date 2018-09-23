@@ -510,7 +510,6 @@ function saveReminderTime(id){
 function loadEvents(inhistory,search){
 	var cont=true;
 	if(inhistory!=null){
-		console.log(inhistory,search);
 		var item;
 		if(inhistory==0){
 			item="skipped";
