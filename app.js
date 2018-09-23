@@ -93,6 +93,16 @@ function reactivateEvent(id){
 	}
 }
 
+function showDate(){
+	if(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value!=null&&
+	   document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value!=""){
+		document.querySelectorAll(".showdate")[0].innerHTML="<br />"+
+		getFormattedDate(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value);
+	}else{
+		document.querySelectorAll(".showdate")[0].innerHTML="";
+	}
+}
+
 var map;
 function requestEvent(id,title,loc,date,place,duration,cancel){
 	clear();
@@ -100,7 +110,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	var extra="";
 	contents.push({html:""+extra+"<div class='inputs'><input placeholder='Title' onclick=''></input>"});
 	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
-	contents.push({html:"<input type='datetime-local'></input>"});
+	contents.push({html:"<input type='datetime-local' onchange='showDate();'></input><span style='font-size:4vh;color:#2e73f7;' class='showdate'></span>"});
 	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
 		       "value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+
 		       " hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' "+
@@ -122,6 +132,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=
 			new Date(new Date(date).getTime()-
 				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
+		showDate();
 	}
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
@@ -935,7 +946,10 @@ function getFormattedDate(date) {
 		day = day.length > 1 ? day : '0' + day;
 		var hour="0".repeat(2-date.getHours().toString().length)+date.getHours();
 		var min="0".repeat(2-date.getMinutes().toString().length)+date.getMinutes();
-		return month + '/' + day + '/' + year + ", " + hour + ":" + min;
+		return month + '/' + day + '/' + year + " ("+
+			(["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"])[date.getDay()] 
+			+")"+
+			+", " + hour + ":" + min;
 	}
 	return "";
 }
