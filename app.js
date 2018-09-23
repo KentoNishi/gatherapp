@@ -267,7 +267,7 @@ function loadEventPage(id){
 						   "leaveEvent("+'"'+id+'"'+");}return false;'"+
 						   ">Skip Event</a></span>"}];
 					if(member==null){
-						link.unshift({html:"<button "+
+						link.unshift({html:"<button style='background-color:rgba(0,255,0,0.3);' "+
 						   "onclick='"+
 						   "joinEvent("+'"'+id+'"'+");'"+
 						   ">Join Event</button>"});
