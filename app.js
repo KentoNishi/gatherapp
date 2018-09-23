@@ -61,7 +61,7 @@ function searchEvents(){
 		}else if(document.querySelectorAll("select")[0].value=="skipped"){
 			int=0;
 		}
-		loadEvents(int,query);
+		loadEvents(int,query.toLowerCase());
 	}
 }
 
@@ -553,7 +553,7 @@ function loadEvents(inhistory,search){
 						var unknown=[];
 						var found=false;
 						writes.forEach(item=>{
-							if(search==null||(search!=null&&item.title.indexOf(search)>0)){
+							if(search==null||(search!=null&&item.title.toLowerCase().indexOf(search)>0)){
 								found=true;
 								if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
 									if(new Date(item.date.time).getTime()>new Date().getTime()){
