@@ -37,14 +37,32 @@ function menu(){
 	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Event History",null,null,"loadEvents(2);");
 	write("Search Events",[{html:"<input class='search' placeholder='Enter A Keyword...'></input>"},
-			       {html:"<button style='margin-top:1vh;' "+
+			       {html:
+				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' checked />"+
+				"<span>Upcoming</span>"+
+				"<br />"+
+				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />"+
+				"<span>Completed</span>"+
+				"<br />"+
+				"<input style='width:2.5vh;height:2.5vh;' type='radio' name='eventtype' />"+
+				"<span>Skipped</span>"
+			       },
+				{html:"<button style='margin-top:1vh;' "+
 				"onclick='searchEvents();'>Search</button>"}]);
 }
 
 function searchEvents(){
 	var query=document.querySelectorAll(".search")[0].value;
 	if(query!=null&&query.replace(/ /g,"")!=""){
-		loadEvents(null,query);
+		var int=0;
+		if(document.querySelectorAll("input[type=radio]")[0].checked){
+			int=1;
+		}else if(document.querySelectorAll("input[type=radio]")[1].checked){
+			int=2;
+		}else if(document.querySelectorAll("input[type=radio]")[2].checked){
+			int=0;
+		}
+		loadEvents(int,query);
 	}
 }
 
@@ -493,35 +511,32 @@ function saveReminderTime(id){
 function loadEvents(inhistory,search){
 	var cont=true;
 	if(inhistory!=null||search!=null){
-		var item;
+		var item="events";
 		if(inhistory==0){
-			item="left";
+			item="skipped";
 		}else if(inhistory==2){
-			item="history";
+			item="completed";
 		}else if(inhistory==3){
 			item="cancelled";
-		}else if(search!=null){
-			item="search/"+encodeURIComponent(search);
 		}
-		if(window.location.hash!="#/"+item||(search!=null&&window.location.hash!="#/search/"+encodeURIComponent(search))){
+		if(search!=null){
+			item="search/"+item+(item!=""?"/":"")+encodeURIComponent(search);
+		}
+		if(window.location.hash!="#/"+item){
 			window.location.hash=("#");
 			history.replaceState([],"","#/"+item);
 			cont=false;
 		}
+		if(inhistory==1){
+			inhistory=null;
+		}
 	}
 	if(cont){
-		function returnDB(){
-			if(search==null){
-				return firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1);
-			}else{
-				return firebase.database().ref("users/"+uid+"/events");
-			}
-		}
 //		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
 		clear();
 		var writes=[];
-		returnDB().once("value",events=>{
-			if(events.val()==null&&search==null){
+		firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
+			if(events.val()==null){
 				write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
 			}else{
 				function addPost(param){
@@ -532,12 +547,7 @@ function loadEvents(inhistory,search){
 						var unknown=[];
 						var found=false;
 						writes.forEach(item=>{
-							if(search==null||item.title.indexOf(search)>-1||
-							   (item.location!=null&&
-							    item.location.name+", "+
-							    item.location.formatted_address.split(",")
-							    .slice(1,item.location.formatted_address.split(",").length)
-							    .join(", ").indexOf(search)>-1)){
+							if(search==null||(search!=null&&item.title.indexOf(search)>0)){
 								found=true;
 								if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
 									if(new Date(item.date.time).getTime()>new Date().getTime()){
@@ -562,7 +572,7 @@ function loadEvents(inhistory,search){
 								}
 							}
 						});
-						if(!found&&search!=null){
+						if(!found){
 							write("No Results",[{text:"There were no results for your search."}]);
 						}
 						ongoing=ongoing.sort((a,b)=>{return a.date.time-b.date.time;});
@@ -734,10 +744,18 @@ function hashChanged(load){
 						loadEvents(3);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="history"){
 						loadEvents(2);
-					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="left"){
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="skipped"){
 						loadEvents(0);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="search"){
-						loadEvents(null,decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2]));
+						var int=1;
+						if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3])=="cancelled"){
+							int=3;
+						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3])=="completed"){
+							int=2;
+						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3])=="skipped"){
+							int=0;
+						}
+						loadEvents(int,decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3]));
 					}
 				}
 			}
