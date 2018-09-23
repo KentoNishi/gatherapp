@@ -350,7 +350,7 @@ function loadEventPage(id){
 					if(!firstload){
 						write("Members",[{html:"<span class='members'></span>"}],links,null,"members"+id,".members"+id);
 					}else{
-						write("Members",[{html:"<span class='members'></span>"}],links);
+						write("Members",[{html:"<span class='members'></span>"}],links,null,"members"+id);
 					}
 					if(event.val().people<6){
 						viewMembers(id);
