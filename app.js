@@ -266,7 +266,7 @@ function loadEventPage(id){
 						   href:"if(confirm('Are you sure you want to skip this event?')){"+
 						   "leaveEvent('"+id+"');}"}];
 					if(member==null){
-						link.push({text:"Join Event",href:"joinEvent('"+id+"');"});
+						link.unshift({text:"Join Event",href:"joinEvent('"+id+"');"});
 					}else{
 						link.unshift({text:"Edit Info",href:"editEvent('"+id+"');"});
 					}
