@@ -1,6 +1,6 @@
 self.addEventListener('push', function(event) {
     var data = event.data.json();
-    var tag=((data.tag.split("/").length>0&&data.tag.split("/")[1]=="board"?"":Date.now())+data.tag);
+    var tag=((data.tag.split("/").length>0&&data.tag.split("/")[1]=="board"?"":Date.now()+":")+data.tag);
     var obj={
         body: data.content,
         icon: '/gatherapp/512x512.png',
