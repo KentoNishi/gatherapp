@@ -264,7 +264,7 @@ function loadEventPage(id){
 					var value=member;
 					var link=[{html:"<span style='color:red;font-size:4vh;'><a href='#' "+
 						   "onclick='if(confirm("+'"'+"Are you sure you want to skip this event?"+'"'+")){"+
-						   "leaveEvent("+'"'+id+'"'+");}'"+
+						   "leaveEvent("+'"'+id+'"'+");}return false;'"+
 						   ">Skip Event</a></span>"}];
 					if(member==null){
 						link.unshift({html:"<button "+
