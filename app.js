@@ -257,7 +257,6 @@ function loadEventPage(id){
 			if(firstload){
 				clear();
 			}
-			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove();
 			firebase.database().ref("events/"+id+"/members/"+uid).once("value",function(me){
 				try{
@@ -440,6 +439,7 @@ function loadEventBoard(parameters){
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].date!=null
 		   )
 		){
+			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			document.querySelectorAll(".board"+id)[0].innerHTML="";
 			var writes=[];
 			function addPost(object){
