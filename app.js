@@ -375,7 +375,10 @@ function loadEventPage(id){
 						}
 					}
 				}catch(TypeError){
-					write("Error",[{text:"Error loading event."}]);
+					changeOns().then(function(){
+						clear();
+						write("Error",[{text:"Error loading event."}]);
+					});
 				}
 				firstload=false;
 			});
