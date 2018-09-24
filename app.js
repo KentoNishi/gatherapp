@@ -309,7 +309,7 @@ function loadEventPage(id){
 					    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 					var extra="";
 					if(Notification.permission!="granted"&&Notification.permission!="denied"){
-						extra="<br /><button onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
+						extra="<br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 					}
 					if(member!=null){
 						var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
