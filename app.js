@@ -365,9 +365,11 @@ function loadEventPage(id){
 						write(event.val().title,contents,link,null,"infocard"+id);
 					}
 					if(event.val()!=null){
-						if(me.val()==null){
-							pendEvent(id,0);
-						}
+						firebase.database().ref("events/"+id+"/left/"+uid).once("value",function(my){
+							if(my.val()==null){
+								pendEvent(id,0);
+							}
+						});
 					}
 					if(event.val().people<6){
 						viewMembers(id);
