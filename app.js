@@ -675,12 +675,10 @@ function findInArray(ar, val) {
 }
 
 function joinEvent(id){
-	changeOns().then(function(){
-		firebase.database().ref("events/"+id+"/members/").update({
-			[uid]:15
-		}).then(function(){
-			document.querySelectorAll(".body")[0].innerHTML="<span class='loading"+id+"'></span>";
-		});
+	firebase.database().ref("events/"+id+"/members/").update({
+		[uid]:15
+	}).then(function(){
+		document.querySelectorAll(".body")[0].innerHTML="<span class='loading"+id+"'></span>";
 	});
 }
 
