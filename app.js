@@ -688,9 +688,13 @@ function joinEvent(id){
 
 function leaveEvent(id,cont){
 	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
-		if(cont==null){
-			action("home");
-		}
+		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove().then(function(){
+			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove().then(function(){
+				if(cont==null){
+					action("home");
+				}
+			});
+		});
 	});
 }
 
