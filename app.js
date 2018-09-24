@@ -632,7 +632,7 @@ function loadEvents(inhistory,search){
 								future=future.reverse();
 							}
 							ongoing=ongoing.reverse();
-							var list=[pending,unknown,future,ongoing];
+							var list=[unknown,future,ongoing,pending];
 							list.forEach(listItem=>{
 								listItem.forEach(item=>{
 									var address="";
