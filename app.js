@@ -253,6 +253,9 @@ function loadEventPage(id){
 	var firstload=true;
 	ons.push("events/"+id+"/info");
 	firebase.database().ref("events/"+id+"/info").on("value",function(event){
+		if(document.querySelectorAll(".loading"+id).length>0){
+			firstload=true;
+		}
 		if(firstload||document.querySelectorAll(".infocard"+id).length>0){
 			if(firstload){
 				clear();
@@ -676,7 +679,7 @@ function joinEvent(id){
 		firebase.database().ref("events/"+id+"/members/").update({
 			[uid]:15
 		}).then(function(){
-			loadEvent(id);
+			document.querySelectorAll(".body")[0].innerHTML="<span class='loading"+id+"'></span>";
 		});
 	});
 }
