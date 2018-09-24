@@ -432,6 +432,7 @@ function newBoardPost(id){
 function loadEventBoard(parameters){
 	var id=parameters.id;
 	var member=parameters.member;
+	firebase.database().ref("events/"+id+"/board").off("value");
 	ons.push("events/"+id+"/board");
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
