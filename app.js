@@ -371,7 +371,7 @@ function loadEventPage(id){
 					}
 					if(event.val()!=null){
 						if(me.val()==null){
-							leaveEvent(id,0);
+							pendEvent(id,0);
 						}
 					}
 				}catch(TypeError){
@@ -690,7 +690,7 @@ function joinEvent(id){
 }
 
 function leaveEvent(id,cont){
-	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
+	firebase.database().ref("users/"+uid+"/events/"+id).update({status:4}).then(function(){
 		firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove().then(function(){
 			firebase.database().ref("users/"+uid+"/events/"+id+"/info").remove().then(function(){
 				if(cont==null){
