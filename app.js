@@ -433,6 +433,9 @@ function loadEventBoard(parameters){
 	var id=parameters.id;
 	var member=parameters.member;
 	firebase.database().ref("events/"+id+"/board").off("value");
+	if(ons.indexOf("events/"+id+"/board")>0){
+		ons=ons.splice(ons.indexOf("events/"+id+"/board"),1);
+	}
 	ons.push("events/"+id+"/board");
 	if(document.querySelectorAll(".board"+id).length<1){
 		write("Event Board",[{html:"<div class='board"+id+
