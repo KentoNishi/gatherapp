@@ -359,15 +359,15 @@ function loadEventPage(id){
 					}else{
 						write("Members",[{html:"<span class='members'></span>"}],links,null,"members"+id);
 					}
-					if(document.querySelectorAll(".infocard"+id).length>0){
-						write(event.val().title,contents,link,null,"infocard"+id,".infocard"+id);
-					}else{
-						write(event.val().title,contents,link,null,"infocard"+id);
-					}
 					if(event.val().people<6){
 						viewMembers(id);
 					}else{
 						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
+					}
+					if(document.querySelectorAll(".infocard"+id).length>0){
+						write(event.val().title,contents,link,null,"infocard"+id,".infocard"+id);
+					}else{
+						write(event.val().title,contents,link,null,"infocard"+id);
 					}
 					if(event.val()!=null){
 						if(me.val()==null){
