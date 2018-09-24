@@ -567,7 +567,23 @@ function loadEvents(inhistory,search){
 //		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
 		clear();
 		var writes=[];
-			firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(4).once("value",invites=>{
+		function returnPromise(){
+			if(search==null){
+				return firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(4);
+			}else{
+				return {
+					once:function(a,b){
+						b({
+							val:function(){
+								return null;
+							},
+							forEach:function(){return;}
+						});
+					}
+				};
+			}
+		}
+		returnPromise().once("value",invites=>{
 			firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
 				if(events.val()==null){
 					if(search==null){
@@ -632,7 +648,10 @@ function loadEvents(inhistory,search){
 								future=future.reverse();
 							}
 							ongoing=ongoing.reverse();
-							var list=[unknown,future,ongoing,pending];
+							var list=[unknown,future,ongoing];
+							if(search==null){
+								list.push(pending);
+							}
 							list.forEach(listItem=>{
 								listItem.forEach(item=>{
 									var address="";
