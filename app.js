@@ -591,7 +591,7 @@ function loadEvents(inhistory,search){
 								}
 								if(search==null||(search!=null&&(item.title.toLowerCase().indexOf(search)>-1||address.toLowerCase().indexOf(search)>-1))){
 									found=true;
-									if(item.status!=4){
+									if(item.status.status!=4){
 										if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
 											if(new Date(item.date.time).getTime()>new Date().getTime()){
 												if(item.date.time==null){
@@ -632,7 +632,7 @@ function loadEvents(inhistory,search){
 								future=future.reverse();
 							}
 							ongoing=ongoing.reverse();
-							var list=[unknown,future,ongoing,pending];
+							var list=[pending,unknown,future,ongoing];
 							list.forEach(listItem=>{
 								listItem.forEach(item=>{
 									var address="";
@@ -641,7 +641,7 @@ function loadEvents(inhistory,search){
 									}
 									var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
 									var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-									if(item.status==4){
+									if(item.status.status==4){
 										contents.push({html:"<span style='color:red;font-size:4vh;'>Pending Invite</span>"});
 									}
 									if(item.cancel!=null){
