@@ -359,11 +359,6 @@ function loadEventPage(id){
 					}else{
 						write("Members",[{html:"<span class='members'></span>"}],links,null,"members"+id);
 					}
-					if(event.val().people<6){
-						viewMembers(id);
-					}else{
-						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
-					}
 					if(document.querySelectorAll(".infocard"+id).length>0){
 						write(event.val().title,contents,link,null,"infocard"+id,".infocard"+id);
 					}else{
@@ -373,6 +368,11 @@ function loadEventPage(id){
 						if(me.val()==null){
 							pendEvent(id,0);
 						}
+					}
+					if(event.val().people<6){
+						viewMembers(id);
+					}else{
+						document.querySelectorAll(".members")[0].innerHTML=encode(event.val().people+" People");
 					}
 				}catch(TypeError){
 					changeOns().then(function(){
@@ -578,7 +578,7 @@ function loadEvents(inhistory,search){
 				}else{
 					function addPost(param){
 						writes.push(param);
-						if(writes.length==Object.keys(events.val()).length+Object.keys(invites.val()).length){
+						if(writes.length==Object.keys(events.val()).length+(invites.val()!=null?Object.keys(invites.val()).length:0)){
 							var pending=[];
 							var ongoing=[];
 							var future=[];
