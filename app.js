@@ -366,7 +366,7 @@ function loadEventPage(id){
 					}
 					if(event.val()!=null){
 						firebase.database().ref("events/"+id+"/left/"+uid).once("value",function(my){
-							if(my.val()==null){
+							if(my.val()==null&&me.val()==null){
 								pendEvent(id,0);
 							}
 						});
