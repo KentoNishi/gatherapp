@@ -366,6 +366,11 @@ function loadEventPage(id){
 					}else{
 						write(event.val().title,contents,link,null,"infocard"+id);
 					}
+					if(event.val()!=null){
+						if(me.val()==null){
+							leaveEvent(id,0);
+						}
+					}
 				}catch(TypeError){
 					write("Error",[{text:"Error loading event."}]);
 				}
@@ -674,9 +679,11 @@ function joinEvent(id){
 	});
 }
 
-function leaveEvent(id){
+function leaveEvent(id,cont){
 	firebase.database().ref("users/"+uid+"/events/"+id).update({status:0}).then(function(){
-		action("home");
+		if(cont==null){
+			action("home");
+		}
 	});
 }
 
