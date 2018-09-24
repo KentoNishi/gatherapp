@@ -567,103 +567,122 @@ function loadEvents(inhistory,search){
 //		back.add("loadEvents("+(inhistory!=null?inhistory:"")+");");
 		clear();
 		var writes=[];
-		firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
-			if(events.val()==null){
-				if(search==null){
-					write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
+			firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(4).once("value",invites=>{
+			firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
+				if(events.val()==null){
+					if(search==null){
+						write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
+					}else{
+						write("No Results",[{text:"There were no results for your search."}]);
+					}
 				}else{
-					write("No Results",[{text:"There were no results for your search."}]);
-				}
-			}else{
-				function addPost(param){
-					writes.push(param);
-					if(writes.length==Object.keys(events.val()).length){
-						var ongoing=[];
-						var future=[];
-						var unknown=[];
-						var found=false;
-						writes.forEach(item=>{
-							var address="";
-							if(item.location!=null){
-								address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
-							}
-							if(search==null||(search!=null&&(item.title.toLowerCase().indexOf(search)>-1||address.toLowerCase().indexOf(search)>-1))){
-								found=true;
-								if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
-									if(new Date(item.date.time).getTime()>new Date().getTime()){
-										if(item.date.time==null){
-											unknown.push(item);
-										}else{
-											future.push(item);
-										}
-									}else{
-										if(item.date.time==null){
-											unknown.push(item);
-										}else{
-											ongoing.push(item);
-										}
-									}
-								}else{
-									if(item.date.time==null){
-										unknown.push(item);
-									}else{
-										future.push(item);
-									}
-								}
-							}
-						});
-						if(!found){
-							write("No Results",[{text:"There were no results for your search."}]);
-						}
-						ongoing=ongoing.sort((a,b)=>{return a.date.time-b.date.time;});
-						if(inhistory!=null){
-							future=future.concat(ongoing);
-							ongoing=[];
-						}
-						future=future.sort((a,b)=>{return a.date.time-b.date.time;});
-						if(inhistory==null){
-							future=future.reverse();
-						}
-						ongoing=ongoing.reverse();
-						var list=[unknown,future,ongoing];
-						list.forEach(listItem=>{
-							listItem.forEach(item=>{
+					function addPost(param){
+						writes.push(param);
+						if(writes.length==Object.keys(events.val()).length+Object.keys(invites.val()).length){
+							var pending=[];
+							var ongoing=[];
+							var future=[];
+							var unknown=[];
+							var found=false;
+							writes.forEach(item=>{
 								var address="";
 								if(item.location!=null){
 									address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 								}
-								var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
-								var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
-								if(item.cancel!=null){
-									contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
-								}
-								else if(item.date.time!=null&&item.date.time!=undefined){
-									if(new Date(item.date.time).getTime()+(item.date.duration*60*1000)<new Date().getTime()){
-										contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
-									}else if(new Date(item.date.time).getTime()<new Date().getTime()){
-										contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								if(search==null||(search!=null&&(item.title.toLowerCase().indexOf(search)>-1||address.toLowerCase().indexOf(search)>-1))){
+									found=true;
+									if(item.status!=4){
+										if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
+											if(new Date(item.date.time).getTime()>new Date().getTime()){
+												if(item.date.time==null){
+													unknown.push(item);
+												}else{
+													future.push(item);
+												}
+											}else{
+												if(item.date.time==null){
+													unknown.push(item);
+												}else{
+													ongoing.push(item);
+												}
+											}
+										}else{
+											if(item.date.time==null){
+												unknown.push(item);
+											}else{
+												future.push(item);
+											}
+										}
+									}else{
+										pending.push(item);
 									}
 								}
-								if(item.status!=null&&item.status.info!=null){
-									contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
-								}
-								if(item.status!=null&&item.status.board!=null){
-									contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Messages</span>"});
-								}
-								write(item.title,contents,null,"loadEvent('"+item.href+"');");
 							});
-						});
+							if(!found){
+								write("No Results",[{text:"There were no results for your search."}]);
+							}
+							pending=pending.sort((a,b)=>{return a.date.time-b.date.time;});
+							ongoing=ongoing.sort((a,b)=>{return a.date.time-b.date.time;});
+							if(inhistory!=null){
+								future=future.concat(ongoing);
+								ongoing=[];
+							}
+							future=future.sort((a,b)=>{return a.date.time-b.date.time;});
+							if(inhistory==null){
+								future=future.reverse();
+							}
+							ongoing=ongoing.reverse();
+							var list=[unknown,future,ongoing,pending];
+							list.forEach(listItem=>{
+								listItem.forEach(item=>{
+									var address="";
+									if(item.location!=null){
+										address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
+									}
+									var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
+									var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+									if(item.status==4){
+										contents.push({html:"<span style='color:red;font-size:4vh;'>Pending Invite</span>"});
+									}
+									if(item.cancel!=null){
+										contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+									}
+									else if(item.date.time!=null&&item.date.time!=undefined){
+										if(new Date(item.date.time).getTime()+(item.date.duration*60*1000)<new Date().getTime()){
+											contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+										}else if(new Date(item.date.time).getTime()<new Date().getTime()){
+											contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+										}
+									}
+									if(item.status!=null&&item.status.info!=null){
+										contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
+									}
+									if(item.status!=null&&item.status.board!=null){
+										contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Messages</span>"});
+									}
+									write(item.title,contents,null,"loadEvent('"+item.href+"');");
+								});
+							});
+						}
 					}
-				}
-				events.forEach(event=>{
-					firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
-						var obj=info.val();
-						obj.status=event.val();
-						obj.href=event.key;
-						addPost(obj);
+					events.forEach(event=>{
+						firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
+							var obj=info.val();
+							obj.status=event.val();
+							obj.href=event.key;
+							addPost(obj);
+						});
 					});
-				});
-			}
+					invites.forEach(event=>{
+						firebase.database().ref("events/"+event.key+"/info").once("value",function(info){
+							var obj=info.val();
+							obj.status=event.val();
+							obj.href=event.key;
+							addPost(obj);
+						});
+					});
+				}
+			});
 		});
 	}
 }
