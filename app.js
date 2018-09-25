@@ -42,6 +42,7 @@ function menu(){
 				"<option value='completed'>Completed</option>"+
 				"<option value='cancelled'>Cancelled</option>"+
 				"<option value='skipped'>Skipped</option>"+
+				"<option value='invites'>Pending</option>"+
 				"</select>"
 			       },
 				{html:"<button style='margin-top:1vh;' "+
@@ -60,6 +61,8 @@ function searchEvents(){
 			int=3;
 		}else if(document.querySelectorAll("select")[0].value=="skipped"){
 			int=0;
+		}else if(document.querySelectorAll("select")[0].value=="pending"){
+			int=4;
 		}
 		loadEvents(int,query.toLowerCase());
 	}
