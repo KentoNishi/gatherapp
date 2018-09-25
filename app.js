@@ -42,6 +42,7 @@ function menu(){
 				"<option value='completed'>Completed</option>"+
 				"<option value='cancelled'>Cancelled</option>"+
 				"<option value='skipped'>Skipped</option>"+
+				"<option value='invites'>Invites</option>"+
 				"</select>"
 			       },
 				{html:"<button style='margin-top:1vh;' "+
@@ -60,6 +61,8 @@ function searchEvents(){
 			int=3;
 		}else if(document.querySelectorAll("select")[0].value=="skipped"){
 			int=0;
+		}else if(document.querySelectorAll("select")[0].value=="invites"){
+			int=4;
 		}
 		loadEvents(int,query.toLowerCase());
 	}
@@ -550,6 +553,8 @@ function loadEvents(inhistory,search){
 			item="completed";
 		}else if(inhistory==3){
 			item="cancelled";
+		}else if(inhistory==4){
+			item="invites";
 		}else{
 			item="events";
 		}
@@ -846,6 +851,8 @@ function hashChanged(load){
 						loadEvents(2);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="skipped"){
 						loadEvents(0);
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="invites"){
+						loadEvents(4);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="search"){
 						var int;
 						if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="cancelled"){
