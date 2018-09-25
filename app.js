@@ -575,7 +575,6 @@ function loadEvents(inhistory,search){
 		clear();
 		var writes=[];
 		function returnPromise(){
-			console.log(search);
 			if(search==null&&(inhistory==null||inhistory==1)){
 				return firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(4);
 			}else{
