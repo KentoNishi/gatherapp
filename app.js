@@ -861,6 +861,8 @@ function hashChanged(load){
 							int=2;
 						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="skipped"){
 							int=0;
+						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="invites"){
+							int=4;
 						}
 						loadEvents(int,decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3]));
 					}
