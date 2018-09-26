@@ -469,7 +469,7 @@ function loadEventBoard(parameters){
 			function addPost(object){
 				writes.push("<div style='background-color:"+
 				(object.admin?"yellowgreen":(object.author==uid?"cornflowerblue":"orange"))+
-				";border-radius:2vh;padding:1vh;text-align:left;width:fit-content;'>"+
+				";border-radius:2vh;padding:1vh;text-align:left;margin:0 auto;width:fit-content;'>"+
 				encode(object.text)+
 				"<div "+(object.admin?"":("class='"+object.key+"' "))+"style='font-size:2.5vh;text-align:left;'>"+
 				"<strong>"+
