@@ -36,7 +36,7 @@ function menu(){
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Completed Events",null,null,"loadEvents(2);");
-	write("Search Events",[{html:"<input class='search' placeholder='Title/Location'></input>"},
+	write("Search Events",[{html:"<input maxlength='50' class='search' placeholder='Title/Location'></input>"},
 			       {html:"Search In: <select style='font-size:2.5vh;'>"+
 				"<option value='upcoming'>Upcoming</option>"+
 				"<option value='completed'>Completed</option>"+
@@ -111,8 +111,8 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	clear();
 	var contents=[];
 	var extra="";
-	contents.push({html:""+extra+"<div class='inputs'><input placeholder='Title'></input>"});
-	contents.push({html:"<input placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
+	contents.push({html:""+extra+"<div class='inputs'><input maxlength='50' placeholder='Title'></input>"});
+	contents.push({html:"<input maxlength='50' placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length)'></input>"});
 	contents.push({html:"<input type='datetime-local' onchange='showDate();'></input>"+
 		       "<strong><span style='font-size:4vh;color:#2e73f7;' class='showdate'></span></strong>"});
 	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
