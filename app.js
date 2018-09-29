@@ -170,7 +170,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 		{ fields: ["name", "place_id", "formatted_address"] });
 	google.maps.event.addListener(autocomplete, 'place_changed', function(){
 		placeChanged();
-	}});
+	});
 }
 
 function placeChanged(){
