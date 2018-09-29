@@ -168,7 +168,11 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
 		{ fields: ["name", "place_id", "formatted_address"] });
-	google.maps.event.addListener(autocomplete, 'place_changed', function () {
+	google.maps.event.addListener(autocomplete, 'place_changed', placeChanged});
+}
+
+function placeChanged(){
+	if(autocomplete.getPlace()!=null){
 		if(autocomplete.getPlace().formatted_address.split(",").length>3){
 			document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display="block";
 			document.querySelectorAll(".inputs")[0].querySelectorAll("iframe")[0].src=
@@ -182,7 +186,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 				document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput=null;
 			};
 		}
-	});
+	}
 }
 
 var autocomplete;
