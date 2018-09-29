@@ -11,6 +11,7 @@ firebase.initializeApp(config);
 var uid = "";
 var name = "";
 var pic = "";
+var city="";
 var lat;
 var lng;
 //var back={data:["loadEvents();","loadEvents();"]};
@@ -117,6 +118,18 @@ function clearAutocomplete(e){
 	for(var i=0;i<document.querySelectorAll(".pac-container").length;i++){
 		document.querySelectorAll(".pac-container")[i].outerHTML="";
 	}
+}
+
+function getZIP(){
+	var xhr = new XMLHttpRequest();
+	xhr.responseType = "json";
+	xhr.open('GET', "https://ipinfo.io/json", true);
+	xhr.send();
+	xhr.onreadystatechange = function(e) {
+	    if (xhr.readyState == 4 && xhr.status == 200) {
+		city=(xhr.response.postal);
+	    }
+	};
 }
 
 var map;
@@ -828,6 +841,7 @@ if(navigator.onLine){
 			uid = me.uid;
 			name = me.displayName;
 			pic = me.photoURL;
+			getZIP();
 			me.getIdToken().then(function(userToken) {
 			});
 			firebase.database().ref("users/"+uid+"/info").update({
