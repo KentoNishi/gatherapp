@@ -106,9 +106,19 @@ function showDate(){
 	}
 }
 
+function addPlace(title,desc){
+	document.querySelectorAll(".pac-container")[0].innerHTML+=
+		("<div id='areasearch' class='pac-item areasearch' onmousedown='"+callback+
+		 "'><span class='pac-icon pac-icon-areas'></span><span class='pac-item-query'>"+
+		 "<span class='pac-matched'></span>"+encode(title)+"</span> <span>"+encode(desc)+"</span></div>");
+}
+
 var map;
 function requestEvent(id,title,loc,date,place,duration,cancel){
 	clear();
+	for(var i=0;i<document.querySelectorAll(".pac-container").length;i++){
+		document.querySelectorAll(".pac-container")[i].outerHTML="";
+	}
 	var contents=[];
 	var extra="";
 	contents.push({html:""+extra+"<div class='inputs'><input maxlength='50' placeholder='Title'></input>"});
