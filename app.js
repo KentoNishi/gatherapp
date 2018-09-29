@@ -107,7 +107,7 @@ function showDate(){
 }
 
 function addPlace(title,desc,callback){
-	document.querySelectorAll(".pac-container")[0].insertAdjacentHTML('beforeend',
+	document.querySelectorAll(".pac-container")[0].insertAdjacentHTML('beforebegin',
 		"<div id='areasearch' class='pac-item areasearch' onmousedown="+'"'+callback+
 		 ";"+'"'+"><span class='pac-icon pac-icon-areas'></span><span class='pac-item-query'>"+
 		 "<span class='pac-matched'></span>"+encode(title)+"</span> <span>"+encode(desc)+"</span></div>");
