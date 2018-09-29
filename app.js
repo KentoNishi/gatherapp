@@ -817,8 +817,8 @@ if(navigator.onLine){
 			me.getIdToken().then(function(userToken) {
 			});
 			firebase.database().ref("users/"+uid+"/info").update({
-				name:name,
-				pic:pic
+				name:name//,
+				//pic:pic
 			});
 			if(!hashChanged(1)){
 				history.pushState([],"","#/");
