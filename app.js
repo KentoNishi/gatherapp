@@ -113,9 +113,9 @@ function addPlace(title,desc,callback){
 		 "<span class='pac-matched'></span>"+encode(title)+"</span> <span>"+encode(desc)+"</span></div>");
 }
 
-function clearAutocomplete(){
+function clearAutocomplete(e){
 	for(var i=0;i<document.querySelectorAll(".pac-container").length;i++){
-		document.querySelectorAll(".pac-container")[i].outerHTML="";
+		document.querySelectorAll(".pac-container")[i][e!=null?"outerHTML":"innerHTML"]="";
 	}
 }
 
@@ -127,7 +127,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	var extra="";
 	contents.push({html:""+extra+"<div class='inputs'><input maxlength='50' placeholder='Title'></input>"});
 	contents.push({html:"<input maxlength='50' placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length);"+
-		       'clearAutocomplete();'+"'></input>"});
+		       'clearAutocomplete(0);'+"'></input>"});
 	contents.push({html:"<input type='datetime-local' onchange='showDate();'></input>"+
 		       "<strong><span style='font-size:4vh;color:#2e73f7;' class='showdate'></span></strong>"});
 	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
