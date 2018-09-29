@@ -107,7 +107,7 @@ function showDate(){
 }
 
 function addPlace(title,desc,callback){
-	document.querySelectorAll(".pac-container")[0].append(
+	document.querySelectorAll(".pac-container")[0].insertAdjacentHTML('beforeend',
 		"<div id='areasearch' class='pac-item areasearch' onmousedown="+'"'+callback+
 		 ";"+'"'+"><span class='pac-icon pac-icon-areas'></span><span class='pac-item-query'>"+
 		 "<span class='pac-matched'></span>"+encode(title)+"</span> <span>"+encode(desc)+"</span></div>");
@@ -115,7 +115,7 @@ function addPlace(title,desc,callback){
 
 function clearAutocomplete(e){
 	for(var i=0;i<document.querySelectorAll(".pac-container").length;i++){
-		document.querySelectorAll(".pac-container")[i][e!=null?"outerHTML":"innerHTML"]="";
+		document.querySelectorAll(".pac-container")[i].outerHTML="";
 	}
 }
 
