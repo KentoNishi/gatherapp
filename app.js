@@ -43,7 +43,7 @@ function menu(){
 				"<option value='completed'>Completed</option>"+
 				"<option value='cancelled'>Cancelled</option>"+
 				"<option value='skipped'>Skipped</option>"+
-				"<option value='invites'>Invites</option>"+
+				"<option value='pending'>Pending</option>"+
 				"</select>"
 			       },
 				{html:"<button style='margin-top:1vh;' "+
@@ -62,7 +62,7 @@ function searchEvents(){
 			int=3;
 		}else if(document.querySelectorAll("select")[0].value=="skipped"){
 			int=0;
-		}else if(document.querySelectorAll("select")[0].value=="invites"){
+		}else if(document.querySelectorAll("select")[0].value=="pending"){
 			int=4;
 		}
 		loadEvents(int,query.toLowerCase());
@@ -594,7 +594,7 @@ function loadEvents(inhistory,search){
 		}else if(inhistory==3){
 			item="cancelled";
 		}else if(inhistory==4){
-			item="invites";
+			item="pending";
 		}else{
 			item="events";
 		}
@@ -892,7 +892,7 @@ function hashChanged(load){
 						loadEvents(2);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="skipped"){
 						loadEvents(0);
-					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="invites"){
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="pending"){
 						loadEvents(4);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="search"){
 						var int;
@@ -902,7 +902,7 @@ function hashChanged(load){
 							int=2;
 						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="skipped"){
 							int=0;
-						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="invites"){
+						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="pending"){
 							int=4;
 						}
 						loadEvents(int,decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3]));
