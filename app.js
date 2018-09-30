@@ -1,3 +1,16 @@
+var install;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  install = e;
+});
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+});
+
 var config = {
 	apiKey: "AIzaSyB4meNlwVUltd007qmH9hPQpn6Oz_CF3xM",
 	authDomain: "gatherapp-14b50.firebaseapp.com",
@@ -48,6 +61,27 @@ function menu(){
 			       },
 				{html:"<button style='margin-top:1vh;' "+
 				"onclick='searchEvents();'>Search</button>"}]);
+	if(install!=null){
+		write("Get The App", [{text:"Download GatherApp, and pin it to your home screen."},
+				      {html:"<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"}],
+		      [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
+		     null,"installPrompt");
+	}
+}
+
+function installApp(e){
+	if(e==null){
+		install.prompt();
+		install.userChoice.then((choiceResult) => {
+			if (choiceResult.outcome === 'accepted') {
+			} else {
+			}
+			install = null;
+		});
+	}else{
+		install = null;
+	}
+	document.querySelectorAll(".installPrompt")[0].outerHTML="";
 }
 
 function searchEvents(){
