@@ -67,14 +67,17 @@ function installApp(e){
 		install.prompt();
 		install.userChoice.then((choiceResult) => {
 			if (choiceResult.outcome === 'accepted') {
+				write("App Pinned",[{text:"GatherApp was pinned to your home screen."}],
+				      null,null,null,".installPrompt");
 			} else {
+				document.querySelectorAll(".installPrompt")[0].outerHTML="";
 			}
 			install = null;
 		});
 	}else{
+		document.querySelectorAll(".installPrompt")[0].outerHTML="";
 		install = null;
 	}
-	document.querySelectorAll(".installPrompt")[0].outerHTML="";
 }
 
 function searchEvents(){
