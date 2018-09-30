@@ -55,7 +55,8 @@ function menu(){
 				{html:"<button style='margin-top:1vh;' "+
 				"onclick='searchEvents();'>Search</button>"}]);
 	if(install!=null){
-		write("Get The App",[{html:"<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"}],
+		write("Get The App!",[{text:"Pin GatherApp to your home screen."},
+				      {html:"<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"}],
 		      [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
 		     null,"installPrompt");
 	}
