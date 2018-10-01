@@ -82,7 +82,7 @@ function installApp(e){
 
 function searchEvents(){
 	var query=document.querySelectorAll(".search")[0].value;
-	if(query!=null&&query.replace(/ /g,"")!=""){
+	if(query!=null&&query.replace(/ /g,"")!=""&&query.replace(/ /g,"").length>2){
 		var int=0;
 		if(document.querySelectorAll("select")[0].value=="upcoming"){
 			int=1;
@@ -96,6 +96,12 @@ function searchEvents(){
 			int=4;
 		}
 		loadEvents(int,query.toLowerCase());
+	}else{
+		document.querySelectorAll(".search")[0].style.background="pink";
+		document.querySelectorAll(".search")[0].oninput=function(){
+			document.querySelectorAll(".search")[0].style.background="white";
+			document.querySelectorAll(".search")[0].oninput=null;
+		};
 	}
 }
 
