@@ -106,7 +106,7 @@ function searchEvents(){
 }
 
 function settings(){
-	write("Feedback",null,null,"window.open('https://github.com/KentoNishi/gatherapp/issues/new');");
+	write("Provide Feedback",null,null,"window.open('https://github.com/KentoNishi/gatherapp/issues/new');");
 	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
