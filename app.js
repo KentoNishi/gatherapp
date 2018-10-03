@@ -106,6 +106,7 @@ function searchEvents(){
 }
 
 function settings(){
+	write("Feedback",[{text:"Submit feedback to GatherApp, such as issues, bugs, and feature suggestions."}],null,"window.open('https://github.com/KentoNishi/gatherapp/issues/new');");
 	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
