@@ -1,5 +1,3 @@
-navigator.geolocation=undefined;
-
 var install;
 window.addEventListener('beforeinstallprompt', (e) => {
 	e.preventDefault();
