@@ -93,7 +93,7 @@ function installApp(e){
 
 function searchEvents(){
 	var query=document.querySelectorAll(".search")[0].value;
-	if(query!=null&&query.replace(/ /g,"")!=""&&query.replace(/ /g,"").length>0){
+	if(query!=null&&query.replace(/ /g,"").replace(/\n/gi,"")!=""&&query.replace(/ /g,"").replace(/\n/gi,"").length>0){
 		var int=0;
 		if(document.querySelectorAll("select")[0].value=="upcoming"){
 			int=1;
@@ -513,7 +513,7 @@ function showMap(){
 }
 
 function newBoardPost(id){
-	if(document.querySelectorAll("textarea")[0].value!=null&&document.querySelectorAll("textarea")[0].value.replace(/ /g,"").length>0){
+	if(document.querySelectorAll("textarea")[0].value!=null&&document.querySelectorAll("textarea")[0].value.replace(/ /g,"").replace(/\n/gi,"").length>0){
 		firebase.database().ref("events/"+id+"/board/").push().update({
 			content:document.querySelectorAll("textarea")[0].value,
 			author:uid,
