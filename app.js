@@ -522,6 +522,12 @@ function newBoardPost(id){
 			document.querySelectorAll("textarea")[0].value=null;
 			autogrow(document.querySelectorAll("textarea")[0]);
 		});
+	}else{
+		document.querySelectorAll("textarea")[0].style.background="pink";
+		document.querySelectorAll("textarea")[0].oninput=function(){
+			document.querySelectorAll("textarea")[0].style.background="white";
+			document.querySelectorAll("textarea")[0].oninput=null;
+		};
 	}
 }
 
