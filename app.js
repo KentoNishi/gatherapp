@@ -159,11 +159,22 @@ function showDate(){
 	}
 }
 
+/*
 function addPlace(title,desc,callback){
 	document.querySelectorAll(".pac-container")[0].insertAdjacentHTML('beforeend',
 		"<div id='areasearch' class='pac-item areasearch' onmousedown="+'"'+callback+
 		 ";"+'"'+"><span class='pac-icon pac-icon-areas'></span><span class='pac-item-query'>"+
 		 "<span class='pac-matched'></span><strong>"+encode(title)+"</strong></span> <span>"+encode(desc)+"</span></div>");
+}
+*/
+
+function loadPromos(){
+	autocomplete = new google.maps.places.Autocomplete(
+		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
+		{ fields: ["name", "place_id", "formatted_address"/*,"address_components"*/],types: ['(region)'] });
+	google.maps.event.addListener(autocomplete, 'place_changed', function(){
+		console.log(autocomplete.getPlace());
+	});
 }
 
 function clearAutocomplete(e){
