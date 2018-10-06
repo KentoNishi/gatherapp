@@ -36,6 +36,15 @@ back.add=(function(param){
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
+window.onload=function(){
+	document.querySelectorAll(".body")[0].innerHTML=`
+		<div class="card" onclick="login('Google')">
+			<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
+			</img>
+		</div>
+	`;
+}
+
 function menu(){
 //	back.add("menu();");
 	clear();
