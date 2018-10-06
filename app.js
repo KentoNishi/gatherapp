@@ -179,6 +179,13 @@ function loadPromos(){
 	google.maps.event.addListener(autocomplete, 'place_changed', function(){
 		console.log(autocomplete.getPlace());
 	});
+
+	autocomplete = new google.maps.places.Autocomplete(
+		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
+		{ fields: ["name", "place_id", "formatted_address","address_components.short_name","address_components.types"/*,types: ['(cities)']*/] });
+	google.maps.event.addListener(autocomplete, 'place_changed', function(){
+		placeChanged();
+	});
 }
 
 function clearAutocomplete(e){
