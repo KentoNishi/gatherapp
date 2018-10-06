@@ -219,7 +219,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	}
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
-		{ fields: ["name", "place_id", "formatted_address"/*,"address_components"*/] });
+		{ fields: ["name", "place_id", "formatted_address"/*,"address_components",types: ['(cities)']*/] });
 	google.maps.event.addListener(autocomplete, 'place_changed', function(){
 		placeChanged();
 	});
