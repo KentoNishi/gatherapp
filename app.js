@@ -169,6 +169,10 @@ function addPlace(title,desc,callback){
 */
 
 function loadPromos(){
+	var geocoder = new google.maps.Geocoder();
+	geocoder.geocode( { 'address': "San Jose, CA, USA"}, function(results, status) {
+		console.log(results);
+	});
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
 		{ fields: ["name", /*"place_id", "formatted_address"/*,"address_components"*/],types: ['(cities)'] });
