@@ -171,7 +171,7 @@ function addPlace(title,desc,callback){
 function loadPromos(){
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
-		{ fields: ["name", "place_id", "formatted_address"/*,"address_components"*/],types: ['(region)'] });
+		{ fields: ["name", /*"place_id", "formatted_address"/*,"address_components"*/],types: ['(cities)'] });
 	google.maps.event.addListener(autocomplete, 'place_changed', function(){
 		console.log(autocomplete.getPlace());
 	});
