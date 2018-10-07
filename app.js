@@ -404,7 +404,7 @@ function loadEventPage(id){
 								.slice(1,event.val().location.formatted_address.split(",").length).join(",");
 						}
 						var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(date||"Unknown Date")+"</span></strong>"},
-							      {text:addr!=null?addr.split(",").slice(0,addr.split(",").length-2).join(","):"Unknown Location"}];
+							      {text:addr!=null?addr.split(",")/*.slice(0,addr.split(",").length-2)*/.join(","):"Unknown Location"}];
 						if(event.val().location!=null){
 							var body="";
 							body+="<span style='font-size:4vh'>";
