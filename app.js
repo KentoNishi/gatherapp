@@ -168,24 +168,50 @@ function addPlace(title,desc,callback){
 }
 */
 
-function loadPromos(){
+function loadPromos(){/*
 	var geocoder = new google.maps.Geocoder();
 	geocoder.geocode( { 'address': "San Jose, CA, USA"}, function(results, status) {
 		console.log(results);
-	});
+	});*/
 	autocomplete = new google.maps.places.Autocomplete(
 		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
-		{ fields: ["name", /*"place_id", "formatted_address"/*,"address_components"*/],types: ['(cities)'] });
+		{ fields: [/*"name", "place_id", "formatted_address",*/
+			"address_components",
+			"address_components.types"],
+		 types: ['(cities)'] });
 	google.maps.event.addListener(autocomplete, 'place_changed', function(){
-		console.log(autocomplete.getPlace());
+		var result=[];
+		if(autocomplete.getPlace()!=null){
+			if(autocomplete.getPlace().address_components!=null){
+				autocomplete.getPlace().address_components.forEach(item=>{
+					if(arrEq(item.types,["locality", "political"])&&result.length==0){
+						result.push(item.long_name);
+					}
+					else if(arrEq(item.types,["administrative_area_level_1", "political"])&&result.length==1){
+						result.push(item.long_name);
+					}
+					else if(arrEq(item.types,["country", "political"])&&result.length==2){
+						result.push(item.short_name);
+					}
+				});
+				if(result.length==3){
+					console.log(result.join(", "));
+				}
+			}
+		}
 	});
+}
 
-	autocomplete = new google.maps.places.Autocomplete(
-		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
-		{ fields: ["name", "place_id", "formatted_address","address_components.short_name","address_components.types"/*,types: ['(cities)']*/] });
-	google.maps.event.addListener(autocomplete, 'place_changed', function(){
-		placeChanged();
-	});
+function arrEq(arr1, arr2) {
+	if(arr1.length !== arr2.length){
+		return false;
+	}
+	for(var i = arr1.length; i--;) {
+		if(arr1[i] !== arr2[i]){
+			return false;
+		}
+	}
+	return true;
 }
 
 function clearAutocomplete(e){
@@ -201,7 +227,7 @@ function getZIP(){
 	xhr.send();
 	xhr.onreadystatechange = function(e) {
 	    if (xhr.readyState == 4 && xhr.status == 200) {
-		city=(xhr.response.postal);
+		city=xhr.response.city+", "+xhr.response.region+", "+xhr.response.country;
 	    }
 	};
 }
