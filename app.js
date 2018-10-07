@@ -168,22 +168,64 @@ function addPlace(title,desc,callback){
 }
 */
 
+function searchPromos(area){
+	var contents=[];
+	contents.push({html:"<span class='promoSearch'>"+
+		       "<input maxlength='50' placeholder='City/Area' onfocus='this.setSelectionRange(0, this.value.length);"+"'></input>"+
+		       "</span>"});
+	contents.push({html:"<div class='promoScreen"+
+		"' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'></div>"});
+	if(document.querySelectorAll(".promoCard").length==0){
+		write("Promotions",contents,null,null,"promoCard");
+	}
+	document.querySelectorAll(".promoSearch")[0].querySelectorAll("input")[0].value=area;
+	document.querySelectorAll(".promoScreen")[0].innerHTML="";
+	function addPromo(object){
+		if(object==null){
+			object={};
+			object.title="No Promotions";
+			object.desc="There were no promotions in "+encode(area)+".";
+			object.admin=true;
+			object.callback="";
+		}
+		document.querySelectorAll(".promoScreen")[0].innerHTML+=
+			("<br /><div style='background-color:"+
+			(object.admin?"yellowgreen":("orange"))+
+			";border-radius:2vh;padding:1vh;text-align:left;margin:0 auto;width:fit-content;'>"+
+			encode(object.desc)+
+			"<div style='font-size:2.5vh;text-align:center;'>"+
+			"<strong>"+
+			(object.admin?"GatherApp":object.title)+	
+			"</strong></div></div>");
+	}
+	firebase.database().ref("promos/"+encode(area.split(", ").join("/"))).once("value",promos=>{
+		if(promos.val()==null){
+			addPromo();
+		}else{
+			promos.forEach(promo=>{
+				addPromo({title:promo.val().title,desc:promo.val().desc,callback:""});
+			});
+		}
+	});
+}
+
 function loadPromos(){/*
 	var geocoder = new google.maps.Geocoder();
 	geocoder.geocode( { 'address': "San Jose, CA, USA"}, function(results, status) {
 		console.log(results);
 	});*/
-	autocomplete = new google.maps.places.Autocomplete(
-		(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1]),
+	searchPromos(city);
+	var citycomplete = new google.maps.places.Autocomplete(
+		(document.querySelectorAll(".promoSearch")[0].querySelectorAll("input")[0]),
 		{ fields: [/*"name", "place_id", "formatted_address",*/
 			"address_components",
 			"address_components.types"],
 		 types: ['(cities)'] });
-	google.maps.event.addListener(autocomplete, 'place_changed', function(){
+	google.maps.event.addListener(citycomplete, 'place_changed', function(){
 		var result=[];
-		if(autocomplete.getPlace()!=null){
-			if(autocomplete.getPlace().address_components!=null){
-				autocomplete.getPlace().address_components.forEach(item=>{
+		if(citycomplete.getPlace()!=null){
+			if(citycomplete.getPlace().address_components!=null){
+				citycomplete.getPlace().address_components.forEach(item=>{
 					if(arrEq(item.types,["locality", "political"])&&result.length==0){
 						result.push(item.long_name);
 					}
@@ -195,7 +237,7 @@ function loadPromos(){/*
 					}
 				});
 				if(result.length==3){
-					console.log(result.join(", "));
+					searchPromos(result.join(", "));
 				}
 			}
 		}
