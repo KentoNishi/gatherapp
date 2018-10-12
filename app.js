@@ -874,7 +874,7 @@ function loadEvents(inhistory,search){
 										border="orange";
 									}
 									if(item.status!=null&&item.status.board!=null){
-										contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Messages</span>"});
+										contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Message"+(item.status.board>1?"s":"")+"</span>"});
 										border="orange";
 									}
 									write(item.title,contents,null,"loadEvent('"+item.href+"');",null,null,border);
