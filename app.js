@@ -871,11 +871,11 @@ function loadEvents(inhistory,search){
 									var border;
 									if(item.status!=null&&item.status.info!=null){
 										contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
-										border="blue";
+										border="orange";
 									}
 									if(item.status!=null&&item.status.board!=null){
 										contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Messages</span>"});
-										border="blue";
+										border="orange";
 									}
 									write(item.title,contents,null,"loadEvent('"+item.href+"');",null,null,border);
 								});
