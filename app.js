@@ -868,13 +868,16 @@ function loadEvents(inhistory,search){
 											contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
 										}
 									}
+									var border;
 									if(item.status!=null&&item.status.info!=null){
 										contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
+										border="blue";
 									}
 									if(item.status!=null&&item.status.board!=null){
 										contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Messages</span>"});
+										border="blue";
 									}
-									write(item.title,contents,null,"loadEvent('"+item.href+"');");
+									write(item.title,contents,null,"loadEvent('"+item.href+"');",null,null,border);
 								});
 							});
 						}
@@ -1152,7 +1155,7 @@ function reverse(snapshot) {
 	return reversed;
 }
 
-function write(title,contents,links,href,classlist,overwrite){
+function write(title,contents,links,href,classlist,overwrite,border){
 	try{
 		if(title==null&&contents==null){
 			throw("");
@@ -1161,9 +1164,11 @@ function write(title,contents,links,href,classlist,overwrite){
 		contents=contents||[];
 		links=links||[];
 		if(href!=null){
-			body+='<div class="card'+(classlist!=null?(" "+classlist):"")+'" onclick="'+href+'">';
+			body+='<div class="card'+(classlist!=null?(" "+classlist):"")+'" onclick="'+href+'" style="'+
+				(border!=null?("box-shadow: inset 0 0 0 5px "+encode(border)+";"):"")+'">';
 		}else{
-			body+='<div class="card'+(classlist!=null?(" "+classlist):"")+'">';
+			body+='<div class="card'+(classlist!=null?(" "+classlist):"")+'" style="'+
+				(border!=null?("box-shadow: inset 0 0 0 5px "+encode(border)+";"):"")+'">';
 		}
 		if((title==null&&contents!=null)){
 		}else{
