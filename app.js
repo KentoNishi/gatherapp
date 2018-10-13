@@ -866,8 +866,11 @@ function loadEvents(inhistory,search){
 										}
 										if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
 											return -1;
-										}else if(a.date.time!=null&&a.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
+										}else if(b.date.time!=null&&b.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
 											return 1;
+										}
+										if(a.date.time!=null&&b.date.time!=null){
+											return b.date.time-a.date.time;
 										}
 										return 0;
 									});
