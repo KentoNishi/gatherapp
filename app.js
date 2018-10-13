@@ -1002,7 +1002,7 @@ function login(provider) {
 
 function signOut() {
 	firebase.auth().signOut().then(function() {
-		location.reload(true);
+		window.location.hash="#";
 	}).catch(function(error) {
 	});
 }
