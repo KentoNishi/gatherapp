@@ -122,7 +122,7 @@ function searchEvents(){
 }
 
 function settings(){
-	write("Provide Feedback",null,null,"window.open('mailto:kento24gs@gmail.com');");
+//	write("Provide Feedback",null,null,"window.open('mailto:kento24gs@gmail.com');");
 	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 }
 
