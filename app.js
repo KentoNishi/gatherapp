@@ -877,7 +877,7 @@ function loadEvents(inhistory,search){
 								});
 								list=[unknown,future,ongoing];
 							}
-							if(search==null){
+							if(search==null||(search!=null&&inhistory==null)){
 								list.push(pending);
 							}
 							list.forEach(listItem=>{
