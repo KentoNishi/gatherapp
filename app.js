@@ -1027,7 +1027,7 @@ if(navigator.onLine){
 	}else{
 		clear();
 		write("Open App",[{text:"GatherApp needs to open outside of the Facebook Browser."}],
-		      [{text:"Open GatherApp",href:"window.open(window.location.href);"}]);
+		      [{text:"Open GatherApp",href:"window.open(window.location.href,'');"}]);
 	}
 }else{
 	clear();
