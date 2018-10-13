@@ -1026,8 +1026,7 @@ if(navigator.onLine){
 		});
 	}else{
 		clear();
-		write("Open App",[{text:"GatherApp needs to open outside of the Facebook Browser."}],
-		      [{text:"Open GatherApp",href:"window.open(window.location.href,'');"}]);
+		write("Open App ↗️",[{text:"Tap the menu button, and press "+'"Open With..."'+" to use GatherApp."}]);
 	}
 }else{
 	clear();
