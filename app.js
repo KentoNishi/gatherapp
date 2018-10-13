@@ -48,6 +48,7 @@ function menu(){
 	write("Completed Events",null,null,"loadEvents(2);");
 	write("Search Events",[{html:"<input maxlength='50' class='search' placeholder='Title/Location'></input>"},
 			       {html:"Search In: <select style='font-size:2.5vh;'>"+
+				"<option value='events'>All</option>"+
 				"<option value='upcoming'>Upcoming</option>"+
 				"<option value='completed'>Completed</option>"+
 				"<option value='cancelled'>Cancelled</option>"+
@@ -98,7 +99,7 @@ function installApp(e){
 function searchEvents(){
 	var query=document.querySelectorAll(".search")[0].value;
 	if(query!=null&&query.replace(/ /g,"").replace(/\n/gi,"")!=""&&query.replace(/ /g,"").replace(/\n/gi,"").length>0){
-		var int=0;
+		var int=null;
 		if(document.querySelectorAll("select")[0].value=="upcoming"){
 			int=1;
 		}else if(document.querySelectorAll("select")[0].value=="completed"){
@@ -738,7 +739,7 @@ function saveReminderTime(id){
 
 function loadEvents(inhistory,search){
 	var cont=true;
-	if(inhistory!=null){
+	if(inhistory!=null||search!=null){
 		var item;
 		if(inhistory==0){
 			item="skipped";
@@ -748,6 +749,8 @@ function loadEvents(inhistory,search){
 			item="cancelled";
 		}else if(inhistory==4){
 			item="pending";
+		}else if(inhistory==1){
+			item="upcoming";
 		}else{
 			item="events";
 		}
@@ -758,9 +761,6 @@ function loadEvents(inhistory,search){
 			window.location.hash=("#");
 			history.replaceState([],"","#/"+item);
 			cont=false;
-		}
-		if(inhistory==1){
-			inhistory=null;
 		}
 	}
 	if(cont){
@@ -784,7 +784,14 @@ function loadEvents(inhistory,search){
 			}
 		}
 		returnPromise().once("value",invites=>{
-			firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1).once("value",events=>{
+			function returnListener(){
+				if(inhistory==null&&search!=null){
+					return firebase.database().ref("users/"+uid+"/events");
+				}else{
+					return firebase.database().ref("users/"+uid+"/events").orderByChild("status").equalTo(inhistory!=null?inhistory:1);
+				}
+			}
+			returnListener().once("value",events=>{
 				if(events.val()==null){
 					if(search==null){
 						write("No Events",[{text:"You have no "+(inhistory!=null?(inhistory==2?"completed":(inhistory==0?"skipped":"cancelled")):"upcoming")+" events."}]);
@@ -849,6 +856,24 @@ function loadEvents(inhistory,search){
 							}
 							ongoing=ongoing.reverse();
 							var list=[unknown,future,ongoing];
+							if(search!=null&&inhistory==null){
+								([unknown,future]).forEach(item=>{
+									item=item.sort((a,b)=>{
+										if(a.cancel!=null){
+											return -1;
+										}else if(b.cancel!=null){
+											return 1;
+										}
+										if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
+											return -1;
+										}else if(a.date.time!=null&&a.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
+											return 1;
+										}
+										return 0;
+									});
+								});
+								list=[unknown,future,ongoing];
+							}
 							if(search==null){
 								list.push(pending);
 							}
@@ -1063,7 +1088,7 @@ function hashChanged(load){
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="pending"){
 						loadEvents(4);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="search"){
-						var int;
+						var int=null;
 						if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="cancelled"){
 							int=3;
 						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="completed"){
@@ -1072,6 +1097,10 @@ function hashChanged(load){
 							int=0;
 						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="pending"){
 							int=4;
+						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="upcoming"){
+							int=1;
+						}else if(decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[2])=="events"){
+							int=null;
 						}
 						loadEvents(int,decodeURIComponent(window.location.hash.substr(1,window.location.hash.length).split("/")[3]));
 					}
