@@ -573,6 +573,11 @@ function loadEventPage(id){
 	});
 }
 
+function isFacebookApp() {
+	var ua = navigator.userAgent || navigator.vendor || window.opera;
+	return (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
+}
+
 function copyToClipboard(text) {
 	if (window.clipboardData && window.clipboardData.setData) {
 		return clipboardData.setData("Text", text); 
@@ -990,37 +995,43 @@ function changeOns(){
 }
 
 if(navigator.onLine){
-	firebase.auth().onAuthStateChanged(function(me) {
-		if (me) {
-			if(Notification.permission=="granted"){
-				offerNotifications();
+		if(!isFacebookApp()){
+		firebase.auth().onAuthStateChanged(function(me) {
+			if (me) {
+				if(Notification.permission=="granted"){
+					offerNotifications();
+				}
+				uid = me.uid;
+				name = me.displayName;
+				pic = me.photoURL;
+				getZIP();
+				me.getIdToken().then(function(userToken) {
+				});
+				firebase.database().ref("users/"+uid+"/info").update({
+					name:name//,
+					//pic:pic
+				});
+				if(!hashChanged(1)){
+					history.pushState([],"","#/");
+					action("home");
+				}
+			}else{
+				document.querySelectorAll(".body")[0].innerHTML=`
+					<div class="card" onclick="login('Google')">
+						<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
+						</img>
+					</div>
+				`;
 			}
-			uid = me.uid;
-			name = me.displayName;
-			pic = me.photoURL;
-			getZIP();
-			me.getIdToken().then(function(userToken) {
-			});
-			firebase.database().ref("users/"+uid+"/info").update({
-				name:name//,
-				//pic:pic
-			});
-			if(!hashChanged(1)){
-				history.pushState([],"","#/");
-				action("home");
-			}
-		}else{
-			document.querySelectorAll(".body")[0].innerHTML=`
-				<div class="card" onclick="login('Google')">
-					<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
-					</img>
-				</div>
-			`;
-		}
-	});
+		});
+	}else{
+		clear();
+		write("Open App",[{text:"GatherApp needs to open outside of the Facebook Browser."}],
+		      [{text:"Open GatherApp",href:"window.open(window.location.href);"}]);
+	}
 }else{
 	clear();
-	write("No internet connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
+	write("No Internet Connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 }
 
 function hashChanged(load){
