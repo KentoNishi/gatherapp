@@ -20,6 +20,7 @@ var pic = "";
 var city="";
 var lat;
 var lng;
+var authed=0;
 //var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
@@ -33,6 +34,26 @@ back.add=(function(param){
 	ons=[];
 });
 */
+
+function authenticate(me){
+	if(Notification.permission=="granted"){
+		offerNotifications();
+	}
+	uid = me.uid;
+	name = me.displayName;
+	pic = me.photoURL;
+	getZIP();
+	me.getIdToken().then(function(userToken) {
+	});
+	firebase.database().ref("users/"+uid+"/info").update({
+		name:name//,
+		//pic:pic
+	});
+	if(!hashChanged(1)){
+		history.pushState([],"","#/");
+		action("home");
+	}
+}
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
@@ -963,6 +984,10 @@ function login(provider) {
 		provider = new firebase.auth.GoogleAuthProvider();
 	}
 	firebase.auth().signInWithPopup(provider).then(function(result) {
+		if(authed==0){
+			authed=1;
+			authenticate(result);
+		}
 	}).catch(function(error) {
 	});
 }
@@ -992,22 +1017,9 @@ function changeOns(){
 if(navigator.onLine){
 	firebase.auth().onAuthStateChanged(function(me) {
 		if (me) {
-			if(Notification.permission=="granted"){
-				offerNotifications();
-			}
-			uid = me.uid;
-			name = me.displayName;
-			pic = me.photoURL;
-			getZIP();
-			me.getIdToken().then(function(userToken) {
-			});
-			firebase.database().ref("users/"+uid+"/info").update({
-				name:name//,
-				//pic:pic
-			});
-			if(!hashChanged(1)){
-				history.pushState([],"","#/");
-				action("home");
+			if(authed==0){
+				authed=1;
+				authenticate(me);
 			}
 		}else{
 			document.querySelectorAll(".body")[0].innerHTML=`
