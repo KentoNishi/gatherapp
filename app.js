@@ -1026,7 +1026,7 @@ if(navigator.onLine){
 		});
 	}else{
 		clear();
-		write("Open App ↗️",[{text:"Tap the menu button, and press "+'"Open With..."'+" to use GatherApp."}]);
+		write("Open App ↗️",[{text:"Tap the menu button, and press "+'"Open with/in ..."'+" to use GatherApp."}]);
 	}
 }else{
 	clear();
