@@ -290,7 +290,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 		       " hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' "+
 		       "value='"+(duration!=null?(duration%60):0)+"'></input> minutes"});
 	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
-		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;max-height:30vh;max-width:30vh;' allowfullscreen></iframe>"+
+		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;max-height:50vh;max-width:50vh;' allowfullscreen></iframe>"+
 		       "</div></span>"+
 		       (id!=null?(cancel==null?("<a style='color:red;font-size:4vh;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
 		       " href='#'>CANCEL EVENT</a><br />"):("<a style='color:green;font-size:4vh;' onclick='reactivateEvent("+'"'+id+'"'+");return false;'"+
