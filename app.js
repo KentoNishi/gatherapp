@@ -856,42 +856,26 @@ function loadEvents(inhistory,search){
 							}
 							ongoing=ongoing.reverse();
 							var list=[unknown,future,ongoing];
-							var completedEvents=[];
-							var cancelledEvents=[];
 							if(search!=null&&inhistory==null){
 								([unknown,future]).forEach(item=>{
 									item=item.sort((a,b)=>{
 										if(a.cancel!=null){
-											cancelledEvents.push(a);
+											return -1;
 										}else if(b.cancel!=null){
-											cancelledEvents.push(b);
+											return 1;
 										}
-										else{
-											if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
-												completedEvents.push(a);
-											}else if(b.date.time!=null&&b.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
-												completedEvents.push(b);
-											}
+										if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
+											return -1;
+										}else if(b.date.time!=null&&b.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
+											return 1;
 										}
+										if(a.date.time!=null&&b.date.time!=null){
+											return b.date.time-a.date.time;
+										}
+										return 0;
 									});
 								});
-								([completedEvents,cancelledEvents]).forEach(type=>{
-									type.forEach(event=>{
-										([future,unknown,ongoing,pending]).forEach(status=>{
-											for(var q=0;q<status.length;q+=0){
-												if(JSON.stringify(status[q])==JSON.stringify(event)){
-													status.splice(q,1);
-												}else{
-													q++;
-												}
-											}
-										});
-									});
-								});
-								completedEvents=completedEvents.sort((a,b)=>{return a.date.time-b.date.time;});
-								cancelledEvents=cancelledEvents.sort((a,b)=>{return a.date.time-b.date.time;}).reverse();
-								list=[unknown,cancelledEvents,completedEvents,future,ongoing];
-								console.log(list);
+								list=[unknown,future,ongoing];
 							}
 							if(search==null||(search!=null&&inhistory==null)){
 								list.push(pending);
