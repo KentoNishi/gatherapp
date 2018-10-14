@@ -806,6 +806,8 @@ function loadEvents(inhistory,search){
 							var ongoing=[];
 							var future=[];
 							var unknown=[];
+							var completed=[];
+							var cancelled=[];
 							var found=false;
 							writes.forEach(item=>{
 								var address="";
@@ -814,27 +816,34 @@ function loadEvents(inhistory,search){
 								}
 								if(search==null||(search!=null&&(item.title.toLowerCase().indexOf(search)>-1||address.toLowerCase().indexOf(search)>-1))){
 									found=true;
+									console.log(item);
 									if(item.status.status!=4){
-										if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
-											if(new Date(item.date.time).getTime()>new Date().getTime()){
+										if(item.cancel==null){
+											if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
+												if(new Date(item.date.time).getTime()>new Date().getTime()){
+													if(item.date.time==null){
+														unknown.push(item);
+													}else{
+														future.push(item);
+													}
+												}else{
+													if(item.date.time==null){
+														unknown.push(item);
+													}else{
+														ongoing.push(item);
+													}
+												}
+											}else{
 												if(item.date.time==null){
 													unknown.push(item);
+												}else if(new Date(item.date.time).getTime()+item.date.duration*60*1000<new Date().getTime()){
+													completed.push(item);
 												}else{
 													future.push(item);
 												}
-											}else{
-												if(item.date.time==null){
-													unknown.push(item);
-												}else{
-													ongoing.push(item);
-												}
 											}
 										}else{
-											if(item.date.time==null){
-												unknown.push(item);
-											}else{
-												future.push(item);
-											}
+											cancelled.push(item);
 										}
 									}else{
 										pending.push(item);
@@ -850,45 +859,16 @@ function loadEvents(inhistory,search){
 								future=future.concat(ongoing);
 								ongoing=[];
 							}
+							completed=completed.sort((a,b)=>{return a.date.time-b.date.time;});
+							cancelled=cancelled.sort((a,b)=>{return a.date.time-b.date.time;});
 							future=future.sort((a,b)=>{return a.date.time-b.date.time;});
 							if(inhistory==null){
 								future=future.reverse();
 							}
 							ongoing=ongoing.reverse();
-							var list=[unknown,future,ongoing];
+							var list=[unknown,cancelled,completed,future,ongoing];
 							var completedEvents=[];
 							var cancelledEvents=[];
-							if(search!=null&&inhistory==null){
-								([unknown,future]).forEach(item=>{
-									item=item.sort((a,b)=>{
-										if(a.cancel!=null){
-											cancelledEvents.push(a);
-										}else if(b.cancel!=null){
-											cancelledEvents.push(b);
-										}
-										if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
-											completedEvents.push(a);
-										}else if(b.date.time!=null&&b.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
-											completedEvents.push(b);
-										}
-										if(a.date.time!=null&&b.date.time!=null){
-											return b.date.time-a.date.time;
-										}
-										return 0;
-									});
-								});
-								([completedEvents,cancelledEvents]).forEach(type=>{
-									type.forEach(event=>{
-										([future,unknown,ongoing]).forEach(status=>{
-											status.forEach(eventInfo=>{///
-											});
-										});
-									});
-								});
-								completedEvents=completedEvents.sort((a,b)=>{return a.date.time-b.date.time;});
-								cancelledEvents=cancelledEvents.sort((a,b)=>{return a.date.time-b.date.time;}).reverse();
-								list=[unknown,cancelledEvents,completedEvents,future,ongoing];
-							}
 							if(search==null||(search!=null&&inhistory==null)){
 								list.push(pending);
 							}
