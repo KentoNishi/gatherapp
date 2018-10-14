@@ -878,6 +878,12 @@ function loadEvents(inhistory,search){
 									});
 								});
 								([completedEvents,cancelledEvents]).forEach(type=>{
+									type.forEach(event=>{
+										([future,unknown,ongoing]).forEach(status=>{
+											status.forEach(eventInfo=>{///
+											});
+										});
+									});
 								});
 								completedEvents=completedEvents.sort((a,b)=>{return a.date.time-b.date.time;});
 								cancelledEvents=cancelledEvents.sort((a,b)=>{return a.date.time-b.date.time;}).reverse();
