@@ -866,23 +866,21 @@ function loadEvents(inhistory,search){
 										}else if(b.cancel!=null){
 											cancelledEvents.push(b);
 										}
-										if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
-											completedEvents.push(a);
-										}else if(b.date.time!=null&&b.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
-											completedEvents.push(b);
+										else{
+											if(a.date.time!=null&&a.date.duration!=null&&a.date.time+a.date.duration*1000*60<new Date().getTime()){
+												completedEvents.push(a);
+											}else if(b.date.time!=null&&b.date.duration!=null&&b.date.time+b.date.duration*1000*60<new Date().getTime()){
+												completedEvents.push(b);
+											}
 										}
-										if(a.date.time!=null&&b.date.time!=null){
-											return b.date.time-a.date.time;
-										}
-										return 0;
 									});
 								});
 								([completedEvents,cancelledEvents]).forEach(type=>{
 									type.forEach(event=>{
-										([future,unknown,ongoing]).forEach(status=>{
+										([future,unknown,ongoing,pending]).forEach(status=>{
 											for(var q=0;q<status.length;q+=0){
 												if(JSON.stringify(status[q])==JSON.stringify(event)){
-													status=status.splice(q,1);
+													status.splice(q,1);
 												}else{
 													q++;
 												}
@@ -893,6 +891,7 @@ function loadEvents(inhistory,search){
 								completedEvents=completedEvents.sort((a,b)=>{return a.date.time-b.date.time;});
 								cancelledEvents=cancelledEvents.sort((a,b)=>{return a.date.time-b.date.time;}).reverse();
 								list=[unknown,cancelledEvents,completedEvents,future,ongoing];
+								console.log(list);
 							}
 							if(search==null||(search!=null&&inhistory==null)){
 								list.push(pending);
