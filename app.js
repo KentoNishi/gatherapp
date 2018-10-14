@@ -482,7 +482,7 @@ function loadEventPage(id){
 							body+='</a>';
 							body+='</span>';
 							contents.push({html:body+"<span class='iframe' style='display:none;'><br />"+
-								       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;' allowfullscreen src='"+
+								       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;max-width:50vh;max-height:50vh;' allowfullscreen src='"+
 								       "https://www.google.com/maps/embed/v1/place?q=place_id:"+event.val().location.place_id+
 								       "&key=AIzaSyAiOBh4lWvseAsdgiTCld1WMXEMVo259hM"+"'></iframe></span>"});
 						}
