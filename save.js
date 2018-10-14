@@ -816,7 +816,6 @@ function loadEvents(inhistory,search){
 								}
 								if(search==null||(search!=null&&(item.title.toLowerCase().indexOf(search)>-1||address.toLowerCase().indexOf(search)>-1))){
 									found=true;
-									console.log(item);
 									if(item.status.status!=4){
 										if(item.cancel==null){
 											if(item.date.time!=null&&new Date(item.date.time).getTime()+item.date.duration*60*1000>new Date().getTime()){
