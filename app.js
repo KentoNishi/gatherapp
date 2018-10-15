@@ -42,7 +42,11 @@ window.onload=function(){
 function menu(){
 //	back.add("menu();");
 	clear();
-		write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},
+		    {text:"Standard User"},
+		    {html:"<input type='checkbox' onclick='toggleNotification();' class='toggleNotification' style='width:3vh;height:3vh;'></input><span style='width:10vh;text-align:center;'>Recieve Notifications</span>"}
+		   ],[{href:"signOut();",text:"Sign Out"}]);
+	document.querySelectorAll(".toggleNotification")[0].checked=Notification.permission!="granted"&&Notification.permission!="denied";
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Completed Events",null,null,"loadEvents(2);");
@@ -64,6 +68,11 @@ function menu(){
 		     null,// [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
 		     null,"installPrompt");
 	}
+}
+
+function toggleNotification(){
+	var checked=document.querySelectorAll(".toggleNotification")[0].checked?true:false;
+	offerNotifications(null,checked);
 }
 
 function linkify(inputText) {/*
@@ -1110,7 +1119,7 @@ function loadBoard(id){
 	loadEvent(id);
 }
 
-function offerNotifications(id){
+function offerNotifications(id,remove){
 	Notification.requestPermission().then(permission=>{
 		if(permission==="granted"){
 			navigator.serviceWorker.ready.then(function(reg){
@@ -1123,11 +1132,19 @@ function offerNotifications(id){
 					var subscr=sub;
 					var key=sub.keys.auth;
 					subscr.keys.auth=null;
-					return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
-						if(id!=null){
-							loadEvent(id);
-						}
-					});
+					if(remove==null){
+						return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
+							if(id!=null){
+								loadEvent(id);
+							}
+						});
+					}else{
+						return firebase.database().ref("users/"+uid+"/subs/"+key).remove().then(function(){
+							if(id!=null){
+								loadEvent(id);
+							}
+						});
+					}
 				});
 			});
 		 }
