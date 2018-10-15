@@ -13,7 +13,12 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
- 
+
+window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+	write("App Error",[{text:"GatherApp encountered an error."},{text:errorMsg},{text:url},{text:lineNumber}]);
+	return false;
+}
+
 var uid = "";
 var name = "";
 var pic = "";
@@ -1009,10 +1014,17 @@ function changeOns(){
 	return Promise.all(returns);
 }
 
+function iOS(){
+	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
 window.onload=function(){
 	if(navigator.onLine){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
+				if(iOS()){
+					write("iOS Support",[{text:"GatherApp for iOS does not have push notifications."}]);
+				}
 				if (me) {
 					if(Notification.permission=="granted"){
 						offerNotifications();
