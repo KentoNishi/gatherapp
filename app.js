@@ -1119,7 +1119,7 @@ function loadBoard(id){
 }
 
 function offerNotifications(id){
-		if(!iOS()){
+	if(!iOS()){
 		Notification.requestPermission().then(permission=>{
 			if(permission==="granted"){
 				navigator.serviceWorker.ready.then(function(reg){
