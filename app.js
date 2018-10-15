@@ -285,7 +285,7 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	contents.push({html:""+extra+"<div class='inputs'><input maxlength='50' placeholder='Title'></input>"});
 	contents.push({html:"<input maxlength='50' placeholder='Address/Location' onfocus='this.setSelectionRange(0, this.value.length);"+"'></input>"});
 	contents.push({html:"<input type='datetime-local' onchange='showDate();'></input>"+
-		       "<strong><span style='font-size:4vh;color:#2e73f7;' class='showdate'></span></strong>"});
+		       "<strong><span style='font-size:3.5;color:#2e73f7;' class='showdate'></span></strong>"});
 	contents.push({html:"<input style='width:10vh;text-align:center;' type='number' min='0' "+
 		       "value='"+(duration!=null?Math.floor(duration/60):2)+"'></input>"+
 		       " hours <input style='width:10vh;text-align:center;' type='number' min='0' max='59' "+
@@ -293,8 +293,8 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	contents.push({html:"<div class='iframe' style='display:none;'><br />"+
 		       "<iframe frameborder='0' style='border:0;width:75vw;height:75vw;max-height:50vh;max-width:50vh;' allowfullscreen></iframe>"+
 		       "</div></span>"+
-		       (id!=null?(cancel==null?("<a style='color:red;font-size:4vh;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
-		       " href='#'>CANCEL EVENT</a><br />"):("<a style='color:green;font-size:4vh;' onclick='reactivateEvent("+'"'+id+'"'+");return false;'"+
+		       (id!=null?(cancel==null?("<a style='color:red;font-size:3.5;' onclick='cancelEvent("+'"'+id+'"'+");return false;'"+
+		       " href='#'>CANCEL EVENT</a><br />"):("<a style='color:green;font-size:3.5;' onclick='reactivateEvent("+'"'+id+'"'+");return false;'"+
 		       " href='#'>REACTIVATE EVENT</a><br />")):"")
 		      });
 	contents.push({html:"<button onclick='"+((id==null)?"newEvent();":"saveEvent("+'"'+id+'"'+");")+"'>"+
@@ -451,7 +451,7 @@ function loadEventPage(id){
 					}else{
 						var member=me.val()||null;
 						var value=member;
-						var link=[{html:"<span style='color:red;font-size:4vh;'><a href='#' "+
+						var link=[{html:"<span style='color:red;font-size:3.5;'><a href='#' "+
 							   "onclick='if("+(me.val()==null?"true":"confirm("+'"'+"Are you sure you want to skip this event?"+'"'+")")+"){"+
 							   "leaveEvent("+'"'+id+'"'+");}return false;'"+
 							   ">Skip Event</a></span>"}];
@@ -473,11 +473,11 @@ function loadEventPage(id){
 								event.val().location.formatted_address.split(",")
 								.slice(1,event.val().location.formatted_address.split(",").length).join(",");
 						}
-						var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(date||"Unknown Date")+"</span></strong>"},
+						var contents=[{html:"<strong><span style='font-size:3.5;color:#2e73f7;'>"+encode(date||"Unknown Date")+"</span></strong>"},
 							      {text:addr!=null?addr.split(",")/*.slice(0,addr.split(",").length-2)*/.join(","):"Unknown Location"}];
 						if(event.val().location!=null){
 							var body="";
-							body+="<span style='font-size:4vh'>";
+							body+="<span style='font-size:3.5'>";
 							body+="<a href='#' class='maptoggle hidden' onclick='showMap();return false;'>";
 							body+=encode("View On Map");
 							body+='</a>';
@@ -514,13 +514,13 @@ function loadEventPage(id){
 								       ")[0].id));'></span> min. early"+extra});
 						}
 						if(event.val().cancel!=null){
-							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+							contents.push({html:"<span style='color:red;font-size:3.5;'>Cancelled Event</span>"});
 						}
 						else if(event.val().date.time!=null){
 							if(new Date(event.val().date.time).getTime()+(event.val().date.duration*60*1000)<new Date().getTime()){
-								contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+								contents.push({html:"<span style='color:green;font-size:3.5'>Completed Event</span>"});
 							}else if(new Date(event.val().date.time).getTime()<new Date().getTime()){
-								contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+								contents.push({html:"<span style='color:red;font-size:3.5;'>Ongoing Event</span>"});
 							}
 						}
 						if(member!=null){
@@ -879,27 +879,27 @@ function loadEvents(inhistory,search){
 										address=item.location.name+", "+item.location.formatted_address.split(",").slice(1,item.location.formatted_address.split(",").length).join(", ");
 									}
 									var duration=item.date.duration!=null?(Math.floor(item.date.duration/60)+"h"+(item.date.duration%60)+"m Long"):"Unknown Duration";
-									var contents=[{html:"<strong><span style='font-size:4vh;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
+									var contents=[{html:"<strong><span style='font-size:3.5;color:#2e73f7;'>"+encode(item.date.time!=Infinity&&item.date.time!=null?getFormattedDate(item.date.time):"Unknown Date")+"</span></strong>"},{text:address||"Unknown Location"}];//,{text:duration}];
 									if(item.status.status==4){
-										contents.push({html:"<span style='color:red;font-size:4vh;'>Pending Invite</span>"});
+										contents.push({html:"<span style='color:red;font-size:3.5;'>Pending Invite</span>"});
 									}
 									if(item.cancel!=null){
-										contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
+										contents.push({html:"<span style='color:red;font-size:3.5;'>Cancelled Event</span>"});
 									}
 									else if(item.date.time!=null&&item.date.time!=undefined){
 										if(new Date(item.date.time).getTime()+(item.date.duration*60*1000)<new Date().getTime()){
-											contents.push({html:"<span style='color:green;font-size:4vh'>Completed Event</span>"});
+											contents.push({html:"<span style='color:green;font-size:3.5'>Completed Event</span>"});
 										}else if(new Date(item.date.time).getTime()<new Date().getTime()){
-											contents.push({html:"<span style='color:red;font-size:4vh;'>Ongoing Event</span>"});
+											contents.push({html:"<span style='color:red;font-size:3.5;'>Ongoing Event</span>"});
 										}
 									}
 									var border;
 									if(item.status!=null&&item.status.info!=null){
-										contents.push({html:"<span style='color:blue;font-size:4vh;'>Updated Info</span>"});
+										contents.push({html:"<span style='color:blue;font-size:3.5;'>Updated Info</span>"});
 										border="orange";
 									}
 									if(item.status!=null&&item.status.board!=null){
-										contents.push({html:"<span style='color:blue;font-size:4vh;'>"+encode(item.status.board)+" New Message"+(item.status.board>1?"s":"")+"</span>"});
+										contents.push({html:"<span style='color:blue;font-size:3.5;'>"+encode(item.status.board)+" New Message"+(item.status.board>1?"s":"")+"</span>"});
 										border="orange";
 									}
 									write(item.title,contents,null,"loadEvent('"+item.href+"');",null,null,border);
@@ -1044,7 +1044,7 @@ window.onload=function(){
 					document.querySelectorAll(".body")[0].innerHTML=`
 						<div class="card" onclick="login('Google')">
 							<span style="font-size:4.5vh;"><strong>Sign In</strong></span><br />
-							<span style="font-size:4vh;">Sign in to GatherApp with a Google Account.</span><br />
+							<span style="font-size:3.5;">Sign in to GatherApp with a Google Account.</span><br />
 							<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
 							</img>
 						</div>
@@ -1231,7 +1231,7 @@ function write(title,contents,links,href,classlist,overwrite,border){
 			if(contents[i].html!=null){
 				body+=contents[i].html;
 			}else if(contents[i].text!=null){
-				body+='<span style="font-size:4vh">';
+				body+='<span style="font-size:3.5">';
 				body+=encode(contents[i].text);
 				body+='</span>';
 			}
@@ -1240,7 +1240,7 @@ function write(title,contents,links,href,classlist,overwrite,border){
 		for(var i=0;i<links.length;i++){
 			if((links[i].href!=null&&links[i].text!=null)||links[i].html!=null){
 				if((links[i].href!=null&&links[i].text!=null)){
-					body+='<span style="font-size:4vh">';
+					body+='<span style="font-size:3.5">';
 					body+='<a href="#" onclick="'+links[i].href+';return false;">';
 					body+=encode(links[i].text);
 					body+='</a>';
