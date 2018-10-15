@@ -982,7 +982,7 @@ function login(provider) {
 	if(provider=="Google"){
 		provider = new firebase.auth.GoogleAuthProvider();
 	}
-	firebase.auth().signInWithRedirect(provider).then(function(result) {
+	firebase.auth().signInWithPopup(provider).then(function(result) {
 	}).catch(function(error) {
 	});
 }
