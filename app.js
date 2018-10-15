@@ -1022,10 +1022,10 @@ window.onload=function(){
 	if(navigator.onLine){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
-				if(iOS()){
-					write("iOS Support",[{text:"GatherApp for iOS does not have push notifications."}]);
-				}
 				if (me) {
+					if(iOS()){
+						write("iOS Support",[{text:"GatherApp for iOS is currently non-functional."}]);
+					}
 					if(Notification.permission=="granted"){
 						offerNotifications();
 					}
