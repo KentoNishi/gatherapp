@@ -1121,7 +1121,7 @@ function loadBoard(id){
 
 function offerNotifications(id,remove){
 	Notification.requestPermission().then(permission=>{
-		if(permission==="granted"){
+		if(permission==="granted"||remove!=null){
 			navigator.serviceWorker.ready.then(function(reg){
 				return reg.pushManager.subscribe({userVisibleOnly:true,
 								  applicationServerKey:urlBase64ToUint8Array(
