@@ -497,7 +497,7 @@ function loadEventPage(id){
 						var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
 						    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 						var extra="";
-						if(Notification.permission!="granted"&&Notification.permission!="denied"){
+						if(!iOS()&&Notification.permission!="granted"&&Notification.permission!="denied"){
 							extra="<br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 						}
 						if(member!=null){
@@ -1023,10 +1023,7 @@ window.onload=function(){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
 				if (me) {
-					if(iOS()){
-						write("iOS Support",[{text:"GatherApp for iOS is currently non-functional."}]);
-					}
-					if(Notification.permission=="granted"){
+					if(!iOS()&&Notification.permission=="granted"){
 						offerNotifications();
 					}
 					uid = me.uid;
@@ -1122,27 +1119,29 @@ function loadBoard(id){
 }
 
 function offerNotifications(id){
-	Notification.requestPermission().then(permission=>{
-		if(permission==="granted"){
-			navigator.serviceWorker.ready.then(function(reg){
-				return reg.pushManager.subscribe({userVisibleOnly:true,
-								  applicationServerKey:urlBase64ToUint8Array(
-									  "BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsx"+
-									  "yDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")
-								 }).then(function(sub){
-					sub=JSON.parse(JSON.stringify(sub));
-					var subscr=sub;
-					var key=sub.keys.auth;
-					subscr.keys.auth=null;
-					return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
-						if(id!=null){
-							loadEvent(id);
-						}
+		if(!iOS()){
+		Notification.requestPermission().then(permission=>{
+			if(permission==="granted"){
+				navigator.serviceWorker.ready.then(function(reg){
+					return reg.pushManager.subscribe({userVisibleOnly:true,
+									  applicationServerKey:urlBase64ToUint8Array(
+										  "BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsx"+
+										  "yDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo")
+									 }).then(function(sub){
+						sub=JSON.parse(JSON.stringify(sub));
+						var subscr=sub;
+						var key=sub.keys.auth;
+						subscr.keys.auth=null;
+						return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
+							if(id!=null){
+								loadEvent(id);
+							}
+						});
 					});
 				});
-			});
-		 }
-	});
+			 }
+		});
+	}
 }
 
 function urlBase64ToUint8Array(base64String) {
