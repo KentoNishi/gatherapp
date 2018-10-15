@@ -72,7 +72,7 @@ function menu(){
 
 function toggleNotification(){
 	var checked=document.querySelectorAll(".toggleNotification")[0].checked?true:false;
-	offerNotifications(null,checked);
+	offerNotifications(null,checked?true:null);
 }
 
 function linkify(inputText) {/*
