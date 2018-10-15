@@ -42,7 +42,7 @@ window.onload=function(){
 function menu(){
 //	back.add("menu();");
 	clear();
-	settings();
+		write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Completed Events",null,null,"loadEvents(2);");
@@ -122,8 +122,7 @@ function searchEvents(){
 }
 
 function settings(){
-//	write("Provide Feedback",null,null,"window.open('mailto:kento24gs@gmail.com');");
-	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+//
 }
 
 function start(){
@@ -510,7 +509,7 @@ function loadEventPage(id){
 								       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
 								       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
 								       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
-								       ")[0].id));'></span> minutes early"+extra});
+								       ")[0].id));'></span> min. early"+extra});
 						}
 						if(event.val().cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:4vh;'>Cancelled Event</span>"});
