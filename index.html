@@ -22,7 +22,7 @@
 	</head>
 	<div class="metas"></div>
 	<body bgColor="white">
-		<div class="top left wide height fixed accent bar">
+		<div class="top left wide height fixed accent bar front">
 			<a onclick="action(this.id);" id="menu" class="icon left">
 			<img alt="menu" src="/gatherapp/menu.svg" />
 			</a>
@@ -60,6 +60,9 @@
 	}
 	a{
 		color:blue;
+	}
+	.front{
+		z-index:1000;
 	}
 	*{
 		-webkit-text-size-adjust: none;
