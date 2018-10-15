@@ -1012,57 +1012,59 @@ function changeOns(){
 	return Promise.all(returns);
 }
 
-if(!(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)){
+window.onload=function(){
 	if(navigator.onLine){
+		if(!(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)){
 			if(!isFacebookApp()){
-			firebase.auth().onAuthStateChanged(function(me) {
-				if (me) {
-					if(Notification.permission=="granted"){
-						offerNotifications();
+				firebase.auth().onAuthStateChanged(function(me) {
+					if (me) {
+						if(Notification.permission=="granted"){
+							offerNotifications();
+						}
+						uid = me.uid;
+						name = me.displayName;
+						pic = me.photoURL;
+						getZIP();
+						me.getIdToken().then(function(userToken) {
+						});
+						firebase.database().ref("users/"+uid+"/info").update({
+							name:name//,
+							//pic:pic
+						});
+						if(!hashChanged(1)){
+							history.pushState([],"","#/");
+							action("home");
+						}
+					}else{
+						document.querySelectorAll(".body")[0].innerHTML=`
+							<div class="card" onclick="login('Google')">
+								<span style="font-size:5.5vh;"><strong>Sign In</strong></span><br />
+								<span style="font-size:4vh;">Sign in to GatherApp with a Google Account.</span><br />
+								<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
+								</img>
+							</div>
+						`;
 					}
-					uid = me.uid;
-					name = me.displayName;
-					pic = me.photoURL;
-					getZIP();
-					me.getIdToken().then(function(userToken) {
-					});
-					firebase.database().ref("users/"+uid+"/info").update({
-						name:name//,
-						//pic:pic
-					});
-					if(!hashChanged(1)){
-						history.pushState([],"","#/");
-						action("home");
-					}
-				}else{
-					document.querySelectorAll(".body")[0].innerHTML=`
-						<div class="card" onclick="login('Google')">
-							<span style="font-size:5.5vh;"><strong>Sign In</strong></span><br />
-							<span style="font-size:4vh;">Sign in to GatherApp with a Google Account.</span><br />
-							<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
-							</img>
-						</div>
-					`;
-				}
-			});
+				});
+			}else{
+				clear();
+				write("Open App ↗️",[{text:"Tap the menu button, and press "+'"Open With..."'+" to use GatherApp."}]);
+			}
 		}else{
-			clear();
-			write("Open App ↗️",[{text:"Tap the menu button, and press "+'"Open With..."'+" to use GatherApp."}]);
+			document.querySelectorAll(".body")[0].innerHTML=`
+				<div class="card" onclick="login('Google')">
+					<span style="font-size:5.5vh;"><strong>Sign In</strong></span><br />
+					<span style="font-size:4vh;">Sign in to GatherApp with a Google Account.</span><br />
+					<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
+					</img>
+				</div>
+			`;
 		}
 	}else{
 		clear();
 		write("No Internet Connection",[{text:"You are not connected."}],[{text:"Try Again",href:"location.reload();"}]);
 	}
-}else{
-	document.querySelectorAll(".body")[0].innerHTML=`
-		<div class="card" onclick="login('Google')">
-			<span style="font-size:5.5vh;"><strong>Sign In</strong></span><br />
-			<span style="font-size:4vh;">Sign in to GatherApp with a Google Account.</span><br />
-			<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
-			</img>
-		</div>
-	`;
-}
+};
 
 function hashChanged(load){
 	if(uid!=null&&uid!=""){
