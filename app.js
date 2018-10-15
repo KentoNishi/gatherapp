@@ -36,9 +36,6 @@ back.add=(function(param){
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
-window.onload=function(){
-}
-
 function menu(){
 //	back.add("menu();");
 	clear();
