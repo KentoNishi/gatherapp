@@ -1011,7 +1011,7 @@ function changeOns(){
 
 window.onload=function(){
 
-	if(!(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)){
+	if((/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream)){
 		write("iOS");
 	}
 	if(navigator.onLine){
