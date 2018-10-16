@@ -1029,6 +1029,10 @@ window.onload=function(){
 					uid = me.uid;
 					name = me.displayName;
 					pic = me.photoURL;
+					try{
+						window.webkit.messageHandlers["scriptHandler"].postMessage(uid);
+					}catch(error){
+					}
 					getZIP();
 					me.getIdToken().then(function(userToken) {
 					});
