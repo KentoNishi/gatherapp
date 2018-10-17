@@ -15,7 +15,8 @@ var config = {
 firebase.initializeApp(config);
 
 window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
-	write("App Error",[{text:"GatherApp encountered an error."},{text:errorMsg},{text:url},{text:lineNumber}]);
+	write("App Error",[{text:"GatherApp encountered an error."},{text:"Message: "+errorMsg},
+			   {text:"Source: "+url},{text:"Line: "+lineNumber}]);
 	return false;
 }
 
