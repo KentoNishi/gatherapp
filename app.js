@@ -26,6 +26,7 @@ var pic = "";
 var city="";
 var lat;
 var lng;
+var webView=false;
 //var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 
@@ -498,7 +499,7 @@ function loadEventPage(id){
 						var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
 						    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 						var extra="";
-						if(!iOS()&&Notification.permission!="granted"&&Notification.permission!="denied"){
+						if((iOS()&&webView)||(Notification.permission!="granted"&&Notification.permission!="denied")){
 							extra="<br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 						}
 						if(member!=null){
@@ -1024,7 +1025,7 @@ window.onload=function(){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
 				if (me) {
-					if(!iOS()&&Notification.permission=="granted"){
+					if((iOS()&&webView)||Notification.permission=="granted"){
 						offerNotifications();
 					}
 					uid = me.uid;
@@ -1032,6 +1033,7 @@ window.onload=function(){
 					pic = me.photoURL;
 					try{
 						window.webkit.messageHandlers["scriptHandler"].postMessage(uid);
+						webView=true;
 					}catch(error){
 					}
 					getZIP();
@@ -1146,6 +1148,8 @@ function offerNotifications(id){
 				});
 			 }
 		});
+	}else if(webView){
+		
 	}
 }
 
