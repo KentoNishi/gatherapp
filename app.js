@@ -39,20 +39,6 @@ back.add=(function(param){
 	ons=[];
 });
 */
-/*
-      <div id="confirm">
-         <div class="message"></div>
-         <button class="yes">Yes</button>
-         <button class="no">No</button>
-      </div>
-      <button onclick = 'functionConfirm("Do you like Football?", function yes() {
-         alert("Yes")
-      },
-      function no() {
-         alert("no")
-      });'>submit</button>
-*/
-
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
