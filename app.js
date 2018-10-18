@@ -587,8 +587,7 @@ function copyToClipboard(str) {
 	el.setAttribute('readonly', '');
 	el.style = {position: 'absolute', left: '-9999px'};
 	document.body.appendChild(el);
-
-		if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+	if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
 		// save current contentEditable/readOnly status
 		var editable = el.contentEditable;
 		var readOnly = el.readOnly;
@@ -615,6 +614,7 @@ function copyToClipboard(str) {
 	}
 	document.execCommand('copy');
 	document.body.removeChild(el);
+	return true;
 }
 
 function showMap(){
