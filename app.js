@@ -136,19 +136,23 @@ function start(){
 	}
 }
 
-function cancelEvent(id){
-	if(confirm("Are you sure you want to cancel this event?")){
+function cancelEvent(id,confirmed){
+	if(confirmed!=null){
 		firebase.database().ref("events/"+id+"/info").update({cancel:1}).then(function(){	
 			loadEvent(id);
 		});
+	}else{
+		customConfirm("Are you sure you want to cancel this event?","cancelEvent('"+id+"',1);");
 	}
 }
 
-function reactivateEvent(id){
-	if(confirm("Are you sure you want to reactivate this event?")){
+function reactivateEvent(id,confirmed){
+	if(confirmed!=null){
 		firebase.database().ref("events/"+id+"/info").update({cancel:null}).then(function(){	
 			loadEvent(id);
 		});
+	}else{
+		customConfirm("Are you sure you want to reactivate this event?","reactivateEvent('"+id+"',1);");
 	}
 }
 
@@ -428,6 +432,12 @@ function loadEvent(id){
 	}
 }
 
+function customConfirm(a,b){
+	if(confirm(a)){
+		eval(b);
+	}
+}
+
 function loadEventPage(id){
 	changeOns();
 //	back.add("loadEvent('"+id+"');");
@@ -453,8 +463,7 @@ function loadEventPage(id){
 						var member=me.val()||null;
 						var value=member;
 						var link=[{html:"<span style='color:red;font-size:3.5vh;'><a href='#' "+
-							   "onclick='if("+(me.val()==null?"true":"confirm("+'"'+"Are you sure you want to skip this event?"+'"'+")")+"){"+
-							   "leaveEvent("+'"'+id+'"'+");}return false;'"+
+							   "onclick='"+(me.val()!=null?('customConfirm("Are you sure you want to skip this event?","leaveEvent('+"`"+id+"`"+');");'):'leaveEvent('+"`"+id+"`"+');')+"return false;'"+
 							   ">Skip Event</a></span>"}];
 						if(member==null){
 							link.unshift({html:"<button style='background-color:rgba(0,255,0,0.3);' "+
