@@ -1063,12 +1063,6 @@ function signOut() {
 	});
 }
 
-window.onhashchange= (function() {
-	changeOns().then(function(){
-		hashChanged();
-	});
-});
-
 function changeOns(){
 	var returns=[];
 	ons.forEach(listener=>{
@@ -1083,6 +1077,11 @@ function iOS(){
 }
 
 window.onload=function(){
+	window.onhashchange=(function() {
+		changeOns().then(function(){
+			hashChanged();
+		});
+	});
 	if(navigator.onLine){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
