@@ -608,21 +608,58 @@ function isFacebookApp() {
 }
 
 function copyToClipboard(text) {
-	if (window.clipboardData && window.clipboardData.setData) {
-		return clipboardData.setData("Text", text); 
-	} else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-		var textarea = document.createElement("textarea");
-		textarea.textContent = text;
-		textarea.style.position = "fixed";
-		document.body.appendChild(textarea);
-		textarea.select();
-		try {
-			return document.execCommand("copy");
-		} catch (ex) {
-			return false;
-		} finally {
-			document.body.removeChild(textarea);
+	if(!iOS()){
+		if (window.clipboardData && window.clipboardData.setData) {
+			return clipboardData.setData("Text", text); 
+		} else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+			var textarea = document.createElement("textarea");
+			textarea.textContent = text;
+			textarea.style.position = "fixed";
+			document.body.appendChild(textarea);
+			textarea.select();
+			try {
+				return document.execCommand("copy");
+			} catch (ex) {
+				return false;
+			} finally {
+				document.body.removeChild(textarea);
+			}
 		}
+	}else{
+		var el = document.createElement('textarea');
+		el.value = text;
+		el.setAttribute('readonly', '');
+		el.style = {position: 'absolute', left: '-9999px'};
+		document.body.appendChild(el);
+
+		if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+		// save current contentEditable/readOnly status
+		var editable = el.contentEditable;
+		var readOnly = el.readOnly;
+
+		// convert to editable with readonly to stop iOS keyboard opening
+		el.contentEditable = true;
+		el.readOnly = true;
+
+		// create a selectable range
+		var range = document.createRange();
+		range.selectNodeContents(el);
+
+		// select the range
+		var selection = window.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
+		el.setSelectionRange(0, 999999);
+
+		// restore contentEditable/readOnly to original state
+		el.contentEditable = editable;
+		el.readOnly = readOnly;
+		} else {
+		el.select(); 
+		}
+
+		document.execCommand('copy');
+		document.body.removeChild(el);
 	}
 }
 
