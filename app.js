@@ -615,6 +615,7 @@ function copyToClipboard(text) {
 		textarea.textContent = text;
 		textarea.style.position = "fixed";
 		document.body.appendChild(textarea);
+		var el=text;
 		if (iOS()) {
 			// save current contentEditable/readOnly status
 			var editable = el.contentEditable;
