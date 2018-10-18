@@ -446,6 +446,15 @@ function customConfirm(a,b){
     `;
 }
 
+function customAlert(a){
+    document.querySelectorAll(".wrappers")[0].innerHTML=`
+	    <div class='confirm'>
+		<span class='question'>`+encode(a)+`</span>
+		<span class='yes' onclick='document.querySelectorAll(".wrappers")[0].innerHTML="";'>OK</span>
+	    </div>
+    `;
+}
+
 function loadEventPage(id){
 	changeOns();
 //	back.add("loadEvent('"+id+"');");
