@@ -14,11 +14,14 @@ var config = {
 };
 firebase.initializeApp(config);
 
+/*
 window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
 	write("App Error",[{text:"GatherApp encountered an error."},{text:"Message: "+errorMsg},
 			   {text:"Source: "+url},{text:"Line: "+lineNumber}]);
 	return false;
 }
+*/
+
 
 var uid = "";
 var name = "";
@@ -136,19 +139,23 @@ function start(){
 	}
 }
 
-function cancelEvent(id){
-	if(confirm("Are you sure you want to cancel this event?")){
+function cancelEvent(id,confirmed){
+	if(confirmed!=null){
 		firebase.database().ref("events/"+id+"/info").update({cancel:1}).then(function(){	
 			loadEvent(id);
 		});
+	}else{
+		customConfirm("Are you sure you want to cancel this event?","cancelEvent(`"+id+"`,1);");
 	}
 }
 
-function reactivateEvent(id){
-	if(confirm("Are you sure you want to reactivate this event?")){
+function reactivateEvent(id,confirmed){
+	if(confirmed!=null){
 		firebase.database().ref("events/"+id+"/info").update({cancel:null}).then(function(){	
 			loadEvent(id);
 		});
+	}else{
+		customConfirm("Are you sure you want to reactivate this event?","reactivateEvent(`"+id+"`,1);");
 	}
 }
 
@@ -428,6 +435,26 @@ function loadEvent(id){
 	}
 }
 
+function customConfirm(a,b){
+    document.querySelectorAll(".wrappers")[0].innerHTML=`
+	    <div class='confirm'>
+		<span class='question'>`+encode(a)+`</span>
+		<span class='no' onclick='document.querySelectorAll(".wrappers")[0].innerHTML="";'>No</span>
+		<span class='yes' onclick='eval(("`+b+
+	    	`"));document.querySelectorAll(".wrappers")[0].innerHTML="";'>Yes</span>
+	    </div>
+    `;
+}
+
+function customAlert(a){
+    document.querySelectorAll(".wrappers")[0].innerHTML=`
+	    <div class='confirm'>
+		<span class='question'>`+encode(a)+`</span>
+		<span class='yes' onclick='document.querySelectorAll(".wrappers")[0].innerHTML="";'>OK</span>
+	    </div>
+    `;
+}
+
 function loadEventPage(id){
 	changeOns();
 //	back.add("loadEvent('"+id+"');");
@@ -453,8 +480,7 @@ function loadEventPage(id){
 						var member=me.val()||null;
 						var value=member;
 						var link=[{html:"<span style='color:red;font-size:3.5vh;'><a href='#' "+
-							   "onclick='if("+(me.val()==null?"true":"confirm("+'"'+"Are you sure you want to skip this event?"+'"'+")")+"){"+
-							   "leaveEvent("+'"'+id+'"'+");}return false;'"+
+							   "onclick='"+(me.val()!=null?('customConfirm("Are you sure you want to skip this event?","leaveEvent('+"`"+id+"`"+');");'):'leaveEvent('+"`"+id+"`"+');')+"return false;'"+
 							   ">Skip Event</a></span>"}];
 						if(member==null){
 							link.unshift({html:"<button style='background-color:rgba(0,255,0,0.3);' "+
@@ -503,14 +529,14 @@ function loadEventPage(id){
 						}
 						if(member!=null){
 							var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
-							    "' step='5' min='1' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
+							    "' step='5' min='0' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
 							    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 							contents.push({html:cb+append+" <span class='okbutton' class='ok"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
-								       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-								       ")[0].innerHTML=null;saveReminderTime("+'"'+id+'"'+
+								       ")[0].innerHTML=``;document.querySelectorAll("+'".nobutton"'+
+								       ")[0].innerHTML=``;saveReminderTime("+'"'+id+'"'+
 								       ");'></span> <span class='nobutton' class='no"+id+"' onclick='document.querySelectorAll("+
-								       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-								       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
+								       '".okbutton"'+")[0].innerHTML=``;document.querySelectorAll("+'".nobutton"'+
+								       ")[0].innerHTML=``;document.querySelectorAll("+'"input[type=number]"'+
 								       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
 								       ")[0].id));'></span> min. early"+extra});
 						}
@@ -525,7 +551,7 @@ function loadEventPage(id){
 							}
 						}
 						if(member!=null){
-							var href="if(copyToClipboard('https://bit.do/gatherapp#"+id+"')){alert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
+							var href="if(copyToClipboard('https://bit.do/gatherapp#"+id+"')){customAlert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
 							if(navigator.share){
 								href="navigator.share({title: decodeURIComponent('"+
 								      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
@@ -581,40 +607,23 @@ function isFacebookApp() {
 	return (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
 }
 
-function copyToClipboard(str) {
-	var el = document.createElement('textarea');
-	el.value = str;
-	el.setAttribute('readonly', '');
-	el.style = {position: 'absolute', left: '-9999px'};
-	document.body.appendChild(el);
-	if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
-		// save current contentEditable/readOnly status
-		var editable = el.contentEditable;
-		var readOnly = el.readOnly;
-
-		// convert to editable with readonly to stop iOS keyboard opening
-		el.contentEditable = true;
-		el.readOnly = true;
-
-		// create a selectable range
-		var range = document.createRange();
-		range.selectNodeContents(el);
-
-		// select the range
-		var selection = window.getSelection();
-		selection.removeAllRanges();
-		selection.addRange(range);
-		el.setSelectionRange(0, 999999);
-
-		// restore contentEditable/readOnly to original state
-		el.contentEditable = editable;
-		el.readOnly = readOnly;
-	} else {
-		el.select(); 
+function copyToClipboard(text) {
+	if (window.clipboardData && window.clipboardData.setData) {
+		return clipboardData.setData("Text", text); 
+	} else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+		var textarea = document.createElement("textarea");
+		textarea.textContent = text;
+		textarea.style.position = "fixed";
+		document.body.appendChild(textarea);
+		textarea.select();
+		try {
+			return document.execCommand("copy");
+		} catch (ex) {
+			return false;
+		} finally {
+			document.body.removeChild(textarea);
+		}
 	}
-	document.execCommand('copy');
-	document.body.removeChild(el);
-	return true;
 }
 
 function showMap(){
@@ -749,8 +758,8 @@ function saveReminderTime(id){
 			document.querySelectorAll('input[type=checkbox]')[0].id=value;
 		});
 	}else{
-		document.querySelectorAll(".okbutton")[0].innerHTML=null;
-		document.querySelectorAll(".nobutton")[0].innerHTML=null;
+		document.querySelectorAll(".okbutton")[0].innerHTML="";
+		document.querySelectorAll(".nobutton")[0].innerHTML="";
 		document.querySelectorAll("input[type=number]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=number]")[0].id));
 		document.querySelectorAll("input[type=checkbox]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=checkbox]")[0].id));
 	}
@@ -1084,6 +1093,7 @@ window.onload=function(){
 };
 
 function hashChanged(load){
+	document.querySelectorAll(".wrappers")[0].innerHTML="";
 	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
