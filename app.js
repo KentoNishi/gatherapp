@@ -433,9 +433,14 @@ function loadEvent(id){
 }
 
 function customConfirm(a,b){
-	if(confirm(a)){
-		eval(b);
-	}
+    document.querySelectorAll(".wrappers")[0].innerHTML=`
+	    <div class='confirm'>
+		<span class='question'>`+encode(a)+`</span>
+		<span class='no' onclick='document.querySelectorAll(".wrappers")[0].innerHTML="";'>Cancel</span>
+		<span class='yes' onclick='eval(decodeURIComponent("`+encodeURIComponent(b)+
+	    	`"));document.querySelectorAll(".wrappers")[0].innerHTML="";'>Yes</span>
+	    </div>
+    `;
 }
 
 function loadEventPage(id){
