@@ -615,7 +615,7 @@ function copyToClipboard(text) {
 		textarea.textContent = text;
 		textarea.style.position = "fixed";
 		document.body.appendChild(textarea);
-		el.select(); 
+		textarea.select();
 		try {
 			return document.execCommand("copy");
 		} catch (ex) {
