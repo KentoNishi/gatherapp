@@ -657,9 +657,9 @@ function copyToClipboard(text) {
 		} else {
 		el.select(); 
 		}
-
 		document.execCommand('copy');
 		document.body.removeChild(el);
+		return true;
 	}
 }
 
