@@ -13,13 +13,13 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
-/*
+
 window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
 	write("App Error",[{text:"GatherApp encountered an error."},{text:"Message: "+errorMsg},
 			   {text:"Source: "+url},{text:"Line: "+lineNumber}]);
 	return false;
 }
-*/
+
 
 var uid = "";
 var name = "";
@@ -143,7 +143,7 @@ function cancelEvent(id,confirmed){
 			loadEvent(id);
 		});
 	}else{
-		customConfirm("Are you sure you want to cancel this event?","cancelEvent('"+id+"',1);");
+		customConfirm("Are you sure you want to cancel this event?","cancelEvent(`"+id+"`,1);");
 	}
 }
 
@@ -153,7 +153,7 @@ function reactivateEvent(id,confirmed){
 			loadEvent(id);
 		});
 	}else{
-		customConfirm("Are you sure you want to reactivate this event?","reactivateEvent('"+id+"',1);");
+		customConfirm("Are you sure you want to reactivate this event?","reactivateEvent(`"+id+"`,1);");
 	}
 }
 
@@ -438,7 +438,7 @@ function customConfirm(a,b){
 	    <div class='confirm'>
 		<span class='question'>`+encode(a)+`</span>
 		<span class='no' onclick='document.querySelectorAll(".wrappers")[0].innerHTML="";'>No</span>
-		<span class='yes' onclick='eval(decodeURIComponent("`+encodeURIComponent(b)+
+		<span class='yes' onclick='eval(("`+b+
 	    	`"));document.querySelectorAll(".wrappers")[0].innerHTML="";'>Yes</span>
 	    </div>
     `;
