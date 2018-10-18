@@ -520,11 +520,11 @@ function loadEventPage(id){
 							    "' step='5' min='0' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
 							    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 							contents.push({html:cb+append+" <span class='okbutton' class='ok"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
-								       ")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-								       ")[0].innerHTML=null;saveReminderTime("+'"'+id+'"'+
+								       ")[0].innerHTML=``;document.querySelectorAll("+'".nobutton"'+
+								       ")[0].innerHTML=``;saveReminderTime("+'"'+id+'"'+
 								       ");'></span> <span class='nobutton' class='no"+id+"' onclick='document.querySelectorAll("+
-								       '".okbutton"'+")[0].innerHTML=null;document.querySelectorAll("+'".nobutton"'+
-								       ")[0].innerHTML=null;document.querySelectorAll("+'"input[type=number]"'+
+								       '".okbutton"'+")[0].innerHTML=``;document.querySelectorAll("+'".nobutton"'+
+								       ")[0].innerHTML=``;document.querySelectorAll("+'"input[type=number]"'+
 								       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
 								       ")[0].id));'></span> min. early"+extra});
 						}
@@ -746,8 +746,8 @@ function saveReminderTime(id){
 			document.querySelectorAll('input[type=checkbox]')[0].id=value;
 		});
 	}else{
-		document.querySelectorAll(".okbutton")[0].innerHTML=null;
-		document.querySelectorAll(".nobutton")[0].innerHTML=null;
+		document.querySelectorAll(".okbutton")[0].innerHTML="";
+		document.querySelectorAll(".nobutton")[0].innerHTML="";
 		document.querySelectorAll("input[type=number]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=number]")[0].id));
 		document.querySelectorAll("input[type=checkbox]")[0].value=Math.abs(parseInt(document.querySelectorAll("input[type=checkbox]")[0].id));
 	}
@@ -1081,6 +1081,7 @@ window.onload=function(){
 };
 
 function hashChanged(load){
+	document.querySelectorAll(".wrappers")[0].innerHTML="";
 	if(uid!=null&&uid!=""){
 		if(window.location.hash.substr(1,window.location.hash.length)!=""){
 			document.getElementById("home").querySelectorAll("strong")[0].innerHTML="HOME";
