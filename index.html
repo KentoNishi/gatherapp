@@ -21,6 +21,7 @@
 		<link rel="manifest" href="/gatherapp/manifest.json" />
 	</head>
 	<div class="metas"></div>
+	<span class="wrappers"></span>
 	<body bgColor="white">
 		<div class="top left wide height fixed accent bar front">
 			<a onclick="action(this.id);" id="menu" class="icon left">
@@ -45,6 +46,57 @@
 		</div>
 	</body>
 	<style>
+	.no{
+		min-width:15vw;
+		float:right;
+		background-color:red;
+		text-align:center;
+	}
+	.yes{
+		min-width:15vw;
+		float:right;
+		background-color:green;
+		text-align:center;
+	}
+	.question{
+		float:left;
+		position:fixed;
+		background-color:orange;
+	}
+	.confirm span{
+		padding:2vh;
+		cursor: default; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+		border-radius:100px;
+		top:4vh;
+		position:relative;
+		color:white;
+		font-size:3vh;
+		bottom:0; 
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+	}
+	.confirm{
+		padding-left:0;
+		padding-top:2.5vh;
+		padding-bottom:1vh;
+		z-index:10000;
+		background-color:rgba(0,0,0,0.25);
+		position:fixed;
+		bottom:0;
+		width:100vw;
+		vertical-align:text-bottom;
+		overflow-wrap: break-word;
+		word-wrap: break-word;
+		-ms-word-break: break-all;
+		word-break: break-all;
+		word-break: break-word;
+		-ms-hyphens: auto;
+		-moz-hyphens: auto;
+		-webkit-hyphens: auto;
+		hyphens: auto;
+		left:0;
+	}
 	@-webkit-keyframes glow{
 		0%   {background-color:black; }
 		50%  {background-color:black; }
@@ -156,7 +208,6 @@
 		width:65vw;
 	}
 	 input{
-		display: inline-block;
 		height:4.5vh;
 		font-size:3.5vh;
 		width:65vw;
