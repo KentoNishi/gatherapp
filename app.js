@@ -13,12 +13,13 @@ var config = {
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
-
+/*
 window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
 	write("App Error",[{text:"GatherApp encountered an error."},{text:"Message: "+errorMsg},
 			   {text:"Source: "+url},{text:"Line: "+lineNumber}]);
 	return false;
 }
+*/
 
 var uid = "";
 var name = "";
