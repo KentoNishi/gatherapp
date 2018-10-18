@@ -551,7 +551,7 @@ function loadEventPage(id){
 							}
 						}
 						if(member!=null){
-							var href="if(copyToClipboard('https://bit.do/gatherapp#"+id+"')){alert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
+							var href="if(copyToClipboard('https://bit.do/gatherapp#"+id+"')){customAlert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
 							if(navigator.share){
 								href="navigator.share({title: decodeURIComponent('"+
 								      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
