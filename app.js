@@ -1092,6 +1092,7 @@ window.onload=function(){
 					try{
 						window.webkit.messageHandlers["scriptHandler"].postMessage("testWK");
 						webView.status=true;
+						offerNotifications();
 					}catch(error){
 						webView.status=false;
 					}
