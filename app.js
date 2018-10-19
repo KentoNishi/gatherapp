@@ -1223,8 +1223,7 @@ function offerNotifications(id){
 
 function iOSPermission(e){
 	webView.permission=e;
-	window.webkit.messageHandlers["scriptHandler"].postMessage(e);
-	if(e==1){
+	if(e==2){
 		try{
 			window.webkit.messageHandlers["scriptHandler"].postMessage("enableNotifications");
 			webView.status=1;
