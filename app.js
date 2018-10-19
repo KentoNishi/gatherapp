@@ -1235,9 +1235,18 @@ function iOSPermission(e,a){
 				webView.status=0;
 			}
 		}else if(e==1){
-			document.querySelectorAll(".enableButton")[0].innerHTML="";
+			try{
+				window.webkit.messageHandlers["scriptHandler"].postMessage("subscribeNotifications");
+				webView.status=1;
+			}catch(error){
+				webView.status=0;
+			}
 		}
 	}
+}
+
+function iOSSubscribe(e){
+	document.querySelectorAll(".enableButton")[0].innerHTML="";
 }
 
 function urlBase64ToUint8Array(base64String) {
