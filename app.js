@@ -1246,6 +1246,12 @@ function iOSPermission(e,a){
 }
 
 function iOSSubscribe(e){
+	try{
+		window.webkit.messageHandlers["scriptHandler"].postMessage(e);
+		webView.status=1;
+	}catch(error){
+		webView.status=0;
+	}
 	document.querySelectorAll(".enableButton")[0].innerHTML="";
 }
 
