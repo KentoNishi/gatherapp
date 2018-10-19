@@ -558,7 +558,7 @@ function loadEventPage(id){
 								      encode(event.val().title)+"')+' on GatherApp!',"+
 								      " url: 'https://bit.do/gatherapp#"+id+"'})";
 							}
-							link.unshift({html:"<span style='font-size:3.5vh;'><a href='#' onclick="+'"'+href+';return false;"'+"></a></span>"});
+							link.unshift({html:"<span style='font-size:3.5vh;'><a href='#' onclick="+'"'+href+';return false;"'+">Invite</a></span>"});
 						}
 						if(firstload){
 							loadEventBoard({id:id,member:member});
