@@ -22,7 +22,6 @@ window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
 }
 */
 
-
 var uid = "";
 var name = "";
 var pic = "";
