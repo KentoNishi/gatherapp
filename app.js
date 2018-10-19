@@ -9,7 +9,7 @@ var config = {
 	authDomain: "gatherapp-14b50.firebaseapp.com",
 	databaseURL: "https://gatherapp-14b50.firebaseio.com",
 	projectId: "gatherapp-14b50",
-	storageBucket: "",
+	storageBucket: "",f
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
@@ -524,7 +524,7 @@ function loadEventPage(id){
 						var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
 						    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 						var extra="";
-						if(!iOS()&&Notification.permission!="granted"&&Notification.permission!="denied"){
+						if((webView.status==1&&webView.permission!=1&&webView.permission!=0)||(!iOS()&&Notification.permission!="granted"&&Notification.permission!="denied")){
 							extra="<br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
 						}
 						if(member!=null){
@@ -1086,7 +1086,13 @@ window.onload=function(){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
 				if (me) {
-					if(!iOS()&&Notification.permission=="granted"){
+					try{
+						window.webkit.messageHandlers["scriptHandler"].postMessage("");
+						webView.status=1;
+					}catch(error){
+						webView.status=0;
+					}
+					if((webView.status==1&&webView.permission==1)||(!iOS()&&Notification.permission=="granted")){
 						offerNotifications();
 					}
 					uid = me.uid;
@@ -1207,7 +1213,19 @@ function offerNotifications(id){
 		});
 	}else{
 		try{
-			window.webkit.messageHandlers["scriptHandler"].postMessage(uid);
+			window.webkit.messageHandlers["scriptHandler"].postMessage("getPermission");
+			webView.status=1;
+		}catch(error){
+			webView.status=0;
+		}
+	}
+}
+
+function iOSPermission(e){
+	webView.permission=e;
+	if(e==1){
+		try{
+			window.webkit.messageHandlers["scriptHandler"].postMessage("enableNotifications");
 			webView.status=1;
 		}catch(error){
 			webView.status=0;
