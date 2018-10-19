@@ -525,7 +525,7 @@ function loadEventPage(id){
 						    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 						var extra="";
 						if((webView.status==1&&webView.permission!=1&&webView.permission!=0)||(!iOS()&&Notification.permission!="granted"&&Notification.permission!="denied")){
-							extra="<br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button>";
+							extra="<br /><span class='enableButton'><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button></span>";
 						}
 						if(member!=null){
 							var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
@@ -1204,7 +1204,7 @@ function offerNotifications(id){
 						subscr.keys.auth=null;
 						return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
 							if(id!=null){
-								loadEvent(id);
+								document.querySelectorAll(".enableButton")[0].querySelectorAll("button")[0].outerHTML="";
 							}
 						});
 					});
@@ -1230,6 +1230,8 @@ function iOSPermission(e){
 		}catch(error){
 			webView.status=0;
 		}
+	}else if(e==1){
+		document.querySelectorAll(".enableButton")[0].querySelectorAll("button")[0].outerHTML="";
 	}
 }
 
