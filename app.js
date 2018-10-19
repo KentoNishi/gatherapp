@@ -30,6 +30,7 @@ var lat;
 var lng;
 //var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
+var webView={};
 
 /*
 back.add=(function(param){
@@ -1207,7 +1208,9 @@ function offerNotifications(id){
 	}else{
 		try{
 			window.webkit.messageHandlers["scriptHandler"].postMessage(uid);
+			webView.status=1;
 		}catch(error){
+			webView.status=0;
 		}
 	}
 }
