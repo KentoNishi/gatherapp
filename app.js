@@ -30,6 +30,7 @@ var lat;
 var lng;
 //var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
+var webView={status:false};
 
 /*
 back.add=(function(param){
@@ -1088,6 +1089,12 @@ window.onload=function(){
 					if(!iOS()&&Notification.permission=="granted"){
 						offerNotifications();
 					}
+					try{
+						window.webkit.messageHandlers["scriptHandler"].postMessage("testWK");
+						webView.status=true;
+					}catch(error){
+						webView.status=false;
+					}
 					uid = me.uid;
 					name = me.displayName;
 					pic = me.photoURL;
@@ -1206,8 +1213,10 @@ function offerNotifications(id){
 		});
 	}else{
 		try{
-			window.webkit.messageHandlers["scriptHandler"].postMessage(uid);
+			window.webkit.messageHandlers["scriptHandler"].postMessage("enableNotifications");
+			webView.status=true;
 		}catch(error){
+			webView.status=false;
 		}
 	}
 }
