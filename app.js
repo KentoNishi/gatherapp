@@ -1090,7 +1090,7 @@ window.onload=function(){
 			firebase.auth().onAuthStateChanged(function(me) {
 				if (me) {
 					try{
-						window.webkit.messageHandlers["scriptHandler"].postMessage("");
+						window.webkit.messageHandlers["scriptHandler"].postMessage("checkPermission");
 						webView.status=1;
 					}catch(error){
 						webView.status=0;
@@ -1224,17 +1224,19 @@ function offerNotifications(id){
 	}
 }
 
-function iOSPermission(e){
+function iOSPermission(e,a){
 	webView.permission=e;
-	if(e==2){
-		try{
-			window.webkit.messageHandlers["scriptHandler"].postMessage("enableNotifications");
-			webView.status=1;
-		}catch(error){
-			webView.status=0;
+	if(a==null){
+		if(e==2){
+			try{
+				window.webkit.messageHandlers["scriptHandler"].postMessage("enableNotifications");
+				webView.status=1;
+			}catch(error){
+				webView.status=0;
+			}
+		}else if(e==1){
+			document.querySelectorAll(".enableButton")[0].innerHTML="";
 		}
-	}else if(e==1){
-		document.querySelectorAll(".enableButton")[0].innerHTML="";
 	}
 }
 
