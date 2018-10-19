@@ -9,7 +9,7 @@ var config = {
 	authDomain: "gatherapp-14b50.firebaseapp.com",
 	databaseURL: "https://gatherapp-14b50.firebaseio.com",
 	projectId: "gatherapp-14b50",
-	storageBucket: "",f
+	storageBucket: "",
 	messagingSenderId: "187325007601"
 };
 firebase.initializeApp(config);
