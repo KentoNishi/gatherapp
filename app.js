@@ -30,7 +30,6 @@ var lat;
 var lng;
 //var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
-var webView={status:false};
 
 /*
 back.add=(function(param){
@@ -1072,10 +1071,6 @@ function changeOns(){
 	return Promise.all(returns);
 }
 
-function iOSPermission(e){
-	webView.notification=e;
-}
-
 function iOS(){
 	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
@@ -1090,16 +1085,8 @@ window.onload=function(){
 		if(!isFacebookApp()){
 			firebase.auth().onAuthStateChanged(function(me) {
 				if (me) {
-					if((iOS()&&webView.notification==1)||(!iOS()&&Notification.permission=="granted")){
+					if(!iOS()&&Notification.permission=="granted"){
 						offerNotifications();
-					}
-					try{
-						window.webkit.messageHandlers["scriptHandler"].postMessage("testWK");
-						webView.status=true;
-						window.webkit.messageHandlers["scriptHandler"].postMessage("getPermission");
-						offerNotifications();
-					}catch(error){
-						webView.status=false;
 					}
 					uid = me.uid;
 					name = me.displayName;
@@ -1219,10 +1206,8 @@ function offerNotifications(id){
 		});
 	}else{
 		try{
-			window.webkit.messageHandlers["scriptHandler"].postMessage("enableNotifications");
-			webView.status=true;
+			window.webkit.messageHandlers["scriptHandler"].postMessage(uid);
 		}catch(error){
-			webView.status=false;
 		}
 	}
 }
