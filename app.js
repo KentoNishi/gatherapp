@@ -553,9 +553,9 @@ function loadEventPage(id){
 						if(member!=null){
 							var href="if(copyToClipboard('https://bit.do/gatherapp#"+id+"')){customAlert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
 							if(navigator.share){
-								href="navigator.share({title: decodeURIComponent('"+
-								      encodeURIComponent(event.val().title)+"')+' - GatherApp', text: 'Join '+decodeURIComponent('"+
-								      encodeURIComponent(event.val().title)+"')+' on GatherApp!',"+
+								href="navigator.share({title: decode('"+
+								      encode(event.val().title)+"')+' - GatherApp', text: 'Join '+decode('"+
+								      encode(event.val().title)+"')+' on GatherApp!',"+
 								      " url: 'https://bit.do/gatherapp#"+id+"'})";
 							}
 							link.unshift({text:"Invite",href:href});
