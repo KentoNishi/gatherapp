@@ -601,7 +601,7 @@ function loadEventPage(id){
 
 function share(id,title){
 	//write("Invites are currently down. Here is the invite information for debugging.",[{text:JSON.stringify({title:title,text:"Join "+title+" on GatherApp!",url:"https://bit.do/gatherapp#"+id})}]);
-	navigator.share({title:title,text:"Join "+title+" on GatherApp!",url:"https://bit.do/gatherapp#"+id})});
+	navigator.share({title:title,text:"Join "+title+" on GatherApp!",url:"https://bit.do/gatherapp#"+id});
 }
 
 function isFacebookApp() {
