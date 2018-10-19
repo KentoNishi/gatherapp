@@ -600,7 +600,7 @@ function loadEventPage(id){
 }
 
 function share(id,title){
-	navigator.share({title:title,text:"Join "+text+" on GatherApp!",url:"https://bit.do/gatherapp#"+id});
+	navigator.share({title:title,text:"Join "+title+" on GatherApp!",url:"https://bit.do/gatherapp#"+id});
 }
 
 function isFacebookApp() {
