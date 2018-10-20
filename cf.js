@@ -1,6 +1,7 @@
 const functions = require(`firebase-functions`);
 const admin = require(`firebase-admin`);
 const webpush = require("web-push");
+const apn = require('apn');
 const keys = {
 	GCMAPIKey: "AAAAK51wxvE:APA91bHbG2pKnltu9PF2vwMSrS9Ev3bTPzufjeeSUwuCm5OI2nXK93XSyxCEfPE20kbJnMTsR3ajxCsBEg2c4BBgY7hz_Tj_2pClHHlLXGsFepvZKM27WPdOthGqfAQCyU1x3aPibkhc02uj_1snanDcbw0d6GNRqw",
 	publicKey: 'BHEaekpS-pAfp4pYeqyJHw6cBmhlxx9bxBHjowhsxyDcuYR-ipUrWT9wAf_AP-q_mgGSwQryLaPMpyhcqByDyqo',
@@ -21,13 +22,21 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
     			subs.forEach(list=>{
     				var sub=list.val();
     				sub.keys.auth=list.key;
-	    			returns.push(webpush.sendNotification(sub,JSON.stringify(payload.val())).catch(error=>{
-	    				return fireDB.child(`/users/${uid}/subs/`+list.key).remove();
-	    			}));
+    				if(sub.apns===null||sub.apns===undefined){
+		    			returns.push(webpush.sendNotification(sub,JSON.stringify(payload.val())).catch(error=>{
+		    				return fireDB.child(`/users/${uid}/subs/`+list.key).remove();
+		    			}));
+	    			}else{
+						return Promise.resolve();
+	    			}
     			});
     			return Promise.all(returns).then(function(){
     				var load={[payload.val().tag.split("/").length===2?payload.val().tag.split("/")[1]:"info"]:0};
-    				return fireDB.child(`/users/${uid}/events/`+payload.val().tag.split("/")[0]).update(load);
+    				if(Object.keys(load)[0]!=="board"){
+	    				return fireDB.child(`/users/${uid}/events/`+payload.val().tag.split("/")[0]).update(load);
+    				}else{
+    					return Promise.resolve();	
+    				}
     			});
 			}else{
 				return Promise.resolve();
@@ -43,7 +52,15 @@ exports.detectLeave = functions.database.ref(`/users/{uid}/events/{id}`).onWrite
     let id = context.params.id;
     let fireDB = admin.database().ref("/");
     if(change.after.val()!==null&&change.after.val()!==undefined&&change.after.val().status===0){
-	    return fireDB.child(`/events/${id}/members/${uid}`).remove();
+	    return fireDB.child(`/events/${id}/members/${uid}`).remove().then(function(){
+	    	return fireDB.child(`/events/${id}/pending/${uid}`).remove().then(function(){
+	    		return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
+	    	});
+	    });
+    }else if(change.after.val()!==null&&change.after.val()!==undefined&&change.after.val().status===4){
+	    return fireDB.child(`/events/${id}/pending/`).update({[uid]:0}).then(function(){
+	    	return fireDB.child(`/events/${id}/members/${uid}`).remove();
+    	});
     }else{
     	return Promise.resolve();	
     }
@@ -60,9 +77,17 @@ exports.sendBoardFeed = functions.database.ref(`/events/{id}/board/{push}/`).onW
 		    		var returns=[];
 		    		people.forEach(person=>{
 		    			if(person.key!==post.val().author){
-			    			returns.push(fireDB.child(`/users/${(post.val().author)}/info`).once(`value`).then(user => {
-			    				return fireDB.child("users/"+person.key+"/feed").push({title:info.val().title+" - New Post",content:(user.val()!==null&&user.val()!==undefined?user.val().name:"Unknown User")+" said: "+post.val().content,tag:id+"/board"})
-			    			}));
+				    			returns.push(
+				    				fireDB.child(`/users/${(person.key)}/events/${id}`).once("value").then(count=>{
+				    					var messageNumber=((count.val()!==null&&count.val()!==undefined&&count.val().board!==null&&count.val().board!==undefined?count.val().board:0)+1);
+				    					var s=((messageNumber>1)?"s":"");
+					    				return fireDB.child("users/"+person.key+"/feed").push({title:info.val().title+" - New Post",content:"You have "+messageNumber+" new message"+s+".",tag:id+"/board"}).then(function(){
+						    				return fireDB.child(`/users/${(person.key)}/events/${id}/board`).transaction(counts => {
+						    					return (counts!==undefined&&counts!==null?counts:0)+1;
+					    					});
+					    				});
+				    				})
+			    				);
 		    			}else{
 		    				returns.push(Promise.resolve());
 		    			}
@@ -120,11 +145,21 @@ exports.sendGroup = functions.database.ref(`/events/{id}/info/`).onWrite((change
 	    		var uid=member.key;
 	    		var edits=difference(change.before.val(),change.after.val());
 	    		edits.forEach(edit=>{
-		    		if(edit==="title"||edit==="date"||edit==="location"){
+		    		if(edit==="title"||edit==="date"||edit==="location"||edit==="cancel"){
 		    			if(context.auth!==undefined&&context.auth.uid!==null&&uid!==context.auth.uid){
+		    				var cont="";
+							if(edit==="cancel"){
+								if(change.after.val().cancel!==undefined&&change.after.val().cancel!==null){
+									cont="Event was cancelled.";
+								}else{
+									cont="Event was reactivated.";
+								}
+							}else{
+	 							cont="Event "+edit.replace("date","time")+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".";
+							}
 				    		returns.push(fireDB.child(`/users/${uid}/feed/`).push().update({
 				    			title:change.before.val().title+" - Edited",
-				    			content:"Event "+edit.replace("date","time")+(edit!=="date"?"":" was")+" changed"+(edit!=="date"?(" to "+(edit!=="location"?change.after.val()[edit]:(change.after.val().location!==null?(change.after.val().location.name+", "+change.after.val().location.formatted_address.split(",").slice(1,change.after.val().location.formatted_address.split(",").length-2).join(",")):"an unknown location"))):"")+".",
+				    			content:cont,
 				    			tag:id
 							}));
 						}else{
@@ -151,12 +186,27 @@ function difference(o1, o2) {
 			returns.push("date");
 		}if(JSON.stringify(o1.location)!==JSON.stringify(o2.location)){
 			returns.push("location");
+		}if(o1.cancel!==o2.cancel){
+			returns.push("cancel");
 		}
 	}
 	return returns;
 }
 
 exports.abandonGroup = functions.database.ref(`/events/{id}/left/{uid}/`).onDelete((change, context) => {
+    let uid = context.params.uid;
+    let id = context.params.id;
+    let fireDB = admin.database().ref("/");
+    return fireDB.child(`/events/${id}/info`).once("value").then(info=>{
+    	if(info.val()===undefined||info.val()===null){
+	   		return fireDB.child(`/users/${uid}/events/`+id).remove(); 	
+   		}else{
+   			return Promise.resolve();	
+   		}
+    });
+});
+
+exports.denyInvite = functions.database.ref(`/events/{id}/pending/{uid}/`).onDelete((change, context) => {
     let uid = context.params.uid;
     let id = context.params.id;
     let fireDB = admin.database().ref("/");
@@ -208,7 +258,9 @@ exports.toggleGroup = functions.database.ref(`/events/{id}/members/{uid}/`).onWr
 			}
 		}).then(function(){
 	    	if(change.after.val()!==undefined&&change.after.val()!==null){
-		    	return fireDB.child("events/"+id+"/left/"+uid).remove();
+		    	return fireDB.child("events/"+id+"/left/"+uid).remove().then(function(){
+			    	return fireDB.child("events/"+id+"/pending/"+uid).remove();
+		    	});
 	    	}else{
 	    		return Promise.resolve();	
 	    	}
@@ -239,11 +291,17 @@ exports.detectAbandonedGroup = functions.database.ref(`/events/{id}/members/{uid
 					return fireDB.child(`/users/${uid}/events/`+id).update({
 		    			status:status
 		   			}).then(function(){
-		   				if(status===0){
-		   					return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
-		   				}else{
-		   					return Promise.resolve();
-		   				}
+		   				return fireDB.child(`/events/${id}/pending/${uid}`).once(`value`).then(me => {
+			   				if(status===0){
+			   					if(me.val()===null||me.val()===undefined){
+				   					return fireDB.child(`/events/${id}/left/`).update({[uid]:0});
+			   					}else{
+			   						return Promise.resolve();
+			   					}
+			   				}else{
+			   					return Promise.resolve();
+			   				}
+	   					});
 		   			});
 	   			});
 	   		});
@@ -363,7 +421,7 @@ exports.setTask = functions.database.ref(`/events/{id}/info/date`).onWrite((chan
 });
 
 
-exports.changeTime = functions.database.ref(`/events/{id}/info/date/`).onWrite((change, context) => {
+exports.changeTime = functions.database.ref(`/events/{id}/info/date/time`).onWrite((change, context) => {
     let id = context.params.id;
     let fireDB = change.after.ref.root;
     let date=change.after.val();
@@ -429,11 +487,17 @@ exports.min_tick = functions.pubsub.topic('min-tick').onPublish((event) => {
 		var returns=[];
 		events.forEach(event=>{
 			returns.push(fireDB.child("events/"+event.key+"/members").once("value").then(members=>{
-				var promises=[];
-				members.forEach(user=>{
-					promises.push(fireDB.child("users/"+user.key+"/events/"+event.key).update({status:2}));
+				return fireDB.child("events/"+event.key+"/info/cancel").once("value").then(info=>{
+					if(info.val()===undefined||info.val()===null){
+						var promises=[];
+						members.forEach(user=>{
+							promises.push(fireDB.child("users/"+user.key+"/events/"+event.key).update({status:2}));
+						});
+						return Promise.all(promises);
+					}else{
+						return Promise.resolve();	
+					}
 				});
-				return Promise.all(promises);
 			}));
 		});
 		return Promise.all(returns);
