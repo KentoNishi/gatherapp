@@ -1246,12 +1246,14 @@ function iOSPermission(e,a){
 }
 
 function iOSSubscribe(e){
-	try{
-		window.webkit.messageHandlers["scriptHandler"].postMessage(e||"");
-		webView.status=1;
-	}catch(error){
-		webView.status=0;
+	if(e!=null&&e!=""){/*
+		firebase.database().ref("users/"+uid+"/subs/").update({e]:"iOS"}).then(function(){
+			if(id!=null){
+				document.querySelectorAll(".enableButton")[0].innerHTML="";
+			}
+		});*/
 	}
+//		window.webkit.messageHandlers["scriptHandler"].postMessage(e||"");
 	document.querySelectorAll(".enableButton")[0].innerHTML="";
 }
 
