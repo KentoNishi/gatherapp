@@ -1249,7 +1249,7 @@ function iOSPermission(e,a){
 
 function iOSSubscribe(e){
 	if(e!=null&&e!=""){
-		firebase.database().ref("users/"+uid+"/subs/").update({"apns":e}).then(function(){
+		firebase.database().ref("users/"+uid+"/subs/").push({apns:e}).then(function(){
 			if(document.querySelectorAll(".enableButton").length>0){
 				document.querySelectorAll(".enableButton")[0].innerHTML="";
 			}
