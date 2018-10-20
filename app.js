@@ -1207,7 +1207,9 @@ function offerNotifications(id){
 						subscr.keys.auth=null;
 						return firebase.database().ref("users/"+uid+"/subs/").update({[key]:subscr}).then(function(){
 							if(id!=null){
-								document.querySelectorAll(".enableButton")[0].innerHTML="";
+								if(document.querySelectorAll(".enableButton").length>0){
+									document.querySelectorAll(".enableButton")[0].innerHTML="";
+								}
 							}
 						});
 					});
@@ -1248,11 +1250,15 @@ function iOSPermission(e,a){
 function iOSSubscribe(e){
 	if(e!=null&&e!=""){
 		firebase.database().ref("users/"+uid+"/subs/").update({"apns":e}).then(function(){
-			document.querySelectorAll(".enableButton")[0].innerHTML="";
+			if(document.querySelectorAll(".enableButton").length>0){
+				document.querySelectorAll(".enableButton")[0].innerHTML="";
+			}
 		});
 	}else{
 		//		window.webkit.messageHandlers["scriptHandler"].postMessage(e||"");
-		document.querySelectorAll(".enableButton")[0].innerHTML="";
+		if(document.querySelectorAll(".enableButton").length>0){
+			document.querySelectorAll(".enableButton")[0].innerHTML="";
+		}
 	}
 }
 
