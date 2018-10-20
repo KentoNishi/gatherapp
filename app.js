@@ -1246,15 +1246,14 @@ function iOSPermission(e,a){
 }
 
 function iOSSubscribe(e){
-	if(e!=null&&e!=""){/*
-		firebase.database().ref("users/"+uid+"/subs/").update({e]:"iOS"}).then(function(){
-			if(id!=null){
-				document.querySelectorAll(".enableButton")[0].innerHTML="";
-			}
-		});*/
+	if(e!=null&&e!=""){
+		firebase.database().ref("users/"+uid+"/subs/").update({"apns":e}).then(function(){
+			document.querySelectorAll(".enableButton")[0].innerHTML="";
+		});
+	}else{
+		//		window.webkit.messageHandlers["scriptHandler"].postMessage(e||"");
+		document.querySelectorAll(".enableButton")[0].innerHTML="";
 	}
-//		window.webkit.messageHandlers["scriptHandler"].postMessage(e||"");
-	document.querySelectorAll(".enableButton")[0].innerHTML="";
 }
 
 function urlBase64ToUint8Array(base64String) {
