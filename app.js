@@ -1083,7 +1083,7 @@ window.onload=function(){
 	window.onhashchange=(function() {
 		changeOns().then(function(){
 			try{
-				window.webkit.messageHandlers["scriptHandler"].postMessage("getPermission");
+				window.webkit.messageHandlers["scriptHandler"].postMessage("checkPermission");
 				webView.status=1;
 			}catch(error){
 				webView.status=0;
