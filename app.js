@@ -929,7 +929,7 @@ function loadEvents(inhistory,search){
 							completed=completed.sort((a,b)=>{return a.date.time-b.date.time;});
 							cancelled=cancelled.sort((a,b)=>{return a.date.time-b.date.time;});
 							future=future.sort((a,b)=>{return a.date.time-b.date.time;});
-							if(inhistory==null){
+							if(inhistory==null||inhistory==1){
 								future=future.reverse();
 							}
 							ongoing=ongoing.reverse();
