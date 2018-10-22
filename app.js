@@ -33,16 +33,14 @@ var lng;
 var ons=[];
 var webView={};
 
-/*
-back.add=(function(param){
+/*back.add=(function(param){
 	back.data.push(param);
 	back.data=back.data.slice(back.data.length-2,back.data.length);
 	ons.forEach(listener=>{
 		firebase.database().ref(listener).off("value");
 	});
 	ons=[];
-});
-*/
+});*/
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
