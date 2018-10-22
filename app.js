@@ -4,6 +4,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 	install = e;
 });
 
+
 var config = {
 	apiKey: "AIzaSyB4meNlwVUltd007qmH9hPQpn6Oz_CF3xM",
 	authDomain: "gatherapp-14b50.firebaseapp.com",
