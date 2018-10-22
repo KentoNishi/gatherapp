@@ -29,23 +29,12 @@ var pic = "";
 var city="";
 var lat;
 var lng;
-//var back={data:["loadEvents();","loadEvents();"]};
 var ons=[];
 var webView={};
-
-/*back.add=(function(param){
-	back.data.push(param);
-	back.data=back.data.slice(back.data.length-2,back.data.length);
-	ons.forEach(listener=>{
-		firebase.database().ref(listener).off("value");
-	});
-	ons=[];
-});*/
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
 function menu(){
-//	back.add("menu();");
 	clear();
 		write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 	write("Skipped Events",null,null,"loadEvents(0);");
