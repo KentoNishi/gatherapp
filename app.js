@@ -36,7 +36,7 @@ document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content
 
 function menu(){
 	clear();
-		write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
+	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
 	write("Completed Events",null,null,"loadEvents(2);");
