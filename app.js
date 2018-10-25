@@ -1110,7 +1110,7 @@ window.onload=function(){
 						<div class="card" onclick="login('Google')">
 							<span style="font-size:4.5vh;"><strong>Sign In</strong></span><br />
 							<span style="font-size:3.5vh;">Sign in to GatherApp with a Google Account.</span><br />
-							<img alt="image" src="/gatherapp/google.png" style="width:50vw;height:auto;">
+							<img alt="image" src="/gatherapp/google.png" style="border:0;width:75vw;height:auto;max-width:50vh;">
 							</img>
 						</div>
 					`;
