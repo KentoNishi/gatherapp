@@ -511,7 +511,7 @@ function loadEventPage(id){
 						var cb="<span class='event"+id+"'></span><input type='checkbox' style='width:3vh;height:3vh;' "+check+
 						    " onclick='saveReminderTime("+'"'+id+'"'+");' class='check"+id+"' />";
 						var extra="";
-						if((webView.status==1&&webView.permission!=1&&webView.permission!=0)||(!iOS()&&Notification.permission!="granted"&&Notification.permission!="denied")){
+						if((webView.status==1&&webView.permission!=1&&webView.permission!=0)||(notificationSupport()&&Notification.permission!="granted"&&Notification.permission!="denied")){
 							extra="<span class='enableButton'><br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button></span>";
 						}
 						if(member!=null){
@@ -1061,6 +1061,10 @@ function changeOns(){
 	return Promise.all(returns);
 }
 
+function notificationSupport(){
+	return window.Notification?true:false;///iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
 function iOS(){
 	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
@@ -1087,7 +1091,7 @@ window.onload=function(){
 					}catch(error){
 						webView.status=0;
 					}
-					if((webView.status==1&&webView.permission==1)||(!iOS()&&Notification.permission=="granted")){
+					if((webView.status==1&&webView.permission==1)||(notificationSupport()&&Notification.permission=="granted")){
 						offerNotifications();
 					}
 					uid = me.uid;
@@ -1184,7 +1188,7 @@ function loadBoard(id){
 }
 
 function offerNotifications(id){
-	if(!iOS()){
+	if(notificationSupport()){
 		Notification.requestPermission().then(permission=>{
 			if(permission==="granted"){
 				navigator.serviceWorker.ready.then(function(reg){
