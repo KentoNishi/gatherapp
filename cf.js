@@ -17,17 +17,42 @@ exports.sendNotification = functions.database.ref(`/users/{uid}/feed/{id}/`).onW
     	webpush.setGCMAPIKey(keys.GCMAPIKey);
     	webpush.setVapidDetails(keys.subject,keys.publicKey,keys.privateKey);
     	return fireDB.child(`/users/${uid}/feed/${id}/`).once(`value`).then(payload => {
-    		if(payload.val()!==null){
+    		if(payload.val()!==null&&payload.val()!==undefined){
     			var returns=[];
     			subs.forEach(list=>{
     				var sub=list.val();
-    				sub.keys.auth=list.key;
-    				if(sub.apns===null||sub.apns===undefined){
+    				if(sub!=="apns"){
+    					sub.keys.auth=list.key;
 		    			returns.push(webpush.sendNotification(sub,JSON.stringify(payload.val())).catch(error=>{
 		    				return fireDB.child(`/users/${uid}/subs/`+list.key).remove();
 		    			}));
 	    			}else{
-						return Promise.resolve();
+						var options = {
+							token: {
+								key: "./AuthKey_K6YBZQN7QY.p8",
+								keyId: "K6YBZQN7QY",
+								teamId: "BH5H97HY4S"
+							},
+							production: false
+						};
+						let deviceToken =list.key;
+						var apnProvider = new apn.Provider(options);
+						var note = new apn.Notification();
+						sub.tag=((payload.val().tag.split("/").length>0&&payload.val().tag.split("/")[1]==="board"?"":Date.now()+":")+payload.val().tag);
+						note.alert={"title":payload.val().title,"body":payload.val().content};
+						note.sound="default";/*
+								"apns-collapse-id": sub.tag,
+								"tag": sub.tag,
+								"thread-id": sub.tag
+							},*/
+						note.topic="v1.gatherapp-14b50.GatherApp.GatherApp";
+	//					};
+						return apnProvider.send(note, deviceToken).then(function(result){
+							console.log("SENT MESSAGE: "+JSON.stringify(result));
+							return Promise.resolve().then(function(){
+								return apnProvider.shutdown();
+							});
+						});
 	    			}
     			});
     			return Promise.all(returns).then(function(){
