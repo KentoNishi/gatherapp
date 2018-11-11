@@ -299,6 +299,12 @@ function requestEvent(id,title,loc,date,place,duration,cancel){
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].value=title||null;
 	document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].value=loc||null;
 	if(date!=null){
+		if(new Date(new Date(date).getTime()).toISOString()
+		   .indexOf(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value)==-1){
+			date=new Date(new Date(date).getTime()).getTime();
+		}else{
+			date=new Date(new Date(date).getTime()+new Date().getTimezoneOffset()*60*1000).getTime();//TIMEZONE!
+		}
 		document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value=
 			new Date(new Date(date).getTime()-
 				 (new Date().getTimezoneOffset()*60*1000)).toISOString().split(".")[0].substr(0,16);
@@ -366,7 +372,12 @@ function newEvent(id){
 			parseInt(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[4].value);
 	}
 	if(date!=null){
-		date=new Date(new Date(date).getTime()).getTime();
+		if(new Date(new Date(date).getTime()).toISOString()
+		   .indexOf(document.querySelectorAll(".inputs")[0].querySelectorAll("input")[2].value)==-1){
+			date=new Date(new Date(date).getTime()).getTime();
+		}else{
+			date=new Date(new Date(date).getTime()+new Date().getTimezoneOffset()*60*1000).getTime();//TIMEZONE!
+		}
 	}
 	if(title!=null&&title!=""&&
 	   (autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
