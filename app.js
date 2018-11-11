@@ -1257,7 +1257,7 @@ function iOSPermission(e,a){
 
 function iOSSubscribe(e){
 	if(e!=null&&e!=""){
-		firebase.database().ref("users/"+uid+"/subs/").update({e:"apns"}).then(function(){
+		firebase.database().ref("users/"+uid+"/subs/").update({[e]:"apns"}).then(function(){
 			if(document.querySelectorAll(".enableButton").length>0){
 				document.querySelectorAll(".enableButton")[0].innerHTML="";
 			}
