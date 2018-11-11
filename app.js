@@ -1082,9 +1082,6 @@ function iOS(){
 }
 
 window.onload=function(){
-	document.querySelectorAll("body")[0].ontouchend = (e) => {
-	    e.preventDefault();
-	};
 	window.onhashchange=(function() {
 		changeOns().then(function(){
 			try{
