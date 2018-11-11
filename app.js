@@ -1401,7 +1401,12 @@ function decode(html) {
 
 function getFormattedDate(date) {
 	if(date!=null){
-		date=new Date(date);
+		if(new Date(new Date(date).getTime()).toISOString()
+		   .indexOf(date)==-1){
+			date=new Date(new Date(date).getTime());
+		}else{
+			date=new Date(new Date(date).getTime()+new Date().getTimezoneOffset()*60*1000);//TIMEZONE!
+		}
 		var year = date.getFullYear();
 		var month = (1 + date.getMonth()).toString();
 		month = month.length > 1 ? month : '0' + month;
