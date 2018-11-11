@@ -1082,7 +1082,7 @@ function iOS(){
 }
 
 window.onload=function(){
-	var fixed = document.getElementById('body');
+	var fixed = document.querySelectorAll('body')[0];
 	fixed.addEventListener('touchmove', function(e) {
 		e.preventDefault();
 	}, false);
