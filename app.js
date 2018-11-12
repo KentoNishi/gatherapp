@@ -550,10 +550,7 @@ function loadEventPage(id){
 							}
 						}
 						if(member!=null){
-							var href="if(copyToClipboard('https://kentonishi.github.io/gatherapp#"+id+"')){customAlert('Invite link copied to clipboard!');}else{prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#"+id+"');}";
-							if(navigator.share){
-								href="share('"+id+"',decodeURIComponent(`"+encodeURIComponent(event.val().title)+"`));";
-							}
+							href="share('"+id+"',decodeURIComponent(`"+encodeURIComponent(event.val().title)+"`));";
 							link.unshift({html:"<span style='font-size:3.5vh;'><a href='#' onclick="+'"'+href+';return false;"'+">Invite</a></span>"});
 						}
 						if(firstload){
@@ -600,7 +597,20 @@ function loadEventPage(id){
 
 function share(id,title){
 	//write("Invites are currently down. Here is the invite information for debugging.",[{text:JSON.stringify({title:title,text:"Join "+title+" on GatherApp!",url:"https://bit.do/gatherapp#"+id})}]);
-	navigator.share({title:title,text:"Join "+title+" on GatherApp!",url:"https://kentonishi.github.io/gatherapp#"+id});
+	if(navigator.share){
+		navigator.share({title:title,text:"Join "+title+" on GatherApp!",url:"https://kentonishi.github.io/gatherapp#"+id});
+	}else{
+		try{
+			window.webkit.messageHandlers["scriptHandler"].postMessage("share:"+encodeURIComponent(id)+":"+encodeURIComponent(title));
+			webView.status=1;
+		}catch(error){
+			if(copyToClipboard('https://kentonishi.github.io/gatherapp#'+id+)){
+				customAlert('Invite link copied to clipboard!');
+			}else{
+				prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#'+id+);
+			}
+		}
+	}
 }
 
 function isFacebookApp() {
