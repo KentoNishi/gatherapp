@@ -1082,7 +1082,6 @@ function iOS(){
 }
 
 window.onload=function(){
-	document.body.addEventListener('touchmove', preventDefault, { passive: false });
 	window.onhashchange=(function() {
 		changeOns().then(function(){
 			try{
