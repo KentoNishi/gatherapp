@@ -1082,10 +1082,7 @@ function iOS(){
 }
 
 window.onload=function(){
-	var fixed = document.querySelectorAll('body')[0];
-	fixed.addEventListener('touchmove', function(e) {
-		e.preventDefault();
-	}, false);
+	document.body.addEventListener('touchmove', preventDefault, { passive: false });
 	window.onhashchange=(function() {
 		changeOns().then(function(){
 			try{
