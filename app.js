@@ -604,7 +604,7 @@ function share(id,title){
 			window.webkit.messageHandlers["scriptHandler"].postMessage("share:"+encodeURIComponent(id)+":"+encodeURIComponent(title));
 			webView.status=1;
 		}catch(error){
-			if(copyToClipboard('https://kentonishi.github.io/gatherapp#'+id+)){
+			if(copyToClipboard('https://kentonishi.github.io/gatherapp#'+id)){
 				customAlert('Invite link copied to clipboard!');
 			}else{
 				prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#'+id+);
