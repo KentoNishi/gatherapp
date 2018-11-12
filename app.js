@@ -607,7 +607,7 @@ function share(id,title){
 			if(copyToClipboard('https://kentonishi.github.io/gatherapp#'+id)){
 				customAlert('Invite link copied to clipboard!');
 			}else{
-				prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#'+id+);
+				prompt('Copy this invite link to your clipboard.','https://kentonishi.github.io/gatherapp#'+id);
 			}
 		}
 	}
