@@ -527,7 +527,7 @@ function loadEventPage(id){
 							extra="<span class='enableButton'><br /><button style='background-color:rgba(0,255,0,0.3);' onclick='offerNotifications("+'"'+id+'"'+");'>Enable Notifications</button></span>";
 						}
 						if(member!=null){
-							var append="Remind me <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
+							var append="Reminder: <input id='"+value+"' type='number' id='+value+' style='width:10vh;text-align:center;' value='"+value+
 							    "' step='5' min='0' class='int"+id+"' onfocus='document.querySelectorAll("+'".okbutton"'+")[0].innerHTML="+'"✔️"'+
 							    ";document.querySelectorAll("+'".nobutton"'+")[0].innerHTML="+'"❌"'+";'></input>";
 							contents.push({html:cb+append+" <span class='okbutton' class='ok"+id+"' onclick='document.querySelectorAll("+'".okbutton"'+
@@ -537,7 +537,7 @@ function loadEventPage(id){
 								       '".okbutton"'+")[0].innerHTML=``;document.querySelectorAll("+'".nobutton"'+
 								       ")[0].innerHTML=``;document.querySelectorAll("+'"input[type=number]"'+
 								       ")[0].value=Math.abs(parseInt(document.querySelectorAll("+'"input[type=number]"'+
-								       ")[0].id));'></span> min. early"+extra});
+								       ")[0].id));'></span> min."+extra});
 						}
 						if(event.val().cancel!=null){
 							contents.push({html:"<span style='color:red;font-size:3.5vh;'>Cancelled Event</span>"});
