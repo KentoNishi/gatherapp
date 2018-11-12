@@ -723,8 +723,8 @@ function loadEventBoard(parameters){
 		   posts.val()[Object.keys(posts.val())[Object.keys(posts.val()).length-1]].date!=null
 		   )
 		){
-			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			document.querySelectorAll(".board"+id)[0].innerHTML="";
+			firebase.database().ref("users/"+uid+"/events/"+id+"/board").remove();
 			var writes=[];
 			function addPost(object){
 				writes.push("<div style='background-color:"+
