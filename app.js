@@ -39,12 +39,12 @@ function loadInfo(e){
 		history.replaceState([],"","#/info");
 	}else{
 		clear();
-		write("Terms of Use", null,null, "termsOfUse();");
+		write("Privacy Policy", null,null, "privacyPolicy();");
 		write("GatherApp", [{text:"By Kento Nishi"}],[{href:"window.location='https://github.com/KentoNishi/gatherapp/';",text:"View on GitHub"}]);
 	}
 }
 
-function termsOfUse(){
+function privacyPolicy(){
 	window.location=("https://kentonishi.github.io/gatherapp/privacy.html");
 }
 
