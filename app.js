@@ -1158,6 +1158,7 @@ window.onload=function(){
 							<span style="font-size:4.25vh;"><strong>Sign In</strong></span><br />
 							<span style="font-size:3.5vh;">Sign in to GatherApp with a Google Account.</span><br />
 							<img alt="image" src="/gatherapp/google.png" style="border:0;width:75vw;height:auto;max-width:50vh;">
+							<span style="font-size:2.5vh;">By signing in you agree with the <a href="https://kentonishi.github.io/gatherapp/terms.html">Terms of Service</a>.</span><br />
 							</img>
 						</div>
 					`;
