@@ -36,7 +36,7 @@ document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content
 function loadInfo(e){
 	if(e==null){
 		window.location.hash=("#");
-		history.replaceState([],"","#"+id+"/info");
+		history.replaceState([],"","#/info");
 	}else{
 		clear();
 		write("Terms of Use", null,null, "termsOfUse();");
