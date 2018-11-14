@@ -40,17 +40,17 @@ function loadInfo(e){
 	}else{
 		clear();
 		write("Terms of Use", null,null, "termsOfUse();");
-		write("GatherApp", [{text:"Kento Nishi"}],null, "termsOfUse();");
+		write("GatherApp", [{text:"By Kento Nishi"}]);
 	}
 }
 
 function termsOfUse(){
-	window.open("https://app.termly.io/document/terms-of-use-for-website/6625c567-c26c-4688-a72f-6e81fe1beafd");
+	window.location=("https://kentonishi.github.io/gatherapp/privacy.html");
 }
 
 function menu(){
 	clear();
-//	write("App Info",null,null,"loadInfo();");
+	write("App Info",null,null,"loadInfo();");
 	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
@@ -1186,9 +1186,9 @@ function hashChanged(load){
 						editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
 						action("menu",1);
-					}/*else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="info"){
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="info"){
 						loadInfo(1);
-					}*/else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
+					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
 						action("home",1);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
 						action("add",1);
