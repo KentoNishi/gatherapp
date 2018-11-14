@@ -1381,7 +1381,7 @@ function write(title,contents,links,href,classlist,overwrite,border){
 		}
 		if((title==null&&contents!=null)){
 		}else{
-			body+='<span style="font-size:4.25vh;">';
+			body+='<span style="font-size:4.5vh;">';
 			body+='<strong>';
 			if(typeof title=="string"){
 				body+=encode(title);
