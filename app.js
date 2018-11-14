@@ -40,7 +40,7 @@ function loadInfo(e){
 	}else{
 		clear();
 		write("Terms of Use", null,null, "termsOfUse();");
-		write("GatherApp", [{text:"By Kento Nishi"}]);
+		write("GatherApp", [{text:"By Kento Nishi"},[{href:"https://github.com/KentoNishi/gatherapp/",text:"View on GitHub"}]]);
 	}
 }
 
