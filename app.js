@@ -40,12 +40,17 @@ function loadInfo(e){
 	}else{
 		clear();
 		write("Privacy Policy", null,null, "privacyPolicy();");
+		write("Terms of Use", null,null, "termsOfUse();");
 		write("GatherApp", [{text:"By Kento Nishi"}],[{href:"window.location='https://github.com/KentoNishi/gatherapp/';",text:"View on GitHub"}]);
 	}
 }
 
 function privacyPolicy(){
 	window.location=("https://kentonishi.github.io/gatherapp/privacy.html");
+}
+
+function termsOfUse(){
+	window.location=("https://kentonishi.github.io/gatherapp/terms.html");
 }
 
 function menu(){
