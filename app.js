@@ -1108,7 +1108,7 @@ function iOS(){
 }
 
 window.onload=function(){
-	document.body.addEventListener("touchmove", e=>{e.preventDefault();return false;}, { passive: false });
+//	document.body.addEventListener("touchmove", e=>{e.preventDefault();return false;}, { passive: false });
 	window.onhashchange=(function() {
 		changeOns().then(function(){
 			try{
