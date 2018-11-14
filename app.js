@@ -405,7 +405,7 @@ function newEvent(id){
 	if(title!=null&&title!=""&&
 	   (autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
 		var key=id||firebase.database().ref("events/").push().key;
-		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
+		document.querySelectorAll("body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
 			date:{
@@ -648,14 +648,14 @@ function copyToClipboard(text) {
 			var textarea = document.createElement("textarea");
 			textarea.textContent = text;
 			textarea.style.position = "fixed";
-			document.body.appendChild(textarea);
+			documentbody.appendChild(textarea);
 			textarea.select();
 			try {
 				return document.execCommand("copy");
 			} catch (ex) {
 				return false;
 			} finally {
-				document.body.removeChild(textarea);
+				documentbody.removeChild(textarea);
 			}
 		}
 	}else{
@@ -663,7 +663,7 @@ function copyToClipboard(text) {
 		el.value = text;
 		el.setAttribute('readonly', '');
 		el.style = {position: 'absolute', left: '-9999px'};
-		document.body.appendChild(el);
+		documentbody.appendChild(el);
 
 		if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
 		// save current contentEditable/readOnly status
@@ -691,7 +691,7 @@ function copyToClipboard(text) {
 		el.select(); 
 		}
 		document.execCommand('copy');
-		document.body.removeChild(el);
+		documentbody.removeChild(el);
 		return true;
 	}
 }
@@ -797,7 +797,7 @@ function loadEventBoard(parameters){
 function autogrow(element) {
 	element.style.height = "5px";
 	element.style.height = (element.scrollHeight+5)+"px";
-	document.querySelectorAll(".body")[0].scrollIntoView(false);
+	document.querySelectorAll("body")[0].scrollIntoView(false);
 }
 
 function viewMembers(id){
@@ -1043,7 +1043,7 @@ function joinEvent(id){
 	firebase.database().ref("events/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
-		document.querySelectorAll(".body")[0].innerHTML="<span class='loading"+id+"'></span>";
+		document.querySelectorAll("body")[0].innerHTML="<span class='loading"+id+"'></span>";
 	});
 }
 
@@ -1114,7 +1114,7 @@ function iOS(){
 }
 
 window.onload=function(){
-//	document.body.addEventListener("touchmove", e=>{e.preventDefault();return false;}, { passive: false });
+//	documentbody.addEventListener("touchmove", e=>{e.preventDefault();return false;}, { passive: false });
 	window.onhashchange=(function() {
 		changeOns().then(function(){
 			try{
@@ -1154,7 +1154,7 @@ window.onload=function(){
 						action("home");
 					}
 				}else{
-					document.querySelectorAll(".body")[0].innerHTML=`
+					document.querySelectorAll("body")[0].innerHTML=`
 						<div class="card" onclick="login('Google')">
 							<span style="font-size:4.25vh;"><strong>Sign In</strong></span><br />
 							<span style="font-size:3.5vh;">Sign in to GatherApp with a Google Account.</span><br />
@@ -1419,7 +1419,7 @@ function write(title,contents,links,href,classlist,overwrite,border){
 		if(overwrite!=null){
 			document.querySelectorAll(overwrite)[0].outerHTML=body;
 		}else{
-			document.querySelectorAll('.body')[0].innerHTML=body+document.querySelectorAll('.body')[0].innerHTML;
+			document.querySelectorAll('body')[0].innerHTML=body+document.querySelectorAll('body')[0].innerHTML;
 		}
 	}catch(TypeError){
 		write('Error',[{text:'GatherApp encountered an error.'}]);
