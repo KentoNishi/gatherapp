@@ -1150,7 +1150,7 @@ window.onload=function(){
 				}else{
 					document.querySelectorAll(".body")[0].innerHTML=`
 						<div class="card" onclick="login('Google')">
-							<span style="font-size:4.5vh;"><strong>Sign In</strong></span><br />
+							<span style="font-size:4.25vh;"><strong>Sign In</strong></span><br />
 							<span style="font-size:3.5vh;">Sign in to GatherApp with a Google Account.</span><br />
 							<img alt="image" src="/gatherapp/google.png" style="border:0;width:75vw;height:auto;max-width:50vh;">
 							</img>
@@ -1371,7 +1371,7 @@ function write(title,contents,links,href,classlist,overwrite,border){
 		}
 		if((title==null&&contents!=null)){
 		}else{
-			body+='<span style="font-size:4.5vh;">';
+			body+='<span style="font-size:4.25vh;">';
 			body+='<strong>';
 			if(typeof title=="string"){
 				body+=encode(title);
