@@ -41,7 +41,9 @@ function loadInfo(e){
 		clear();
 		write("Privacy Policy", null,null, "privacyPolicy();");
 		write("Terms of Use", null,null, "termsOfUse();");
-		write("GatherApp", [{text:"By Kento Nishi"}],[{href:"window.location='https://github.com/KentoNishi/gatherapp/';",text:"View on GitHub"}]);
+		write("GatherApp", [{text:"By Kento Nishi"}],
+		      [{href:"window.location='mailto:kento24gs@gmail.com';",text:"Send Email"},
+		       {href:"window.location='https://github.com/KentoNishi/gatherapp/';",text:"View on GitHub"}]);
 	}
 }
 
