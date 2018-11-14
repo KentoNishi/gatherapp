@@ -33,8 +33,24 @@ var webView={};
 
 document.querySelectorAll(".metas")[0].innerHTML=('<meta name="viewport" content="width=device-width,height='+window.innerHeight+', initial-scale=1.0">');
 
+function loadInfo(e){
+	if(e==null){
+		window.location.hash=("#");
+		history.replaceState([],"","#"+id+"/info");
+	}else{
+		clear();
+		write("Terms of Use", null,null, "termsOfUse();");
+		write("GatherApp", [{text:"Kento Nishi"}],null, "termsOfUse();");
+	}
+}
+
+function termsOfUse(){
+	window.open("https://app.termly.io/document/terms-of-use-for-website/6625c567-c26c-4688-a72f-6e81fe1beafd");
+}
+
 function menu(){
 	clear();
+//	write("App Info",null,null,"loadInfo();");
 	write(name,[{html:"<img style='width:30vw;height:30vw;' src='"+pic+"' class='pic'></img>"},{text:"Standard User"}],[{href:"signOut();",text:"Sign Out"}]);
 	write("Skipped Events",null,null,"loadEvents(0);");
 	write("Cancelled Events",null,null,"loadEvents(3);");
@@ -1170,13 +1186,15 @@ function hashChanged(load){
 						editEvent(window.location.hash.substr(1,window.location.hash.length).split("/")[0]);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="menu"){
 						action("menu",1);
-					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
+					}/*else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="info"){
+						loadInfo(1);
+					}*/else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="home"){
 						action("home",1);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="new"){
 						action("add",1);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="cancelled"){
 						loadEvents(3);
-					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="completed"){
+f					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="completed"){
 						loadEvents(2);
 					}else if(window.location.hash.substr(1,window.location.hash.length).split("/")[1]=="skipped"){
 						loadEvents(0);
