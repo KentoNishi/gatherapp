@@ -45,187 +45,187 @@
 			</div>
 		</div>
 	</body>
-	<style>
-	.no{
-		min-width:15vw;
-		float:right;
-		background-color:red;
-		text-align:center;
-	}
-	.yes{
-		min-width:15vw;
-		float:right;
-		background-color:green;
-		text-align:center;
-	}
-	.question{
-		float:left;
-		position:fixed;
-		background-color:orange;
-	}
-	.confirm span{
-		padding:2vh;
-		cursor: default; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
-		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-		border-radius:100px;
-		top:4vh;
-		position:relative;
-		color:white;
-		font-size:3vh;
-		bottom:0; 
-		transform: translateY(-50%);
-		-webkit-transform: translateY(-50%);
-	}
-	.confirm{
-		padding-left:0;
-		padding-top:2.5vh;
-		padding-bottom:1vh;
-		z-index:10000;
-		background-color:rgba(0,0,0,0.25);
-		position:fixed;
-		bottom:0;
-		width:100vw;
-		vertical-align:text-bottom;
-		overflow-wrap: break-word;
-		word-wrap: break-word;
-		-ms-word-break: break-all;
-		word-break: break-all;
-		word-break: break-word;
-		-ms-hyphens: auto;
-		-moz-hyphens: auto;
-		-webkit-hyphens: auto;
-		hyphens: auto;
-		left:0;
-	}
-	@-webkit-keyframes glow{
-		0%   {background-color:black; }
-		50%  {background-color:black; }
-		100% {background-color:black; }
-	}
-	@keyframes glow{
-		0%   {background-color:black; }
-		50%  {background-color:black; }
-		100% {background-color:black; }
-	}
-	html {
-		-webkit-overflow-scrolling: auto;
-		height: 100%;
-		width: 100%;
-		overflow: hidden;
-		margin:0;
-	}
-	body{
-		-webkit-overflow-scrolling: touch;
-		-webkit-backface-visibility: hidden;
-		margin:0;
-		height:100%;
-		width:100%;
-		overflow:auto;
-	}
-	a{
-		color:blue;
-	}
-	.front{
-		z-index:1000;
-	}
-	*{
-		pointer-events: auto;
-		-webkit-text-size-adjust: none;
-		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-		overflow-wrap: break-word;
-		word-wrap: break-word;
-		-ms-word-break: break-all;
-		word-break: break-all;
-		word-break: break-word;
-	}
-	 .card{
-		width:85vw;
-		margin:auto;
-		margin-top:2.5vh;
-		margin-bottom:2.5vh;
-		background-color:rgba(0,0,0,0.1);
-		padding:2.5vh;
-		text-align:center;
-		font-size:3vh;
-		border-radius:10px;
-		box-shadow: inset 0 0 0 5px black;
-		transition:0.5s;
-	}/*
-	 .card:hover{
-		background-color:rgba(0,0,0,0.2);
-	}*/
-	.body{
-		-webkit-overflow-scrolling: touch;
-		-webkit-backface-visibility: hidden;
-		width:100%;
-		background-color:white;
-		padding-top:8vh;
-		left:0;
-		color:black;
-	}
-	 .top{
-		top:0;
-	}
-	 .left{
-		left:0;
-		float:left;
-	}
-	 .right{
-		right:0;
-		float:right;
-	}
-	 .fixed{
-		position:fixed;
-	}
-	.absolute{
-		position:absolute;
-	}
-	 .wide{
-		width:100%;
-	}
-	 .height{
-		height:8vh;
-	}
-	 .accent{
-		background-color:orange;
-	}
-	 .icon{
-		padding:1vh;
-		width:6vh;
-		height:6vh;
-	}
-	 .bar a img {
-		width:6vh;
-		height:6vh;
-		border-radius:8vh;
-	}
-	 .pic{
-		width:50vw;
-		height:50vw;
-		max-width:50vh;
-		max-height:50vh;
-	}
-	 textarea {
-		height:5vh;
-		font-size:3.5vh;
-		width:65vw;
-	}
-	 input{
-		height:6vh;
-		font-size:3.5vh;
-		width:65vw;
-		text-align:center;
-	}
-	 button{
-		font-size:3.75vh;
-		background-color:white;
-		border-radius:1vh;
-		border:0px;
-	}
-	 #map{
-		width:75vw;
-		height:75vw;
-	}
+		<style>
+		.no{
+			min-width:15vw;
+			float:right;
+			background-color:red;
+			text-align:center;
+		}
+		.yes{
+			min-width:15vw;
+			float:right;
+			background-color:green;
+			text-align:center;
+		}
+		.question{
+			float:left;
+			position:fixed;
+			background-color:orange;
+		}
+		.confirm span{
+			padding:2vh;
+			cursor: default; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			border-radius:100px;
+			top:4vh;
+			position:relative;
+			color:white;
+			font-size:3vh;
+			bottom:0; 
+			transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+		}
+		.confirm{
+			padding-left:0;
+			padding-top:2.5vh;
+			padding-bottom:1vh;
+			z-index:10000;
+			background-color:rgba(0,0,0,0.25);
+			position:fixed;
+			bottom:0;
+			width:100vw;
+			vertical-align:text-bottom;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+			-ms-word-break: break-all;
+			word-break: break-all;
+			word-break: break-word;
+			-ms-hyphens: auto;
+			-moz-hyphens: auto;
+			-webkit-hyphens: auto;
+			hyphens: auto;
+			left:0;
+		}
+		@-webkit-keyframes glow{
+			0%   {background-color:black; }
+			50%  {background-color:black; }
+			100% {background-color:black; }
+		}
+		@keyframes glow{
+			0%   {background-color:black; }
+			50%  {background-color:black; }
+			100% {background-color:black; }
+		}
+		html {
+			-webkit-overflow-scrolling: auto;
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+			margin:0;
+		}
+		body{
+			-webkit-overflow-scrolling: touch;
+			-webkit-backface-visibility: hidden;
+			margin:0;
+			height:100%;
+			width:100%;
+			overflow:auto;
+		}
+		a{
+			color:blue;
+		}
+		.front{
+			z-index:1000;
+		}
+		*{
+			pointer-events: auto;
+			-webkit-text-size-adjust: none;
+			font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+			-ms-word-break: break-all;
+			word-break: break-all;
+			word-break: break-word;
+		}
+		 .card{
+			width:85vw;
+			margin:auto;
+			margin-top:2.5vh;
+			margin-bottom:2.5vh;
+			background-color:rgba(0,0,0,0.1);
+			padding:2.5vh;
+			text-align:center;
+			font-size:3vh;
+			border-radius:10px;
+			box-shadow: inset 0 0 0 5px black;
+			transition:0.5s;
+		}/*
+		 .card:hover{
+			background-color:rgba(0,0,0,0.2);
+		}*/
+		.body{
+			-webkit-overflow-scrolling: touch;
+			-webkit-backface-visibility: hidden;
+			width:100%;
+			background-color:white;
+			padding-top:8vh;
+			left:0;
+			color:black;
+		}
+		 .top{
+			top:0;
+		}
+		 .left{
+			left:0;
+			float:left;
+		}
+		 .right{
+			right:0;
+			float:right;
+		}
+		 .fixed{
+			position:fixed;
+		}
+		.absolute{
+			position:absolute;
+		}
+		 .wide{
+			width:100%;
+		}
+		 .height{
+			height:8vh;
+		}
+		 .accent{
+			background-color:orange;
+		}
+		 .icon{
+			padding:1vh;
+			width:6vh;
+			height:6vh;
+		}
+		 .bar a img {
+			width:6vh;
+			height:6vh;
+			border-radius:8vh;
+		}
+		 .pic{
+			width:50vw;
+			height:50vw;
+			max-width:50vh;
+			max-height:50vh;
+		}
+		 textarea {
+			height:5vh;
+			font-size:3.5vh;
+			width:65vw;
+		}
+		 input{
+			height:6vh;
+			font-size:3.5vh;
+			width:65vw;
+			text-align:center;
+		}
+		 button{
+			font-size:3.75vh;
+			background-color:white;
+			border-radius:1vh;
+			border:0px;
+		}
+		 #map{
+			width:75vw;
+			height:75vw;
+		}
 	</style>
 	<noscript>
 		<div style="z-index:1000;background-color:white;top:0;left:0;position:fixed;width:100%;height:100%;">
