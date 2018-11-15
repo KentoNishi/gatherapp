@@ -1352,7 +1352,7 @@ function action(act,valid) {
 }
 
 function clear(e){
-	document.querySelectorAll("."+(e||"body"))[0].innerHTML="";
+	document.querySelectorAll((e!=null?("."+e):"body"))[0].innerHTML="";
 } 
 
 function reverse(snapshot) {
