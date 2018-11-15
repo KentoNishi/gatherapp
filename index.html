@@ -108,20 +108,20 @@
 		100% {background-color:black; }
 	}
 	html {
-		-webkit-overflow-scrolling: touch;
+		-webkit-overflow-scrolling: auto;
 		height: 100%;
 		width: 100%;
 		overflow: hidden;
 		margin:0;
 	}
 	body{
-		-webkit-overflow-scrolling: touch;
+		pointer-events: none;
+		-webkit-overflow-scrolling: auto;
 		-webkit-backface-visibility: hidden;
 		margin:0;
-		height:92%;
+		height:100%;
 		width:100%;
-		padding-top:8vh;
-		overflow:auto;
+		overflow:hidden;
 	}
 	a{
 		color:blue;
@@ -130,6 +130,7 @@
 		z-index:1000;
 	}
 	*{
+		pointer-events: auto;
 		-webkit-text-size-adjust: none;
 		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 		overflow-wrap: break-word;
@@ -157,9 +158,13 @@
 	.body{
 		-webkit-overflow-scrolling: touch;
 		-webkit-backface-visibility: hidden;
+		overflow:auto;
 		width:100%;
+		height:92%;
 		background-color:white;
+		position:absolute;
 		padding:0;
+		top:8vh;
 		left:0;
 		color:black;
 	}
@@ -176,8 +181,6 @@
 	}
 	 .fixed{
 		position:fixed;
-		transform: translate3d(0,0,0);  
-		-webkit-backface-visibility: hidden;
 	}
 	 .wide{
 		width:100%;
