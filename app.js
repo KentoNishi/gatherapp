@@ -405,7 +405,7 @@ function newEvent(id){
 	if(title!=null&&title!=""&&
 	   (autocomplete.getPlace()==null||autocomplete.getPlace().formatted_address.split(",").length>3)){
 		var key=id||firebase.database().ref("events/").push().key;
-		document.querySelectorAll("body")[0].innerHTML+="<span class='event"+key+"'></span>";
+		document.querySelectorAll(".body")[0].innerHTML+="<span class='event"+key+"'></span>";
 		var info={
 			title:title,
 			date:{
@@ -797,7 +797,7 @@ function loadEventBoard(parameters){
 function autogrow(element) {
 	element.style.height = "5px";
 	element.style.height = (element.scrollHeight+5)+"px";
-	document.querySelectorAll("body")[0].scrollIntoView(false);
+	document.querySelectorAll(".body")[0].scrollIntoView(false);
 }
 
 function viewMembers(id){
@@ -1043,7 +1043,7 @@ function joinEvent(id){
 	firebase.database().ref("events/"+id+"/members/").update({
 		[uid]:15
 	}).then(function(){
-		document.querySelectorAll("body")[0].innerHTML="<span class='loading"+id+"'></span>";
+		document.querySelectorAll(".body")[0].innerHTML="<span class='loading"+id+"'></span>";
 	});
 }
 
@@ -1154,7 +1154,7 @@ window.onload=function(){
 						action("home");
 					}
 				}else{
-					document.querySelectorAll("body")[0].innerHTML=`
+					document.querySelectorAll(".body")[0].innerHTML=`
 						<div class="card" onclick="login('Google')">
 							<span style="font-size:4.25vh;"><strong>Sign In</strong></span><br />
 							<span style="font-size:3.5vh;">Sign in to GatherApp with a Google Account.</span><br />
@@ -1352,7 +1352,7 @@ function action(act,valid) {
 }
 
 function clear(e){
-	document.querySelectorAll((e!=null?("."+e):"body"))[0].innerHTML="";
+	document.querySelectorAll("."+(e||"body"))[0].innerHTML="";
 } 
 
 function reverse(snapshot) {
@@ -1419,7 +1419,7 @@ function write(title,contents,links,href,classlist,overwrite,border){
 		if(overwrite!=null){
 			document.querySelectorAll(overwrite)[0].outerHTML=body;
 		}else{
-			document.querySelectorAll('body')[0].innerHTML=body+document.querySelectorAll('body')[0].innerHTML;
+			document.querySelectorAll('.body')[0].innerHTML=body+document.querySelectorAll('.body')[0].innerHTML;
 		}
 	}catch(TypeError){
 		write('Error',[{text:'GatherApp encountered an error.'}]);
