@@ -12,7 +12,10 @@ var config = {
         storageBucket: "",
         messagingSenderId: "187325007601"
 };
-firebase.initializeApp(config);
+try{
+	firebase.initializeApp(config).catch(err=>{});
+}catch(err){
+}
 
 window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
         if (navigator.online) {
