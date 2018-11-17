@@ -8,7 +8,7 @@
 		<meta property="og:title" content="GatherApp" />
 		<meta property="og:image" content="/gatherapp/AppBanner.png" />
 		<meta property="og:description" content="Easily schedule and manage events with your friends and family." />
-		<meta property="og:url" content="https://bit.do/gatherapp" />
+		<meta property="og:url" content="https://kentonishi.github.io/gatherapp" />
 		<meta property="og:type" content="website" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no,viewport-fit=cover" />
 		<meta name="mobile-web-app-capable" content="yes" />
@@ -35,12 +35,12 @@
 			<img alt="add" src="/gatherapp/add.svg" />
 			</a>
 		</div>
-		<div class="body">
+		<div class="body" autofocus>
 			<div class="card">
 				<span style="font-size:4.5vh;">
 					<strong>GatherApp</strong>
 				</span><br>
-				<img style="width:50vw;height:50vw;" src="/gatherapp/512x512.png" class="pic">
+				<img style="width:50vw;height:50vw;" src="/gatherapp/512x512.png" class="pic" />
 				<br><span style="font-size:3vh">Loading App...</span><br>
 			</div>
 		</div>
@@ -108,13 +108,16 @@
 		100% {background-color:black; }
 	}
 	html {
+		-webkit-overflow-scrolling: auto;
 		height: 100%;
 		width: 100%;
 		overflow: hidden;
 		margin:0;
 	}
 	body{
-		position:fixed;
+		pointer-events: none;
+		-webkit-overflow-scrolling: auto;
+		-webkit-backface-visibility: hidden;
 		margin:0;
 		height:100%;
 		width:100%;
@@ -127,6 +130,7 @@
 		z-index:1000;
 	}
 	*{
+		pointer-events: auto;
 		-webkit-text-size-adjust: none;
 		font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 		overflow-wrap: break-word;
@@ -153,6 +157,7 @@
 	}*/
 	.body{
 		-webkit-overflow-scrolling: touch;
+		-webkit-backface-visibility: hidden;
 		overflow:auto;
 		width:100%;
 		height:92%;
