@@ -5,7 +5,7 @@
       (function fetch_text (url) {
         return fetch(url).then((response) => (response.text()));
       })("/gatherapp/app.js").then(app=>{
-   		document.body.innerHTML=data.replace(/app.js/gi, app);
+   		document.body.innerHTML=data.replace(/gatherapp/beta/app.js/gi, app);
 		window.onload=function(){
 			loaded();
 		}
