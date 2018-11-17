@@ -6,7 +6,9 @@
         return fetch(url).then((response) => (response.text()));
       })("/gatherapp/app.js").then(app=>{
    		document.body.innerHTML=data.replace(/app.js/gi, app);
-		window.onload();
+		window.onload=function(){
+			window.onload();
+		}
       });
   });
 </script>
