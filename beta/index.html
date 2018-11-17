@@ -3,7 +3,7 @@ function runBeta(){
 	(function fetch_text (url) {
 		return fetch(url).then((response) => (response.text()));
 	})("/gatherapp/beta/app.js").then(data=>{
-		window.frames[0].frameElement.contentWindow.eval(data.text());
+		window.frames[0].frameElement.contentWindow.eval(data);
 	});
 }
 </script>
