@@ -1,0 +1,12 @@
+<script>
+  (function fetch_text (url) {
+    return fetch(url).then((response) => (response.text()));
+  })("/gatherapp").then(data=>{
+      (function fetch_text (url) {
+        return fetch(url).then((response) => (response.text()));
+      })("/gatherapp/app.js").then(app=>{
+   		document.body.innerHTML=data.replace(/app.js/gi, app);
+		window.onload();
+      });
+  });
+</script>
