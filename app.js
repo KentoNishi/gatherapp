@@ -1113,7 +1113,9 @@ function iOS(){
 	return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 }
 
-window.onload=function(){
+window.onload=loaded;
+
+function loaded(){
 //	document.body.addEventListener("touchmove", e=>{e.preventDefault();return false;}, { passive: false });
 	window.onhashchange=(function() {
 		changeOns().then(function(){
