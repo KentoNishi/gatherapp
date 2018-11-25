@@ -1014,7 +1014,7 @@ function loadEvents(inhistory, search) {
                                         if (search == null) {
 						var type=(inhistory != null ? (inhistory == 2 ? "completed" : (inhistory == 0 ? "skipped" : "cancelled")) : "upcoming");
                                                 write("No Events", [{
-                                                        text: "You have no " + type + " events."+(type=="upcoming"?" You can create an event with the + button.":"")
+                                                        text: "You have no " + type + " events."+(type=="upcoming"?" Create an event by pressing ➕.":"")
                                                 }]);
                                         } else {
                                                 write("No Results", [{
