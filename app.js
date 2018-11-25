@@ -1012,8 +1012,9 @@ function loadEvents(inhistory, search) {
                         returnListener().once("value", events => {
                                 if (events.val() == null) {
                                         if (search == null) {
+						var type=(inhistory != null ? (inhistory == 2 ? "completed" : (inhistory == 0 ? "skipped" : "cancelled")) : "upcoming");
                                                 write("No Events", [{
-                                                        text: "You have no " + (inhistory != null ? (inhistory == 2 ? "completed" : (inhistory == 0 ? "skipped" : "cancelled")) : "upcoming") + " events."
+                                                        text: "You have no " + type + " events."+(type=="upcoming"?" You can create an event with the + button.":"")
                                                 }]);
                                         } else {
                                                 write("No Results", [{
