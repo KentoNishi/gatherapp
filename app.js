@@ -161,7 +161,7 @@ function searchEvents() {
                 document.querySelectorAll(".search")[0].style.background = "pink";
                 document.querySelectorAll(".search")[0].oninput = function() {
                         document.querySelectorAll(".search")[0].style.background = "white";
-                        document.querySelectorAll(".search")[0].oninput = null;
+                        document.querySelectorAll(".search")[0].oninput = "autogrow(this);";
                 };
         }
 }
