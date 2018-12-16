@@ -159,9 +159,9 @@ function searchEvents() {
                 loadEvents(int, query.toLowerCase());
         } else {
                 document.querySelectorAll(".search")[0].style.background = "pink";
-                document.querySelectorAll(".search")[0].oninput = function() {
+                document.querySelectorAll(".search")[0].onclick = function() {
                         document.querySelectorAll(".search")[0].style.background = "white";
-                        document.querySelectorAll(".search")[0].oninput = "autogrow(this);";
+                        document.querySelectorAll(".search")[0].onclick = null;
                 };
         }
 }
@@ -410,10 +410,10 @@ function placeChanged() {
                 } else {
                         document.querySelectorAll(".inputs")[0].querySelectorAll(".iframe")[0].style.display = "none";
                         document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background = "pink";
-                        document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput = function() {
-                                document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background = "white";
-                                document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput = null;
-                        };
+			document.querySelectorAll(".search")[0].onclick = function() {
+				document.querySelectorAll(".search")[0].style.background = "white";
+				document.querySelectorAll(".search")[0].onclick = null;
+			};
                 }
         }
 }
@@ -494,17 +494,17 @@ function newEvent(id) {
         } else {
                 if (title == null || title == "") {
                         document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background = "pink";
-                        document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput = function() {
-                                document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].style.background = "white";
-                                document.querySelectorAll(".inputs")[0].querySelectorAll("input")[0].oninput = null;
-                        };
+			document.querySelectorAll(".search")[0].onclick = function() {
+				document.querySelectorAll(".search")[0].style.background = "white";
+				document.querySelectorAll(".search")[0].onclick = null;
+			};
                 }
                 if (autocomplete.getPlace() != null && autocomplete.getPlace().formatted_address.split(",").length < 3) {
                         document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background = "pink";
-                        document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput = function() {
-                                document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].style.background = "white";
-                                document.querySelectorAll(".inputs")[0].querySelectorAll("input")[1].oninput = null;
-                        };
+			document.querySelectorAll(".search")[0].onclick = function() {
+				document.querySelectorAll(".search")[0].style.background = "white";
+				document.querySelectorAll(".search")[0].onclick = null;
+			};
                 }
         }
 }
@@ -828,9 +828,9 @@ function newBoardPost(id) {
                 });
         } else {
                 document.querySelectorAll("textarea")[0].style.background = "pink";
-                document.querySelectorAll("textarea")[0].oninput = function() {
-                        document.querySelectorAll("textarea")[0].style.background = "white";
-                        document.querySelectorAll("textarea")[0].oninput = null;
+                document.querySelectorAll(".search")[0].onclick = function() {
+                        document.querySelectorAll(".search")[0].style.background = "white";
+                        document.querySelectorAll(".search")[0].onclick = null;
                 };
         }
 }
