@@ -847,7 +847,7 @@ function loadEventBoard(parameters) {
                 write("Event Board", [{
                         html: "<div class='board" + id +
                                 "' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>" +
-                                (member ? ("</div><textarea maxlength='1000' placeholder='Type A Message...' oninput='autogrow(this);' " +
+                                (member ? ("</div><textarea maxlength='1000' placeholder='Type A Message...' onkeyup='autogrow(this);' " +
                                         "style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;max-width:75vw;" +
                                         "min-width:75vw;max-height:15vh;' onkeypress='if (event.keyCode == 13&&!event.shiftKey) {newBoardPost(" + '"' + id + '"' + ");return false;}'></textarea><br />"+
 					"<button onclick='newBoardPost(" + '"' + id + '"' + ");' " +
