@@ -1297,7 +1297,7 @@ function loaded() {
                 });
         });
         if (navigator.onLine) {
-                if (!isFacebookApp()) {
+                if (true){//!isFacebookApp()) {
                         firebase.auth().onAuthStateChanged(function(me) {
                                 if (me) {
                                         try {
