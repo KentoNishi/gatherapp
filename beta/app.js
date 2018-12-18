@@ -847,9 +847,10 @@ function loadEventBoard(parameters) {
                 write("Event Board", [{
                         html: "<div class='board" + id +
                                 "' style='text-align:center;height:50vh;overflow-y:auto;min-width:75vw;background-color:white;'>" +
-                                (member ? ("</div><textarea maxlength='1000' placeholder='Type A Message...' oninput='autogrow(this);' " +
+                                (member ? ("</div><textarea maxlength='1000' placeholder='Type A Message...' " +
                                         "style='overflow-y:auto;resize:none;margin-top:2.5vh;margin-bottom:2.5vh;max-width:75vw;" +
-                                        "min-width:75vw;max-height:15vh;'></textarea><br /><button onclick='newBoardPost(" + '"' + id + '"' + ");' " +
+                                        "min-width:75vw;max-height:15vh;' onkeypress='autogrow(this);if(event.keyCode == 13/*&&!event.shiftKey*/) {newBoardPost(" + '"' + id + '"' + ");return false;}'></textarea><br />"+
+					"<button onclick='newBoardPost(" + '"' + id + '"' + ");' " +
                                         "style='margin-bottom:1.5vh;'>Post To Board</button>") : "")
                 }], null, null, "boardcontainer");
         }
@@ -1012,8 +1013,9 @@ function loadEvents(inhistory, search) {
                         returnListener().once("value", events => {
                                 if (events.val() == null) {
                                         if (search == null) {
+						var type=(inhistory != null ? (inhistory == 2 ? "completed" : (inhistory == 0 ? "skipped" : "cancelled")) : "upcoming");
                                                 write("No Events", [{
-                                                        text: "You have no " + (inhistory != null ? (inhistory == 2 ? "completed" : (inhistory == 0 ? "skipped" : "cancelled")) : "upcoming") + " events."
+                                                        text: "You have no " + type + " events."+(type=="upcoming"?" Create an event by pressing ➕.":"")
                                                 }]);
                                         } else {
                                                 write("No Results", [{
