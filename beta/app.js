@@ -866,8 +866,11 @@ function loadEventBoard(parameters) {
                         document.querySelectorAll(".board" + id)[0].innerHTML = "";
                         firebase.database().ref("users/" + uid + "/events/" + id + "/board").remove();
                         var writes = [];
-
+			var writeData=[];
                         function addPost(object) {
+				writeData.push({admin:object.admin,author:object.author,text:object.text,key:object.key});
+                        };
+			writeData.forEach(object=>{
                                 writes.push("<div style='background-color:" +
                                         (object.admin ? "yellowgreen" : (object.author == uid ? "cornflowerblue" : "orange")) +
                                         ";border-radius:2vh;padding:1vh;text-align:left;margin:0 auto;width:fit-content;'>" +
@@ -876,7 +879,7 @@ function loadEventBoard(parameters) {
                                         "<strong>" +
                                         (object.admin ? "GatherApp" : "") +
                                         "</strong></div></div>");
-                        };
+			});
                         if (posts.val() == null) {
                                 addPost({
                                         text: "This event has no board posts.",
@@ -900,6 +903,7 @@ function loadEventBoard(parameters) {
                                         });
                                 });
                         }
+			console.log(writes);
                         document.querySelectorAll(".board" + id)[0].innerHTML = "<br />" + writes.join("<br />") + "<br />";
                         posts.forEach(post => {
                                 firebase.database().ref("users/" + post.val().author + "/info").once("value", info => {
