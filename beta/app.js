@@ -870,6 +870,13 @@ function loadEventBoard(parameters) {
                         function addPost(object) {
 				writeData.push({admin:object.admin,author:object.author,text:object.text,key:object.key});
                         };
+			for(var i=1;i<writeData.length;i++){
+				if(writeData[i-1].author==writeData[i].author){
+					writeData[i-1].text+="\n"+writeData[i].text;
+					writeData[i-1].key=writeData[i].key;
+					writeData.splice(i,1);
+				}
+			}
 			writeData.forEach(object=>{
                                 writes.push("<div style='background-color:" +
                                         (object.admin ? "yellowgreen" : (object.author == uid ? "cornflowerblue" : "orange")) +
