@@ -866,16 +866,9 @@ function loadEventBoard(parameters) {
                         document.querySelectorAll(".board" + id)[0].innerHTML = "";
                         firebase.database().ref("users/" + uid + "/events/" + id + "/board").remove();
                         var writes = [];
-
+			var writeData=[];
                         function addPost(object) {
-                                writes.push("<div style='background-color:" +
-                                        (object.admin ? "yellowgreen" : (object.author == uid ? "cornflowerblue" : "orange")) +
-                                        ";border-radius:2vh;padding:1vh;text-align:left;margin:0 auto;width:fit-content;'>" +
-                                        encode(object.text) +
-                                        "<div " + (object.admin ? "" : ("class='" + object.key + "' ")) + "style='font-size:2.5vh;text-align:center;'>" +
-                                        "<strong>" +
-                                        (object.admin ? "GatherApp" : "") +
-                                        "</strong></div></div>");
+				writeData.push({admin:object.admin,author:object.author,text:object.text,key:object.key,date:object.date});
                         };
                         if (posts.val() == null) {
                                 addPost({
@@ -896,16 +889,37 @@ function loadEventBoard(parameters) {
                                         addPost({
                                                 text: post.content,
                                                 author: post.author,
-                                                key: post.key
+                                                key: post.key,
+						date:post.date
                                         });
                                 });
                         }
+			for(var i=1;i<writeData.length;i++){
+				if(writeData[i-1].author==writeData[i].author&&Math.abs(writeData[i].date-writeData[i-1].date)<1000*60*5){
+					writeData[i-1].text+="\n"+writeData[i].text;
+					writeData[i-1].key=writeData[i].key;
+					writeData.splice(i,1);
+					i--;
+				}
+			}
+			writeData.forEach(object=>{
+                                writes.push("<div style='background-color:" +
+                                        (object.admin ? "yellowgreen" : (object.author == uid ? "cornflowerblue" : "orange")) +
+                                        ";border-radius:2vh;padding:1vh;text-align:left;margin:0 auto;width:fit-content;'>" +
+                                        encode(object.text) +
+                                        "<div " + (object.admin ? "" : ("class='" + object.key + "' ")) + "style='font-size:2.5vh;text-align:center;'>" +
+                                        "<strong>" +
+                                        (object.admin ? "GatherApp" : "") +
+                                        "</strong></div></div>");
+			});
                         document.querySelectorAll(".board" + id)[0].innerHTML = "<br />" + writes.join("<br />") + "<br />";
                         posts.forEach(post => {
                                 firebase.database().ref("users/" + post.val().author + "/info").once("value", info => {
-                                        document.querySelectorAll("." + post.key)[0].querySelectorAll("strong")[0].innerHTML = encode(info.val().name);
-                                        document.querySelectorAll("." + post.key)[0].innerHTML += "<br />" + encode(getFormattedDate(post.val().date));
-                                        document.querySelectorAll(".board" + id)[0].scrollTop = Math.pow(document.querySelectorAll(".board" + id)[0].scrollHeight, 2);
+					if(document.querySelectorAll("." + post.key).length>0){
+						document.querySelectorAll("." + post.key)[0].querySelectorAll("strong")[0].innerHTML = encode(info.val().name);
+						document.querySelectorAll("." + post.key)[0].innerHTML += "<br />" + encode(getFormattedDate(post.val().date));
+						document.querySelectorAll(".board" + id)[0].scrollTop = Math.pow(document.querySelectorAll(".board" + id)[0].scrollHeight, 2);
+					}
                                 });
                         });
                 }
