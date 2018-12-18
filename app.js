@@ -97,15 +97,17 @@ function menu() {
                 html: "<button style='margin-top:1vh;' " +
                         "onclick='searchEvents();'>Search</button>"
         }]);
+	var message;
         if (install != null) {
-                write("Get The App!", [ //{text:"Pin GatherApp to your home screen."},
-                                {
-                                        html: "<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"
-                                }
-                        ],
-                        null, // [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
-                        null, "installPrompt");
-        }
+		message={html: "<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"};
+	}else{
+		message={text: "Your browser does not support app downloading."};
+	}
+	write("Get The App!", [ //{text:"Pin GatherApp to your home screen."},
+		message
+		],
+		null, // [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
+		null, "installPrompt");
 }
 
 function linkify(inputText) {
