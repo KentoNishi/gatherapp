@@ -1164,7 +1164,7 @@ function loadEvents(inhistory, search) {
 							if (install != null) {
 								message={html: "<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"};
 							}else{
-								message={text: "Your browser does not support app downloading. Try again in a different browser."};
+								message={text: "Downloading apps in this browser is unsupported. Try a different browser."};
 							}
 							write("Get The App!", [ //{text:"Pin GatherApp to your home screen."},
 								message
