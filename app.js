@@ -100,14 +100,14 @@ function menu() {
 	var message;
         if (install != null) {
 		message={html: "<button onclick='installApp();' style='background-color:rgba(0,255,0,0.3);'>Download Now</button>"};
+		write("Get The App!", [ //{text:"Pin GatherApp to your home screen."},
+			message
+			],
+			null, // [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
+			null, "installPrompt");
 	}else{
 		message={text: "This browser doesn't support app downloads. Try a different browser."};
 	}
-	write("Get The App!", [ //{text:"Pin GatherApp to your home screen."},
-		message
-		],
-		null, // [{text:"No Thanks",href:"if(confirm('Are you sure you want to skip downloading the app?')){installApp(0);}"}],
-		null, "installPrompt");
 }
 
 function linkify(inputText) {
